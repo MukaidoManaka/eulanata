@@ -8,10 +8,19 @@ const Home = resolve => require(['@/views/Home'], resolve);
 const Login = resolve => require(['@/views/Login'], resolve);
 const About = resolve => require(['@/views/About'], resolve);
 const Ore = resolve => require(['@/views/Ore'], resolve);
+const Delivery = resolve => require(['@/views/Delivery'], resolve);
 
 const routes = [
   {
     path: '/',
+    name: 'Login',
+    component: Login,
+    meta: {
+      title: '登录'
+    }
+  },
+  {
+    path: '/login',
     name: 'Login',
     component: Login,
     meta: {
@@ -40,6 +49,14 @@ const routes = [
     component: Ore,
     meta: {
       title: '个人中心'
+    }
+  },
+  {
+    path: '/delivery',
+    name: 'Delivery',
+    component: Delivery,
+    meta: {
+      title: '送货'
     }
   }
 ]

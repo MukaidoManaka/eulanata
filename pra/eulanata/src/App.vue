@@ -4,6 +4,16 @@
   </div>
 </template>
 
+<script>
+  export default {
+    data() {
+      return {
+        active: null
+      }
+    }
+  }
+</script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -11,6 +21,11 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: .16rem;
 }
 
 #nav {

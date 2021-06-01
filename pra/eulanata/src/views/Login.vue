@@ -2,11 +2,11 @@
  <div class="login" :style="background">
      <div class="opacity">
          <div class="logo">
-            <img src="@/assets/image/logo.jpg" alt="">
+            <img src="@/assets/image/logo.png" alt="">
             <span>凯隆智能</span>
         </div>
         <van-form class="form">
-            <div class="icon">
+            <div class="icon icon_1">
                 <van-field v-model="username" placeholder="请输出账号" type="text"></van-field>
                 <van-icon name="user-circle-o" class="userIcon"></van-icon>
             </div>
@@ -19,7 +19,8 @@
                 <a href="#" @click="forgetPwd">忘记密码</a>
             </div>
             <div>
-                <van-button class="loginBtn" block round type="info" @click="login">登 录</van-button>
+                <van-button :linear-gradient="gradient" class="loginBtn" block plain round native-type @click="login">登 录</van-button>
+                <button class="button">wawa</button>
                 <!-- <img :src="button" alt="" class="buttonImg"> -->
             </div>
         </van-form>
@@ -29,7 +30,7 @@
 
 <script>
     export default  {
-        name: 'login',
+        name: 'Login',
         data() {
             return {
                 bg1:require('@/assets/image/login_bg1.jpg'),
@@ -41,6 +42,8 @@
                 bg7:require('@/assets/image/login_bg7.jpg'),
                 bg8:require('@/assets/image/login_bg8.jpg'),
                 button:require('@/assets/image/phone-btn.png'),
+                // gradient:['to right','rgb(29, 98, 240)', 'rgb(25, 213, 253)'],
+                gradient:`{linear-gradient('rgb(29, 98, 240), rgb(25, 213, 253))}`,
                 username: '',
                 password: '',
                 url: '',
@@ -103,9 +106,9 @@
     }
     .logo {
         width: 80px;
-        margin: 0 auto 80px;
-        padding-top: 80px;
-        font-size: 20px;
+        margin: 0 auto .8rem;
+        padding-top: .8rem;
+        font-size: .16rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -131,8 +134,13 @@
         width: 90%;
         margin: 0 auto;
         .loginBtn {
-            height: 44px;
-            font-size: 16px;
+            height: .44rem;
+            font-size: .16rem;
+            margin-top: .2rem;
+            // background: linear-gradient(to bottom right, #2aa3df , #2ac3df);
+        }
+        .loginBtn:before {
+            // background: linear-gradient(to bottom right, #2aa3df , #2ac3df);
         }
         .icon {
             position: relative;
@@ -143,11 +151,25 @@
             top: 12px;
             font-size: 20px;
         }
+        .icon .van-cell {
+            border-radius: .2rem;
+        }
+        .icon_1 {
+            margin-bottom: .2rem;
+        }
         // .van-field__control {
         //     padding-left: 15px;
         // } 
         .van-field {
             padding-left: 35px;
         }
+    }
+    .button {
+        width: 100%;
+        height: 0.44rem;
+        background-image: linear-gradient(to right,rgba(29, 98, 240,.5), rgba(25, 213, 253,.5));
+        border:0;
+        border-radius: 10px;
+        margin-top: .1rem;
     }
 </style>
