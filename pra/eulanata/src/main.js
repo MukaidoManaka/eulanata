@@ -7,12 +7,19 @@ Vue.config.productionTip = false
 
 import Vant from 'vant';
 import 'vant/lib/index.css';
-import { Tabbar, TabbarItem } from 'vant'
+// import { Tabbar, TabbarItem, List, PullRefresh, NavBar, Tab, Tabs, Devider } from 'vant'
 import { Toast, Dialog } from 'vant'
+
 Vue.prototype.$toast = Toast;
 Vue.prototype.$dialog = Dialog;
 
-Vue.use(Vant).use(Tabbar).use(TabbarItem)
+Vue.use(Vant);
+// Vue.use(Vant).use(Tabbar).use(TabbarItem).use(List).use(PullRefresh).use(NavBar).use(Tab).use(Tabs).use(Devider)
+// Vue.use(Card)
+
+//[vue-router] Failed to resolve async component default: TypeError: onComplete is not a function 报这错才安的
+require('es6-promise').polyfill();
+require('es6-promise/auto');
 
 new Vue({
   router,

@@ -22,3 +22,6 @@ a {
 /* #F9F9F9背景色  button渐变色w gradient:['rgb(29, 98, 240)', 'rgb(25, 213, 253)'] 
 .lg-linear{background: linear-gradient(to bottom right, #2aa3df , #2ac3df);}
 */
+.header .van-nav-bar {
+  background-color: #6cf;
+}

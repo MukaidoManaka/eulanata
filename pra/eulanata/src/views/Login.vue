@@ -2,7 +2,7 @@
  <div class="login" :style="background">
      <div class="opacity">
          <div class="logo">
-            <img src="@/assets/image/logo.png" alt="">
+            <img :src="logo" alt="">
             <span>凯隆智能</span>
         </div>
         <van-form class="form">
@@ -42,6 +42,7 @@
                 bg7:require('@/assets/image/login_bg7.jpg'),
                 bg8:require('@/assets/image/login_bg8.jpg'),
                 button:require('@/assets/image/phone-btn.png'),
+                logo:require('@/assets/image/logo.png'),
                 // gradient:['to right','rgb(29, 98, 240)', 'rgb(25, 213, 253)'],
                 gradient:`{linear-gradient('rgb(29, 98, 240), rgb(25, 213, 253))}`,
                 username: '',
@@ -80,6 +81,7 @@
                })
            },
            forgetPwd() {
+               console.log('wang ji mi ma')
                this.$dialog.alert({
                    message:'你确定忘记密码了？'
                }).then(() => {
