@@ -25,3 +25,14 @@ a {
 .header .van-nav-bar {
   background-color: #6cf;
 }
+#app .van-ellipsis {
+  color: #fff;
+}
+
+#app .van-nav-bar .van-icon {
+  color: #fff;
+}
+
+#app .van-nav-bar__text {
+  color: #fff;
+}

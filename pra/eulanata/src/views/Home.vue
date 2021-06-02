@@ -1,14 +1,14 @@
 <template>
   <div class="home">
     <div class="header">
-      <van-nav-bar title="主页">
+      <van-nav-bar title="主页" color="white">
         <template #right>
           <van-icon name="search" size="18" />
         </template>
       </van-nav-bar>
     </div>
     <div class="section">
-      <van-tabs v-model="active2" swipeable>
+      <van-tabs v-model="active2" @click="tabClick" @change="tabChange" swipeable>
         <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
@@ -24,7 +24,8 @@
                 <div class="right_item">
                   <div class="_top">
                     <span>送货单号：{{item.arrivalNo}}</span>
-                    <van-tag plain type="warning">待审核</van-tag>
+                    <van-tag plain type='primary'>{{item.status == 0 ? '待审核' : (item.status == 1 ? '已通过' : '已完成')}}</van-tag>
+                    <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
@@ -61,14 +62,19 @@ export default {
   components: {},
   data() {
     return {
-      list: [],
+      //区分审核或者通过火已完成3中状态 所需要的中间件
+      newJson: [],
       loading: false,
       finished: false,
       refreshing: false,
       active: null,
       active2: null,
       pink: 'pink',
-      dict1:['全部','审核中','已通过','已完成'],
+      //区分审核或者通过火已完成3中状态
+      dict1:['全部','待审核','已通过','已完成'],
+      x_status: 0,
+      x_name: '',
+
       date: '2021-06-06 10:11:12',
       kehu: '嘉兴凯隆智能有限公司',
       data1:[],
@@ -94,38 +100,93 @@ export default {
   methods: {
     onLoad() {
       setTimeout(() => {
-        if (this.refreshing) {
-          this.data1 = require('../../mock.json')
-          this.refreshing = false
-        }
+        // if (this.refreshing) {
+        //   this.data1 = require('../../mock.json')
+        //   this.refreshing = false
+        // }
 
-        if(this.data1.length <= 10) {
-          this.data1.push(this.oneItem)
-          this.loading = false
-        }
+        // if(this.data1.length <= 10) {
+        //   this.data1.push(this.oneItem)
+        //   this.loading = false
+        // }
 
-        // this.finished = true
+        this.finished = true
+        this.loading = false
+        this.refreshing = false
        
       }, 1000)
     },
     onRefresh() {
-      // 清空列表数据
-      this.finished = false
+      setTimeout(() => {
+        // 清空列表数据
+        this.finished = false
 
-      // 重新加载数据
-      // 将 loading 设置为 true，表示处于加载状态
-      this.loading = true
-      this.onLoad()
+        // 重新加载数据
+        // 将 loading 设置为 true，表示处于加载状态
+        this.loading = true
+        this.onLoad()
+      },1000)
     },
     enterDetail(id) {
       console.log('看看id',id)
       this.$router.push('/listDetail',{id})
-    }
+    },
+    tabClick(name,title) {
+      console.log('name',name)
+      console.log('title',title)
+      if(name == 1) {
+        this.newJson = require('../../mock.json')
+        this.data1 = this.newJson.filter((item) => {
+          return item.status == 0
+        })
+      }else if (name == 2) {
+        this.newJson = require('../../mock.json')
+        this.data1 = this.newJson.filter((item) => {
+          return item.status == 1
+        })
+      }else if (name == 3) {
+        this.newJson = require('../../mock.json')
+        this.data1 = this.newJson.filter((item) => {
+          return item.status == 2
+        })
+      }else {
+        this.data1 = require('../../mock.json')
+      }
+
+      console.log('filter之后的数据',this.data1)
+    },
+    tabChange(name,title) {
+      console.log('name',name)
+      console.log('title',title)
+
+      if(name == 1) {
+        this.newJson = require('../../mock.json')
+        this.data1 = this.newJson.filter((item) => {
+          return item.status == 0
+        })
+      }else if (name == 2) {
+        this.newJson = require('../../mock.json')
+        this.data1 = this.newJson.filter((item) => {
+          return item.status == 1
+        })
+      }else if (name == 3) {
+        this.newJson = require('../../mock.json')
+        this.data1 = this.newJson.filter((item) => {
+          return item.status == 2
+        })
+      }else {
+        this.data1 = require('../../mock.json')
+      }
+
+      console.log('filter之后的数据',this.data1)
+    },
   },
   created() {
+    //读本地json当作是请求后端
     console.log(require('../../mock.json'))
     console.log('json值',json)
     this.data1 = json
+
   }
 }
 </script>
@@ -154,17 +215,6 @@ export default {
     width: 100%;
     height: 0.5rem;
     line-height: 0.5rem;
-  }
-  .header /deep/ .van-ellipsis {
-    color: #503235;
-  }
-
-  .header /deep/ .van-nav-bar .van-icon {
-    color: #009b22;
-  }
-
-  .header /deep/ .van-nav-bar__text {
-    color: #ef1726;
   }
 
   .list_item {
@@ -204,5 +254,27 @@ export default {
   }
   .section .van-divider {
     margin: 0;
+  }
+
+  // .section {
+  //   position: relative;
+  // }
+  // .section .van-tabs--line .van-tabs__wrap {
+  //   position: fixed;
+  //   top: 0;
+  //   left: 0;
+  //   z-index: 101;
+  //   margin-top: .9rem;
+  // }
+
+  .sectiopn .van-tabs {
+    position: static!important;;
+  }
+  .section .van-tabs--line .van-tabs__wrap .van-tabs__nav {
+    position: fixed!important;
+    top: 0;
+    left: 0;
+    z-index: 101;
+    margin-top: .9rem;
   }
 </style>
