@@ -25,6 +25,7 @@
   display: flex;
   flex-direction: column;
   font-size: .16rem;
+  background-color: #F9F9F9;
 }
 
 #nav {

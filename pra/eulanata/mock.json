@@ -14,7 +14,45 @@
     "remark": null,
     "deliveryNo": null,
     "saleNo": "100426A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 82,
@@ -31,7 +69,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 81,
@@ -48,7 +124,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 80,
@@ -65,7 +179,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 79,
@@ -82,7 +234,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 78,
@@ -99,7 +289,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 77,
@@ -116,7 +344,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 76,
@@ -133,7 +399,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "100426A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 75,
@@ -150,7 +454,45 @@
     "remark": "家乐福,(注意:低隔测试(Cadmium)+6P测试)",
     "deliveryNo": null,
     "saleNo": "",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 74,
@@ -167,7 +509,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": false,
+        "buhegeNO": null,
+        "checkTime": ""
+      }
+    ]
   },
   {
     "id": 100,
@@ -184,7 +564,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 101,
@@ -201,7 +619,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 102,
@@ -218,7 +674,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 103,
@@ -235,7 +729,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 104,
@@ -252,7 +784,45 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 2,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 5,
+        "checkTime": "2020-06-01"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 0,
+        "checkTime": "2020-06-02"
+      }
+    ]
   },
   {
     "id": 105,
@@ -269,6 +839,44 @@
     "remark": "1213",
     "deliveryNo": null,
     "saleNo": "100427A",
-    "source": null
+    "source": null,
+    "goods": [
+      {
+        "id": 13,
+        "goodsNO": "BH8975789757",
+        "brand": "光明",
+        "unit": "箱",
+        "basicProperty": "牛奶",
+        "expandProperty": "有机酸奶、奶酪、鲜奶、黄油、布丁、甜点、乳清粉、豆奶、烘焙原料",
+        "totalNO": 80,
+        "isChecked": true,
+        "buhegeNO": 21,
+        "checkTime": "2020-06-32"
+      },
+      {
+        "id": 14,
+        "goodsNO": "BH11111111111",
+        "brand": "红富士",
+        "unit": "公斤",
+        "basicProperty": "苹果",
+        "expandProperty": "主要品种有：辽伏，寒富及其芽变系，早捷（Geneva Early）；夏绿；伏帅；安娜（Anna），藤牧1号；杰西麦克（Jerseymac）；珊新嘎拉（Royal Gala）及其芽变系；首红；新红星；超红；红玉；千秋；华冠；新世界，乔纳金及其芽变系；秦冠；王林、首红；灵宝苹果—华冠；栖霞苹果—红富士；花牛；北斗；金帅；大沙。",
+        "totalNO": 123,
+        "isChecked": true,
+        "buhegeNO": 55,
+        "checkTime": "2020-06-10"
+      },
+      {
+        "id": 15,
+        "goodsNO": "BH222222222221",
+        "brand": "怡宝",
+        "unit": "24瓶/件",
+        "basicProperty": "矿泉水",
+        "expandProperty": "产品SKU包括：350ml、400ml、555ml、1.18L、1.555L、2.08L、4.5L、6L、18.9L等。",
+        "totalNO": 25,
+        "isChecked": true,
+        "buhegeNO": 10,
+        "checkTime": "2020-06-10"
+      }
+    ]
   }
 ]

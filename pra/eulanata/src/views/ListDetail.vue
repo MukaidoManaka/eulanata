@@ -5,25 +5,29 @@
     </div>
     <div class="section">
       <van-cell-group>
-        <van-cell title="单元格" value="内容" />
-        <van-cell title="单元格" value="内容" label="描述信息" />
+        <van-cell title="送货商名称" :value="data.supplierName" />
+        <van-cell title="送货商ID" :value="id" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="单元格" value="内容" />
-        <van-cell title="单元格" value="内容" label="描述信息" />
+        <van-cell title="送货日期" :value="data.arrivalDate" />
+        <van-cell title="送货单号" :value="data.arrivalNo" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="单元格" value="内容" />
-        <van-cell title="单元格" value="内容" label="描述信息" />
+        <van-cell title="送货人" :value="data.createBy" />
+        <van-cell title="生成订单时间" :value="data.createTime" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="单元格" value="内容" />
-        <van-cell title="单元格" value="内容" label="描述信息" />
+        <van-cell title="合同号" :value="data.saleNo" />
+        <van-cell title="订单状态" :value="data.status" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="单元格" value="内容" />
-        <van-cell title="单元格" value="内容" label="描述信息" />
+        <van-cell title="货物详情" is-link @click="readGoods" />
       </van-cell-group>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
     </div>
     <div class="footer">
       
@@ -36,16 +40,34 @@ export default {
   name: 'ListDetail',
   data() {
     return {
-
+      data:{},
+      data1:[],
+      json:[],
+      //进来这页面的是哪个id
+      id:null,
     }
   },
   methods: {
     returnPrev() {
       this.$router.push('/home')
+    },
+    readGoods() {
+      this.$router.push({name: 'GoodsDetail',params: {routerData:this.data.goods,id: this.id}})
     }
   },
   created() {
     console.log('外面传进来的id',this.$route.params.id)
+    this.id = this.$route.params.id
+    //根据以上id拿到详情
+    this.json = require('../../mock.json')
+    console.log('先看看json',this.json)
+    this.data1 = this.json.filter((item) => {
+      console.log(1)
+      return item.id == this.id
+    })
+    this.data = this.data1[0]
+    console.log('现在的data',this.data)
+
   }
 }
 </script>
@@ -59,5 +81,9 @@ export default {
   }
   .section {
     flex: 1;
+    overflow: scroll;
+  }
+  textarea {
+    width: 100%;
   }
 </style>

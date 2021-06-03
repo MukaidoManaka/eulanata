@@ -43,13 +43,9 @@
     <div class="footer">
       <van-tabbar v-model="active">
         <van-tabbar-item to="home" icon="home-o">主页</van-tabbar-item>
-        <van-tabbar-item to="about" icon="search" dot>随意</van-tabbar-item>
-        <van-tabbar-item to="delivery" icon="friends-o" badge="5"
-          >送货</van-tabbar-item
-        >
-        <van-tabbar-item to="ore" icon="user-o" badge="20"
-          >我的</van-tabbar-item
-        >
+        <van-tabbar-item to="about" icon="search">随意</van-tabbar-item>
+        <van-tabbar-item to="delivery" icon="friends-o">送货</van-tabbar-item>
+        <van-tabbar-item to="ore" icon="user-o">我的</van-tabbar-item>
       </van-tabbar>
     </div>
   </div>
@@ -129,7 +125,7 @@ export default {
     },
     enterDetail(id) {
       console.log('看看id',id)
-      this.$router.push('/listDetail',{id})
+      this.$router.push({name:'ListDetail',params:{id:id}})
     },
     tabClick(name,title) {
       console.log('name',name)
@@ -195,21 +191,22 @@ export default {
   .home {
     width: 100%;
     height: 100%;
-    // display: flex;
-    // flex-direction: column;
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    // position: relative;
   }
   .header {
     width: 100%;
-    position: fixed;
+    // position: fixed;
     left: 0;
     top: 0;
     z-index: 100;
     // margin-bottom: .46rem;
   }
   .section {
-    // flex: 1;
-    margin-top: .46rem;
+    flex: 1;
+    overflow: scroll;
+    // margin-top: .46rem;
   }
   .footer {
     width: 100%;
@@ -267,14 +264,23 @@ export default {
   //   margin-top: .9rem;
   // }
 
-  .sectiopn .van-tabs {
-    position: static!important;;
+  .section .van-tabs {
+    // display: flex;
+    flex-direction: column;
+    height: 100%;
   }
-  .section .van-tabs--line .van-tabs__wrap .van-tabs__nav {
-    position: fixed!important;
-    top: 0;
-    left: 0;
-    z-index: 101;
-    margin-top: .9rem;
+  .section .van-tabs .van-tabs__wrap {
+    overflow: visible;
+  }
+  .section .van-tabs .van-tabs__content {
+    flex: 1;
+    overflow: scroll;
+  }
+  .section .van-tabs>div:first-child {
+    overflow: visible;
+  }
+  .section .van-tabs>div:last-child {
+    flex: 1;
+    overflow: scroll;
   }
 </style>

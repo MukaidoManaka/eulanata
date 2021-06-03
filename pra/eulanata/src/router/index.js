@@ -10,6 +10,7 @@ const About = resolve => require(['@/views/About'], resolve);
 const Ore = resolve => require(['@/views/Ore'], resolve);
 const Delivery = resolve => require(['@/views/Delivery'], resolve);
 const ListDetail = resolve => require(['@/views/ListDetail'], resolve);
+const GoodsDetail = resolve => require(['@/views/GoodsDetail'], resolve);
 
 const routes = [
   {
@@ -25,7 +26,7 @@ const routes = [
     name: 'Login',
     component: Login,
     meta: {
-      title: '登录'
+      title: '登录a'
     }
   },
   {
@@ -65,7 +66,15 @@ const routes = [
     name: 'ListDetail',
     component: ListDetail,
     meta: {
-      title: '送货'
+      title: '送货单详情'
+    }
+  },
+  {
+    path: '/goodsDetail',
+    name: 'GoodsDetail',
+    component: GoodsDetail,
+    meta: {
+      title: '货物详情'
     }
   }
 ]

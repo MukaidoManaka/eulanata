@@ -19,11 +19,14 @@
                 <a href="#" @click="forgetPwd">忘记密码</a>
             </div>
             <div>
-                <van-button :linear-gradient="gradient" class="loginBtn" block plain round native-type @click="login">登 录</van-button>
-                <button class="button">wawa</button>
+                <van-button color="{'rgb(29, 98, 240)', 'rgb(25, 213, 253)'}" type="info" class="loginBtn" block round @click="login">登 录</van-button>
+                <!-- <button class="button">wawa</button> -->
                 <!-- <img :src="button" alt="" class="buttonImg"> -->
             </div>
         </van-form>
+        <div class="wechat">
+            <img :src="wechat" alt="" @click="wxLogin">
+        </div>
      </div>
  </div>
 </template>
@@ -43,8 +46,10 @@
                 bg8:require('@/assets/image/login_bg8.jpg'),
                 button:require('@/assets/image/phone-btn.png'),
                 logo:require('@/assets/image/logo.png'),
+                wechat:require('@/assets/image/f_we_chat.png'),
                 // gradient:['to right','rgb(29, 98, 240)', 'rgb(25, 213, 253)'],
-                gradient:`{linear-gradient('rgb(29, 98, 240), rgb(25, 213, 253))}`,
+                // gradient:{'to right','rgb(29, 98, 240)', 'rgb(25, 213, 253)'},
+                // gradient:`{linear-gradient('rgb(29, 98, 240), rgb(25, 213, 253))}`,
                 username: '',
                 password: '',
                 url: '',
@@ -66,18 +71,19 @@
                this.params.password = this.password
                console.log(this.params.username.split('').length,this.password.split('').length)
                if (this.params.username.split('').length <= 10 && this.params.password.split('').length >= 8) {
-                   this.$router.push('/ore',{
-                       id: 1,
-                       username: this.params.username
-                   })
+                   this.$router.push({name: 'Home',params:{id:9999}})
                }else {
                    this.$toast('请检查一下你输的什么')
                }
            },
+           wxLogin() {
+               this.$toast.success('微信登录成功！')
+               this.$router.push({name: 'Home',params: {id:10000}})
+           },
            register() {
                this.$toast.loading({
                    message:'请稍微，马上注册成功',
-                   forbidClick: true
+                //    forbidClick: true
                })
            },
            forgetPwd() {
@@ -164,6 +170,16 @@
         // } 
         .van-field {
             padding-left: 35px;
+        }
+    }
+    .wechat {
+        display: flex;
+        justify-content: center;
+        margin-top: .2rem;
+        img {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: .5rem;
         }
     }
     .button {
