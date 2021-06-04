@@ -8,7 +8,7 @@
       </van-nav-bar>
     </div>
     <div class="section">
-      <van-tabs v-model="active2" @click="tabClick" @change="tabChange" swipeable>
+      <van-tabs v-model="active2" @click="tabClick" @change="tabChange" swipeable color="#6cf">
         <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
@@ -24,7 +24,7 @@
                 <div class="right_item">
                   <div class="_top">
                     <span>送货单号：{{item.arrivalNo}}</span>
-                    <van-tag plain type='primary'>{{item.status == 0 ? '待审核' : (item.status == 1 ? '已通过' : '已完成')}}</van-tag>
+                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待填写' : (item.status == 1 ? '待审核' : '已完成')}}</van-tag>
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
@@ -40,22 +40,18 @@
         </van-tab>
       </van-tabs>
     </div>
-    <div class="footer">
-      <van-tabbar v-model="active">
-        <van-tabbar-item to="home" icon="home-o">主页</van-tabbar-item>
-        <van-tabbar-item to="about" icon="search">随意</van-tabbar-item>
-        <van-tabbar-item to="delivery" icon="friends-o">送货</van-tabbar-item>
-        <van-tabbar-item to="ore" icon="user-o">我的</van-tabbar-item>
-      </van-tabbar>
-    </div>
+    <Footer />
   </div>
 </template>
 
 <script>
 import json from '../../mock.json'
+import Footer from '@/components/Footer'
 export default {
   name: 'Home',
-  components: {},
+  components: {
+    Footer
+  },
   data() {
     return {
       //区分审核或者通过火已完成3中状态 所需要的中间件
@@ -63,11 +59,11 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
-      active: null,
-      active2: null,
+      // active: 0,
+      active2: 0,
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
-      dict1:['全部','待审核','已通过','已完成'],
+      dict1:['全部','待填写','待审核','已完成'],
       x_status: 0,
       x_name: '',
 
@@ -125,7 +121,14 @@ export default {
     },
     enterDetail(id) {
       console.log('看看id',id)
-      this.$router.push({name:'ListDetail',params:{id:id}})
+      console.log('acttive2',this.active2)
+      //0表示待填写，就去填写页
+      if (this.active2 == 1 ) {
+        this.$router.push({name: 'WriteOrder', params: {id: id}})
+      }else {
+        this.$router.push({name:'ListDetail',params:{id:id}})
+      }
+      
     },
     tabClick(name,title) {
       console.log('name',name)
@@ -154,6 +157,7 @@ export default {
     tabChange(name,title) {
       console.log('name',name)
       console.log('title',title)
+      console.log("active",this.active2)
 
       if(name == 1) {
         this.newJson = require('../../mock.json')
@@ -198,9 +202,9 @@ export default {
   .header {
     width: 100%;
     // position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 100;
+    // left: 0;
+    // top: 0;
+    // z-index: 100;
     // margin-bottom: .46rem;
   }
   .section {
@@ -242,12 +246,13 @@ export default {
     }
   }
 
-  // 改 一些UI的默认样式
+  // 改(覆盖) 一些UI的默认样式
+
   .header .van-nav-bar {
     background-color: #6cf;
   }
   .section .list_item:first-child {
-    border-top: 1px solid gray;
+    // border-top: 1px solid gray;
   }
   .section .van-divider {
     margin: 0;
@@ -264,15 +269,16 @@ export default {
   //   margin-top: .9rem;
   // }
 
+  //想让van-tabs那四个选项像header一样固定在顶部不动，还未成功
   .section .van-tabs {
     // display: flex;
     flex-direction: column;
     height: 100%;
   }
-  .section .van-tabs .van-tabs__wrap {
+  .section .van-tabs.van-tabs--line .van-tabs__wrap {
     overflow: visible;
   }
-  .section .van-tabs .van-tabs__content {
+  .section .van-tabs.van-tabs--line .van-tabs__content {
     flex: 1;
     overflow: scroll;
   }
@@ -282,5 +288,16 @@ export default {
   .section .van-tabs>div:last-child {
     flex: 1;
     overflow: scroll;
+  }
+
+  //改van-tag颜色 成功
+  .bindClass0.van-tag--primary.van-tag--plain {
+    color: #1989FA;
+  }
+  .bindClass1.van-tag--primary.van-tag--plain {
+    color: goldenrod;
+  }
+  .bindClass2.van-tag--primary.van-tag--plain {
+    color: #07C160;
   }
 </style>

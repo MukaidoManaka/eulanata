@@ -43,7 +43,7 @@
                 bg5:require('@/assets/image/login_bg5.jpg'),
                 bg6:require('@/assets/image/login_bg6.jpg'),
                 bg7:require('@/assets/image/login_bg7.jpg'),
-                bg8:require('@/assets/image/login_bg8.jpg'),
+                // bg8:require('@/assets/image/login_bg8.jpg'),
                 button:require('@/assets/image/phone-btn.png'),
                 logo:require('@/assets/image/logo.png'),
                 wechat:require('@/assets/image/f_we_chat.png'),

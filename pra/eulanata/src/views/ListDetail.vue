@@ -23,14 +23,10 @@
       <van-cell-group>
         <van-cell title="货物详情" is-link @click="readGoods" />
       </van-cell-group>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
-    </div>
-    <div class="footer">
-      
+      <div class="remark">
+        <span>备注:</span>
+        <p> {{data.remark}} </p>
+      </div>
     </div>
   </div>
 </template>
@@ -83,7 +79,15 @@ export default {
     flex: 1;
     overflow: scroll;
   }
-  textarea {
+  .remark {
     width: 100%;
+    padding:.1rem .16rem;
+    p {
+      width: 100%;
+      background-color: #fff;
+      min-height: .5rem;
+      padding-left: 20px;
+      border:1px solid #333;
+    }
   }
 </style>

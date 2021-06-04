@@ -11,6 +11,9 @@ const Ore = resolve => require(['@/views/Ore'], resolve);
 const Delivery = resolve => require(['@/views/Delivery'], resolve);
 const ListDetail = resolve => require(['@/views/ListDetail'], resolve);
 const GoodsDetail = resolve => require(['@/views/GoodsDetail'], resolve);
+const WriteOrder = resolve => require(['@/views/WriteOrder'], resolve);
+const WriteGoods = resolve => require(['@/views/WriteGoods'], resolve);
+const Index = resolve => require(['@/views/Index'], resolve);
 
 const routes = [
   {
@@ -27,6 +30,14 @@ const routes = [
     component: Login,
     meta: {
       title: '登录a'
+    }
+  },
+  {
+    path: '/index',
+    name: 'Index',
+    component: Index,
+    meta: {
+      title: '首页aa'
     }
   },
   {
@@ -76,8 +87,32 @@ const routes = [
     meta: {
       title: '货物详情'
     }
+  },
+  {
+    path: '/writeOrder',
+    name: 'WriteOrder',
+    component: WriteOrder,
+    meta: {
+      title: '订单填写'
+    }
+  },
+  {
+    path: '/writeGoods',
+    name: 'WriteGoods',
+    component: WriteGoods,
+    meta: {
+      title: '货物填写'
+    }
   }
 ]
+
+//不写这个的话，如果一直点同一个路由 console会报错
+//获取原型对象上的push函数
+const originalPush = VueRouter.prototype.push
+//修改原型对象中的push方法
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const router = new VueRouter({
   routes

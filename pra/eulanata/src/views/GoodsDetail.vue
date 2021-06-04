@@ -12,7 +12,7 @@
           <van-cell title="日期" :value="item.checkTime" />
           <van-cell title="物料名" :value="item.basicProperty" />
           <van-collapse v-model="activeNames">
-            <van-collapse-item title="扩展属性" name="1">{{item.expandProperty}}</van-collapse-item>
+            <van-collapse-item title="扩展属性" :name="item.basicProperty">{{item.expandProperty}}</van-collapse-item>
           </van-collapse>
           <van-cell title="单位" :value="item.unit" />
           <van-cell title="总数" :value="item.totalNO" />
@@ -30,7 +30,8 @@ export default {
     return {
       routerData: [],
       id:null,
-      activeNames:[1],
+      //当前展开的折叠面板 有什么值，就展开对应name
+      activeNames:[],
     }
   },
   methods: {
@@ -43,6 +44,12 @@ export default {
     //暂时先这样解决，不一路带着ID走的话，返回ListDetail会出错
     this.id = this.$route.params.id
     console.log('routerData多少',this.routerData)
+    
+    //不用var居然会报i not defined
+    for (var i in this.routerData) {
+      this.activeNames.push(this.routerData[i].basicProperty)
+    }
+    console.log('折叠面板数组值',this.activeNames)
   }
 }
 </script>

@@ -8,16 +8,25 @@
       <div class="order">
         <div class="order_item">
           <p>5</p>
-          <p>待审核</p>
+          <p>待填写</p>
         </div>
         <div class="order_item">
           <p>3</p>
-          <p>进行中</p>
+          <p>待审核</p>
         </div>
         <div class="order_item">
           <p>58</p>
-          <p>已成交</p>
+          <p>已完成</p>
         </div>
+      </div>
+      <div class="share">
+        <van-icon name="share-o" class="share_icon" @click="share" />
+        <van-share-sheet
+          v-model="showShare"
+          title="立即分享给好友"
+          :options="options"
+          @select="shareOne"
+        />
       </div>
     </div>
     <div class="section">
@@ -26,27 +35,40 @@
         <van-cell title="生成订单时间" value="阿玛忒拉斯" />
         <van-cell title="生成订单时间" value="阿玛忒拉斯" />
         <van-cell title="生成订单时间" value="阿玛忒拉斯" />
+        <van-cell title="我的消息" value="阿玛忒拉斯" />
       </van-cell-group>
       <van-button type="danger" @click="logout" class="logout">退 出</van-button>
     </div>
-    <div class="footer">
-      <van-tabbar v-model="active">
-        <van-tabbar-item to="home" icon="home-o">主页</van-tabbar-item>
-        <van-tabbar-item to="about" icon="search">随意</van-tabbar-item>
-        <van-tabbar-item to="delivery" icon="friends-o">送货</van-tabbar-item>
-        <van-tabbar-item to="ore" icon="user-o">我的</van-tabbar-item>
-      </van-tabbar>
-    </div>
+    <Footer />
   </div>
 </template>
 
 <script>
+  import Footer from '@/components/Footer'
   export default {
     name: 'Ore',
+    components: {
+      Footer
+    },
     data() {
         return {
-            active: null,
-            touxiang: require('@/assets/image/bingguo.gif')
+            // active: null,
+            touxiang: require('@/assets/image/bingguo.gif'),
+            showShare: false,
+            options: [
+              [
+                { name: '微信', icon: 'wechat' },
+                { name: '朋友圈', icon: 'wechat-moments' },
+                { name: '微博', icon: 'weibo' },
+                { name: 'QQ', icon: 'qq' },
+              ],
+              [
+                { name: '复制链接', icon: 'link' },
+                { name: '分享海报', icon: 'poster' },
+                { name: '二维码', icon: 'qrcode' },
+                { name: '小程序码', icon: 'weapp-qrcode' },
+              ],
+            ],
         }
     },
     methods: {
@@ -56,6 +78,15 @@
         }).then(() => {
           this.$router.push('/login')
         })
+      },
+      share() {
+        this.showShare = !this.showShare
+      },
+      shareOne(option,index) {
+        this.$toast('分享成功！')
+        console.log("分享的option",option)
+        console.log("分享的index",index)
+        this.showShare = !this.showShare
       }
     }
   }
@@ -75,6 +106,7 @@
   display: flex;
   flex-direction: column;
   color: #fff;
+  position: relative;
 }
 .touxiang {
   display: flex;
@@ -106,6 +138,11 @@
   .order_item>p:first-child {
     font-size: .2rem;
   }
+}
+.share {
+  position: absolute;
+  right: .2rem;
+  top: .2rem;
 }
 .section {
   display: flex;
