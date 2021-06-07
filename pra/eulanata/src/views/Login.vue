@@ -15,8 +15,8 @@
                 <van-icon name="credit-pay" class="userIcon"></van-icon>
             </div>
             <div class="wawa">
-                <a href="#" @click="register">立即注册</a>
-                <a href="#" @click="forgetPwd">忘记密码</a>
+                <a href="javascript:void(0);" @click="register">立即注册</a>
+                <a href="javascript:void(0);" @click="forgetPwd">忘记密码</a>
             </div>
             <div>
                 <van-button color="{'rgb(29, 98, 240)', 'rgb(25, 213, 253)'}" type="info" class="loginBtn" block round @click="login">登 录</van-button>
