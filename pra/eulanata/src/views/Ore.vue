@@ -3,7 +3,7 @@
     <div class="header">
       <div class="touxiang">
         <img :src="touxiang" alt="" />
-        <p>愤怒の审判</p>
+        <p>讴歌_</p>
       </div>
       <div class="order">
         <div class="order_item">
@@ -31,11 +31,11 @@
     </div>
     <div class="section">
       <van-cell-group>
-        <van-cell title="送货人" value="阿玛忒拉斯" />
-        <van-cell title="生成订单时间" value="阿玛忒拉斯" />
-        <van-cell title="生成订单时间" value="阿玛忒拉斯" />
-        <van-cell title="生成订单时间" value="阿玛忒拉斯" />
-        <van-cell title="我的消息" value="阿玛忒拉斯" />
+        <van-cell title="送货人" value="凯隆智能" />
+        <van-cell title="生成订单时间" value="2021-09-09" />
+        <van-cell title="生成订单时间" value="2021-09-09" />
+        <van-cell title="生成订单时间" value="2021-09-09" />
+        <van-cell title="我的消息" value="凯隆智能" />
       </van-cell-group>
       <van-button type="danger" @click="logout" class="logout">退 出</van-button>
     </div>
@@ -53,7 +53,7 @@
     data() {
         return {
             // active: null,
-            touxiang: require('@/assets/image/bingguo.gif'),
+            touxiang: require('@/assets/image/touxiang.jpeg'),
             showShare: false,
             options: [
               [

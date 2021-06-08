@@ -8,12 +8,13 @@ const Home = resolve => require(['@/views/Home'], resolve);
 const Login = resolve => require(['@/views/Login'], resolve);
 const About = resolve => require(['@/views/About'], resolve);
 const Ore = resolve => require(['@/views/Ore'], resolve);
-const Delivery = resolve => require(['@/views/Delivery'], resolve);
+const Message = resolve => require(['@/views/Message'], resolve);
 const ListDetail = resolve => require(['@/views/ListDetail'], resolve);
 const GoodsDetail = resolve => require(['@/views/GoodsDetail'], resolve);
 const WriteOrder = resolve => require(['@/views/WriteOrder'], resolve);
 const WriteGoods = resolve => require(['@/views/WriteGoods'], resolve);
 const Index = resolve => require(['@/views/Index'], resolve);
+const OrderDetail = resolve => require(['@/views/OrderDetail'], resolve);
 
 const routes = [
   {
@@ -65,9 +66,9 @@ const routes = [
     }
   },
   {
-    path: '/delivery',
-    name: 'Delivery',
-    component: Delivery,
+    path: '/message',
+    name: 'Message',
+    component: Message,
     meta: {
       title: '送货'
     }
@@ -102,6 +103,14 @@ const routes = [
     component: WriteGoods,
     meta: {
       title: '货物填写'
+    }
+  },
+  {
+    path: '/orderDetail',
+    name: 'OrderDetail',
+    component: OrderDetail,
+    meta: {
+      title: '订单详情'
     }
   }
 ]

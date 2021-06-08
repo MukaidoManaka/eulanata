@@ -2,8 +2,8 @@
   <div class="footer">
     <van-tabbar v-model="active">
       <van-tabbar-item icon="home-o" @click="goHome">主页</van-tabbar-item>
-      <van-tabbar-item icon="search" @click="goAbout">搜索</van-tabbar-item>
-      <van-tabbar-item icon="friends-o" @click="goDelivery">送货</van-tabbar-item>
+      <!-- <van-tabbar-item icon="search" @click="goAbout">搜索</van-tabbar-item> -->
+      <!-- <van-tabbar-item icon="friends-o" @click="message">消息</van-tabbar-item> -->
       <van-tabbar-item icon="user-o" @click="goOre">我的</van-tabbar-item>
     </van-tabbar>
   </div>
@@ -24,20 +24,20 @@ export default {
         id:10000
       }})
     },
-    goAbout() {
-      this.active = 1
-      this.$router.push({name: 'About', params: {
-        id:10000
-      }})
-    },
-    goDelivery() {
-      this.active = 2
-      this.$router.push({name: 'Delivery', params: {
-        id:10000
-      }})
-    },
+    // goAbout() {
+    //   this.active = 1
+    //   this.$router.push({name: 'About', params: {
+    //     id:10000
+    //   }})
+    // },
+    // message() {
+    //   this.active = 1
+    //   this.$router.push({name: 'Message', params: {
+    //     id:10000
+    //   }})
+    // },
     goOre() {
-      this.active = 3
+      this.active = 1
       this.$router.push({name: 'Ore', params: {
         id:10000
       }})

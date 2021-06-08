@@ -25,7 +25,10 @@ a {
 .header .van-nav-bar {
   background-color: #6cf;
 }
-#app .van-ellipsis {
+/* .home .van-ellipsis {
+  color: #fff;
+} */
+#app .van-nav-bar__title {
   color: #fff;
 }
 
@@ -35,4 +38,8 @@ a {
 
 #app .van-nav-bar__text {
   color: #fff;
+}
+
+.header .van-nav-bar {
+  background-color: #06AE56;
 }

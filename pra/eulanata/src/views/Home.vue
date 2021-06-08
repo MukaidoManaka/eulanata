@@ -3,12 +3,25 @@
     <div class="header">
       <van-nav-bar title="主页" color="white">
         <template #right>
-          <van-icon name="search" size="18" />
+          <van-icon name="search" size="18" @click="search"/>
         </template>
       </van-nav-bar>
+      <van-overlay :show="show" @click="overlay">
+        <div class="wrapper" @click="overlay1">
+          <van-datetime-picker
+            v-model="currentDate"
+            type="year-month"
+            title="选择年月"
+            :min-date="minDate"
+            :max-date="maxDate"
+            :formatter="formatter"
+            @confirm="selectDate"
+          />
+        </div>
+      </van-overlay>
     </div>
     <div class="section">
-      <van-tabs v-model="active2" @click="tabClick" @change="tabChange" swipeable color="#6cf">
+      <van-tabs v-model="active2" @click="tabClick" @change="tabChange" swipeable color="#06AE56">
         <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
@@ -24,7 +37,7 @@
                 <div class="right_item">
                   <div class="_top">
                     <span>送货单号：{{item.arrivalNo}}</span>
-                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待填写' : (item.status == 1 ? '待审核' : '已完成')}}</van-tag>
+                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待填写' : (item.status == 1 ? '待发货' : '已完成')}}</van-tag>
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
@@ -47,6 +60,7 @@
 <script>
 import json from '../../mock.json'
 import Footer from '@/components/Footer'
+import { dateFormat } from '@/assets/js/utils'
 export default {
   name: 'Home',
   components: {
@@ -59,11 +73,16 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
+
+      show: false,
       // active: 0,
       active2: 0,
+      minDate: new Date(2020, 0, 1),
+      maxDate: new Date(2025, 10, 1),
+      currentDate: new Date(2021, 0, 17),
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
-      dict1:['全部','待填写','待审核','已完成'],
+      dict1:['全部','待填写','待发货','已完成'],
       x_status: 0,
       x_name: '',
 
@@ -87,6 +106,7 @@ export default {
         "saleNo": "100426A",
         "source": null
       },
+      formatDate: ''
     }
   },
   methods: {
@@ -180,6 +200,30 @@ export default {
 
       console.log('filter之后的数据',this.data1)
     },
+    search() {
+      this.show = !this.show
+    },
+    overlay1() {
+      // console.log('overlay1')
+    },
+    overlay() {
+      // console.log('overlay')
+      // this.show = !this.show
+    },
+    formatter(type, val) {
+      if (type === 'year') {
+        return `${val}年`;
+      } else if (type === 'month') {
+        return `${val}月`;
+      }
+      return val;
+    },
+    selectDate(val) {
+      this.formatDate = val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDate() + ' ' + val.getHours() + ':' + val.getMinutes() + ':' + val.getSeconds(); 
+      console.log("格式化",this.formatDate)
+      console.log(dateFormat('YYYY-mm-dd HH:MM:SS', val))
+      this.show = !this.show
+    }
   },
   created() {
     //读本地json当作是请求后端
@@ -249,7 +293,8 @@ export default {
   // 改(覆盖) 一些UI的默认样式
 
   .header .van-nav-bar {
-    background-color: #6cf;
+    // background-color: #6cf;
+    background-color: #06AE56;
   }
   .section .list_item:first-child {
     // border-top: 1px solid gray;
@@ -299,5 +344,12 @@ export default {
   }
   .bindClass2.van-tag--primary.van-tag--plain {
     color: #07C160;
+  }
+
+  // .home .van-ellipsis.van-picker__title {
+  //   color: #2c3e50;
+  // }
+  .home .van-nav-bar__title {
+    color: #fff;
   }
 </style>
