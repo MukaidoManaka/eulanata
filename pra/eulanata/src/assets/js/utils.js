@@ -2,7 +2,7 @@
 /**
      * 日期格式化
      * **/
-export default function dateFormat (fmt, date) {
+export function dateFormat (fmt, date) {
     let ret;
     const opt = {
         'Y+': date.getFullYear().toString(), // 年

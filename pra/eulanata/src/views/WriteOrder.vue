@@ -24,7 +24,7 @@
         <van-cell title="填写" is-link @click="writeGoods" />
       </van-cell-group>
       <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea>
-      <van-button type="info" class="submit">提 交</van-button>
+      <van-button type="primary" class="submit">提 交</van-button>
     </div>
   </div>
 </template>

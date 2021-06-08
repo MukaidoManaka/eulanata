@@ -37,7 +37,8 @@
                 <div class="right_item">
                   <div class="_top">
                     <span>送货单号：{{item.arrivalNo}}</span>
-                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待填写' : (item.status == 1 ? '待发货' : '已完成')}}</van-tag>
+                    <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待填写' : (item.status == 1 ? '待发货' : '已完成')}}</van-tag> -->
+                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : '已完成'}}</van-tag>
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
@@ -82,7 +83,8 @@ export default {
       currentDate: new Date(2021, 0, 17),
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
-      dict1:['全部','待填写','待发货','已完成'],
+      // dict1:['全部','待填写','待发货','已完成'],
+      dict1:['全部','待发货','已完成'],
       x_status: 0,
       x_name: '',
 
@@ -221,7 +223,7 @@ export default {
     selectDate(val) {
       this.formatDate = val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDate() + ' ' + val.getHours() + ':' + val.getMinutes() + ':' + val.getSeconds(); 
       console.log("格式化",this.formatDate)
-      console.log(dateFormat('YYYY-mm-dd HH:MM:SS', val))
+      console.log(dateFormat('YYYY-mm-dd', val))
       this.show = !this.show
     }
   },
@@ -337,10 +339,12 @@ export default {
 
   //改van-tag颜色 成功
   .bindClass0.van-tag--primary.van-tag--plain {
-    color: #1989FA;
+    // color: #1989FA;
+    color: goldenrod;
   }
   .bindClass1.van-tag--primary.van-tag--plain {
-    color: goldenrod;
+    // color: goldenrod;
+    color: #07C160;
   }
   .bindClass2.van-tag--primary.van-tag--plain {
     color: #07C160;
