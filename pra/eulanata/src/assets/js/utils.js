@@ -1,7 +1,6 @@
-
-/**
-     * 日期格式化
-     * **/
+//主要把Wed Jun 09 2021 11:51:01 GMT+0800 (中国标准时间) 转换成 2021-06-09，时分秒一般不必
+// 用法
+// curDate = dateFormat('YYYY-mm-dd HH:MM:SS', curDate)
 export function dateFormat (fmt, date) {
     let ret;
     const opt = {
@@ -22,6 +21,41 @@ export function dateFormat (fmt, date) {
     return fmt
 }
 
+//主要用于给隔壁的currentDate赋值
+//用法 dateFormat2(dateFormat('YYYY-mm-dd', new Date()))
+export function dateFormat2 (val) {
+    let arr = val.split('-');
+    console.log(arr);
+    let newArr = [];
+    arr.forEach((item) => {
+        if(item.length === 2) {
+            if (item.indexOf('0') === 0 ){
+                newArr.push(item.slice(1))
+                return
+            }
+        }
+        newArr.push(item)
+    })
+    console.log(newArr)
+    //月份得减1, 天数得根据是start还是end + - 1的，但是判断条件太复杂，就直接当天了
+    return new Date(newArr[0],newArr[1] - 1,newArr[2])
+}
 
-// 用法
-// curDate = dateFormat('YYYY-mm-dd HH:MM:SS', curDate)
+// val: 2021 06-06  转成shijianchuo
+export function timestamp (val) {
+    return new Date(val).getTime()
+}
+
+//解析url的query字符串
+//console.log(decodeurl('www.fnif.com?name=wawa&age=10&sex=男&id=100'))
+export function decodeurl(url){
+    var params = [], h;
+    var hash = url.slice(url.indexOf("?") + 1).split('&'); //将变量放在数组里面，形如[fr=iks,word=slice,ie=gbk]
+    for(var i = 0; i<hash.length; i++) {
+    h = hash[i].split("=");                             //形如[fr,iks]
+    params[h[0]] = h[1];
+    // params.h[0] = h[1]
+    }
+    return params;
+}
+

@@ -7,17 +7,17 @@
         </template>
       </van-nav-bar>
       <van-overlay :show="show" @click="overlay">
-        <div class="wrapper" @click="overlay1">
-          <van-datetime-picker
-            v-model="currentDate"
-            type="year-month"
-            title="选择年月"
-            :min-date="minDate"
-            :max-date="maxDate"
-            :formatter="formatter"
-            @confirm="selectDate"
-          />
-        </div>
+        <van-cell-group>
+          <div class="cross">
+            <van-icon name="cross" @click="closeSearch"/>
+          </div>
+          <van-field label="关键字" placeholder="请输入关键字" v-model="keyword"></van-field>
+          <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间"></van-field>
+          <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间"></van-field>
+          <div>
+            <van-button type="primary" class="search" @click="submit">搜 索</van-button>
+          </div>
+        </van-cell-group>
       </van-overlay>
     </div>
     <div class="section">
@@ -54,6 +54,18 @@
         </van-tab>
       </van-tabs>
     </div>
+    <van-popup v-model="showPop" position="bottom" >
+      <van-datetime-picker
+        v-model="currentDate"
+        type="date"
+        title="选择年月"
+        :min-date="minDate"
+        :max-date="maxDate"
+        :formatter="formatter"
+        @confirm="selectDate"
+        @cancel="cancelDate"
+      />
+    </van-popup>
     <Footer />
   </div>
 </template>
@@ -61,7 +73,7 @@
 <script>
 import json from '../../mock.json'
 import Footer from '@/components/Footer'
-import { dateFormat } from '@/assets/js/utils'
+import { dateFormat, dateFormat2, timestamp } from '@/assets/js/utils'
 export default {
   name: 'Home',
   components: {
@@ -74,19 +86,27 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
-
+      //overlay的显隐
       show: false,
+      //popup的显隐
+      showPop: false,
       // active: 0,
       active2: 0,
       minDate: new Date(2020, 0, 1),
-      maxDate: new Date(2025, 10, 1),
+      maxDate: new Date(2025, 5, 1),
       currentDate: new Date(2021, 0, 17),
+      //不管先选起止还是截至，x_date来标记时间
+      x_date: '',
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
       // dict1:['全部','待填写','待发货','已完成'],
       dict1:['全部','待发货','已完成'],
       x_status: 0,
       x_name: '',
+
+      //搜索时日期的起始截至时间
+      startDate: '',
+      endDate: '',
 
       date: '2021-06-06 10:11:12',
       kehu: '嘉兴凯隆智能有限公司',
@@ -108,7 +128,11 @@ export default {
         "saleNo": "100426A",
         "source": null
       },
-      formatDate: ''
+      formatDate: '',
+      //搜索关键字
+      keyword: '',
+      //此时是在选择起始还是截至时间  start/end
+      startOrEnd: ''
     }
   },
   methods: {
@@ -217,18 +241,56 @@ export default {
         return `${val}年`;
       } else if (type === 'month') {
         return `${val}月`;
+      } else if (type === 'day') {
+        return `${val}日`
       }
       return val;
     },
+    //日期选择之确认
     selectDate(val) {
-      this.formatDate = val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDate() + ' ' + val.getHours() + ':' + val.getMinutes() + ':' + val.getSeconds(); 
-      console.log("格式化",this.formatDate)
-      console.log(dateFormat('YYYY-mm-dd', val))
+      // console.log('val',val) //val Mon Mar 20 2023 00:00:00 GMT+0800 (中国标准时间)
+
+      if (this.startOrEnd === 'start') {
+        this.startDate = dateFormat('YYYY-mm-dd',val)
+        this.currentDate = dateFormat2(dateFormat('YYYY-mm-dd',val))
+        console.log(this.startDate)
+      }else if (this.startOrEnd === 'end') {
+        this.endDate = dateFormat('YYYY-mm-dd',val)
+        this.currentDate = dateFormat2(dateFormat('YYYY-mm-dd',val))
+        console.log(this.endDate)
+      }
+
+      this.showPop = !this.showPop
+    },
+    //日期选择之取消
+    cancelDate() {
+      this.showPop = !this.showPop
+    },
+    showPopup(val) {
+      this.showPop = !this.showPop
+      this.startOrEnd = val
+    },
+    submit() {
+      //如果搜索框的 起始时间 > 截至时间 ，不通过
+      let time1 = timestamp(this.startDate)
+      let time2 = timestamp(this.endDate)
+      if(time1 > time2 ) {
+        this.$toast.fail('日期选择不规范！')
+      } else {
+        if(this.keyword.length > 10 ) {
+          this.$toast.fail('查询关键字长度不能大于10！')
+        }else {
+          this.show = !this.show
+        }
+      }
+      
+    },
+    closeSearch() {
       this.show = !this.show
     }
   },
   created() {
-    //读本地json当作是请求后端
+    //读本地json当作是请求
     console.log(require('../../mock.json'))
     console.log('json值',json)
     this.data1 = json
@@ -291,6 +353,13 @@ export default {
       padding-right: .1rem;
     }
   }
+  .search {
+    width: .8rem;
+    height: .36rem;
+    border-radius: 5px;
+    margin: 0 auto;
+    display: block;
+  }
 
   // 改(覆盖) 一些UI的默认样式
 
@@ -303,6 +372,15 @@ export default {
   }
   .section .van-divider {
     margin: 0;
+  }
+  .home .van-overlay .van-cell-group {
+    width: 80%;
+    border-radius: 10px;
+    padding: 15px 15px 10px;
+  }
+  .cross {
+    display: flex;
+    justify-content: flex-end;
   }
 
   // .section {
@@ -355,5 +433,14 @@ export default {
   // }
   .home .van-nav-bar__title {
     color: #fff;
+  }
+  
+  //遮罩层要在Tab的滑动横线之上
+  .home .van-overlay {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 </style>

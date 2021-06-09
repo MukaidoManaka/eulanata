@@ -15,6 +15,7 @@ const WriteOrder = resolve => require(['@/views/WriteOrder'], resolve);
 const WriteGoods = resolve => require(['@/views/WriteGoods'], resolve);
 const Index = resolve => require(['@/views/Index'], resolve);
 const OrderDetail = resolve => require(['@/views/OrderDetail'], resolve);
+const BindUser = resolve => require(['@/views/BindUser'], resolve);
 
 const routes = [
   {
@@ -109,6 +110,14 @@ const routes = [
     path: '/orderDetail',
     name: 'OrderDetail',
     component: OrderDetail,
+    meta: {
+      title: '订单详情'
+    }
+  },
+  {
+    path: '/bindUser',
+    name: 'BindUser',
+    component: BindUser,
     meta: {
       title: '订单详情'
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <van-tabbar v-model="active">
+    <van-tabbar v-model="active" active-color="#06AE56">
       <van-tabbar-item icon="home-o" @click="goHome">主页</van-tabbar-item>
       <!-- <van-tabbar-item icon="search" @click="goAbout">搜索</van-tabbar-item> -->
       <!-- <van-tabbar-item icon="friends-o" @click="message">消息</van-tabbar-item> -->
@@ -14,7 +14,7 @@ export default {
   name: 'Footer',
   data() {
     return {
-      active: null
+      active: 0
     }
   },
   methods: {
