@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { decodeurl, getUrlParam } from '@/assets/js/utils'
 export default {
     data() {
         return {
@@ -24,14 +25,44 @@ export default {
         bind() {
             setTimeout(() => {
                 this.$toast.success('绑定成功')
+                this.$router.push({name: 'Home'})
             },1000)
-        }
+        },
+        // getCode () { // 非静默授权，第一次有弹框
+        //     const code = GetUrlParam('code') // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
+        //     const local = window.location.href
+        //     if (code == null || code === '') {
+        //         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + window.APPID + '&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+        //     } else {
+        //         this.getOpenId(code) //把code传给后台获取用户信息
+        //     }
+        // },
+        // getOpenId (code) { // 通过code获取 openId等用户信息，/api/user/wechat/login 为后台接口
+        //     // let _this = this
+        //     this.$http.post('/api/user/wechat/login', {code: code}).then((res) => {
+        //         let datas = res.data
+        //         if (datas.code === 0 ) {
+        //             console.log('成功')
+        //         }
+        //     }).catch((error) => {
+        //         console.log(error)
+        //     })
+        // }
     },
     created() {
         setTimeout(() => {
             this.company = '请问破案每次看v女巫i七篇公司'
             this.show = !this.show
         },3000)
+
+        console.log(window.location.href)
+        let url = 'https://www.abcd.com/user/edit?age=10&name=zhangsan&sex=男&openid=200'
+        console.log('11',decodeurl(url))
+        console.log('22',getUrlParam('code'))
+
+        this.$axios.get('/').then(res => {
+            console.log('res',res)
+        })
     }
 }
 </script>

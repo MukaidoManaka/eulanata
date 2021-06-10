@@ -43,3 +43,11 @@ a {
 .header .van-nav-bar {
   background-color: #06AE56;
 }
+
+.home .section .van-tabs.van-tabs--line .van-tabs__wrap {
+  overflow: visible;
+}
+.home .section .van-tabs.van-tabs--line .van-tabs__content {
+  flex: 1;
+  overflow: scroll;
+}

@@ -8,11 +8,11 @@
       <div class="order">
         <div class="order_item">
           <p>5</p>
-          <p>待填写</p>
+          <p>待发货</p>
         </div>
         <div class="order_item">
           <p>3</p>
-          <p>待审核</p>
+          <p>送货中</p>
         </div>
         <div class="order_item">
           <p>58</p>

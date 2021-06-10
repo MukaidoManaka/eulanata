@@ -11,9 +11,23 @@
           <div class="cross">
             <van-icon name="cross" @click="closeSearch"/>
           </div>
-          <van-field label="关键字" placeholder="请输入关键字" v-model="keyword"></van-field>
+          <van-field label="关键字" placeholder="输入关键字(选填)" v-model="keyword"></van-field>
           <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间"></van-field>
           <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间"></van-field>
+          <van-radio-group v-model="radio" checked-color="#60C08B">
+            <van-row type="flex" justify="space-around" class="van_row">
+              <van-col span="1"></van-col>
+              <van-col span="11"><van-radio name="1">全部</van-radio></van-col>
+              <van-col span="11"><van-radio name="2">待发货</van-radio></van-col>
+              <van-col span="1"></van-col>
+            </van-row>
+            <van-row>
+              <van-col span="1"></van-col>
+              <van-col span="11"><van-radio name="3">送货中</van-radio></van-col>
+              <van-col span="11"><van-radio name="4">已完成</van-radio></van-col>
+              <van-col span="1"></van-col>
+            </van-row>
+          </van-radio-group>
           <div>
             <van-button type="primary" class="search" @click="submit">搜 索</van-button>
           </div>
@@ -30,22 +44,22 @@
               finished-text="没有更多了"
               @load="onLoad"
             >
-              <div class="list_item" v-for="item in data1" :key="item.id" :title="item.supplierName" @click="enterDetail(item.id)">
+              <div class="list_item" v-for="item in data1" :key="item.id" :title="item.hjbhsje" @click="enterDetail(item.id)">
                 <div class="left_item">
                   <img src="@/assets/image/f_qq1.png" alt="">
                 </div>
                 <div class="right_item">
                   <div class="_top">
-                    <span>送货单号：{{item.arrivalNo}}</span>
-                    <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待填写' : (item.status == 1 ? '待发货' : '已完成')}}</van-tag> -->
-                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : '已完成'}}</van-tag>
+                    <span>客户合同号：{{item.khhth}}</span>
+                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : (item.status == 1 ? '送货中' : '已完成')}}</van-tag>
+                    <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : '已完成'}}</van-tag> -->
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
-                    <p>创建时间： {{item.createTime}} </p>
-                    <p>送货地：{{item.supplierName}} </p>
-                    <p>预计送达：2021.01.01 22:23:24 </p>
+                    <p>销售合同号: {{item.xshth}} </p>
+                    <p>交货日期：{{item.jhrq}} </p>
+                    <p>合计不含税金额：{{item.hjbhsje}} </p>
                   </div>
                 </div>
               </div>
@@ -71,7 +85,7 @@
 </template>
 
 <script>
-import json from '../../mock.json'
+import json from '../../mock3.json'
 import Footer from '@/components/Footer'
 import { dateFormat, dateFormat2, timestamp } from '@/assets/js/utils'
 export default {
@@ -86,21 +100,20 @@ export default {
       loading: false,
       finished: false,
       refreshing: false,
-      //overlay的显隐
-      show: false,
-      //popup的显隐
-      showPop: false,
+      
+      show: false,//overlay的显隐
+      showPop: false,//popup的显隐
       // active: 0,
       active2: 0,
-      minDate: new Date(2020, 0, 1),
+      minDate: new Date(2018, 0, 1),
       maxDate: new Date(2025, 5, 1),
-      currentDate: new Date(2021, 0, 17),
+      currentDate: new Date(2021, 5, 15),
       //不管先选起止还是截至，x_date来标记时间
       x_date: '',
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
-      // dict1:['全部','待填写','待发货','已完成'],
-      dict1:['全部','待发货','已完成'],
+      dict1:['全部','待发货','送货中','已完成'],
+      // dict1:['全部','待发货','已完成'],
       x_status: 0,
       x_name: '',
 
@@ -129,17 +142,19 @@ export default {
         "source": null
       },
       formatDate: '',
-      //搜索关键字
-      keyword: '',
-      //此时是在选择起始还是截至时间  start/end
-      startOrEnd: ''
+      keyword: '',//搜索关键字
+      startOrEnd: '', //此时是在选择起始还是截至时间  start/end
+      radio: "1", //这东西是得字符串，就能默认选中了
+      searchParams: {
+
+      }
     }
   },
   methods: {
     onLoad() {
       setTimeout(() => {
         // if (this.refreshing) {
-        //   this.data1 = require('../../mock.json')
+        //   this.data1 = require('../../mock3.json')
         //   this.refreshing = false
         // }
 
@@ -170,9 +185,9 @@ export default {
       console.log('acttive2',this.active2)
       //0表示待填写，就去填写页
       if (this.active2 == 1 ) {
-        this.$router.push({name: 'WriteOrder', params: {id: id}})
+        this.$router.push({name: 'WriteOrder', params: {id: 83}})
       }else {
-        this.$router.push({name:'ListDetail',params:{id:id}})
+        this.$router.push({name:'ListDetail',params:{id:83}})
       }
       
     },
@@ -180,22 +195,22 @@ export default {
       console.log('name',name)
       console.log('title',title)
       if(name == 1) {
-        this.newJson = require('../../mock.json')
+        this.newJson = require('../../mock3.json')
         this.data1 = this.newJson.filter((item) => {
           return item.status == 0
         })
       }else if (name == 2) {
-        this.newJson = require('../../mock.json')
+        this.newJson = require('../../mock3.json')
         this.data1 = this.newJson.filter((item) => {
           return item.status == 1
         })
       }else if (name == 3) {
-        this.newJson = require('../../mock.json')
+        this.newJson = require('../../mock3.json')
         this.data1 = this.newJson.filter((item) => {
           return item.status == 2
         })
       }else {
-        this.data1 = require('../../mock.json')
+        this.data1 = require('../../mock3.json')
       }
 
       console.log('filter之后的数据',this.data1)
@@ -206,22 +221,22 @@ export default {
       console.log("active",this.active2)
 
       if(name == 1) {
-        this.newJson = require('../../mock.json')
+        this.newJson = require('../../mock3.json')
         this.data1 = this.newJson.filter((item) => {
           return item.status == 0
         })
       }else if (name == 2) {
-        this.newJson = require('../../mock.json')
+        this.newJson = require('../../mock3.json')
         this.data1 = this.newJson.filter((item) => {
           return item.status == 1
         })
       }else if (name == 3) {
-        this.newJson = require('../../mock.json')
+        this.newJson = require('../../mock3.json')
         this.data1 = this.newJson.filter((item) => {
           return item.status == 2
         })
       }else {
-        this.data1 = require('../../mock.json')
+        this.data1 = require('../../mock3.json')
       }
 
       console.log('filter之后的数据',this.data1)
@@ -280,10 +295,20 @@ export default {
         if(this.keyword.length > 10 ) {
           this.$toast.fail('查询关键字长度不能大于10！')
         }else {
+          this.searchParams.startDate = this.startDate
+          this.searchParams.endDate = this.endDate
+          this.searchParams.keyword = this.keyword
+          this.searchParams.radio = this.radio
+          console.log('searchParams',this.searchParams)
           this.show = !this.show
         }
       }
       
+
+      // 客户合同号，销售合同号，交货日期，合计不含税金额，单据编号
+      // khhth，xshth，fsrq，hjbhsje djbh
+
+
     },
     closeSearch() {
       this.show = !this.show
@@ -291,7 +316,7 @@ export default {
   },
   created() {
     //读本地json当作是请求
-    console.log(require('../../mock.json'))
+    console.log(require('../../mock3.json'))
     console.log('json值',json)
     this.data1 = json
 
@@ -357,7 +382,7 @@ export default {
     width: .8rem;
     height: .36rem;
     border-radius: 5px;
-    margin: 0 auto;
+    margin: 10px auto 0;
     display: block;
   }
 
@@ -382,7 +407,9 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-
+  .van_row {
+    margin: .05rem 0;
+  }
   // .section {
   //   position: relative;
   // }
@@ -394,26 +421,26 @@ export default {
   //   margin-top: .9rem;
   // }
 
-  //想让van-tabs那四个选项像header一样固定在顶部不动，还未成功
+  //想让van-tabs那四个选项像header一样固定在顶部不动，还未成功  成功了，写到init.css里面就生效了
   .section .van-tabs {
-    // display: flex;
+    display: flex;
     flex-direction: column;
     height: 100%;
   }
-  .section .van-tabs.van-tabs--line .van-tabs__wrap {
-    overflow: visible;
-  }
-  .section .van-tabs.van-tabs--line .van-tabs__content {
-    flex: 1;
-    overflow: scroll;
-  }
-  .section .van-tabs>div:first-child {
-    overflow: visible;
-  }
-  .section .van-tabs>div:last-child {
-    flex: 1;
-    overflow: scroll;
-  }
+  // .section .van-tabs.van-tabs--line .van-tabs__wrap {
+  //   overflow: visible;
+  // }
+  // .section .van-tabs.van-tabs--line .van-tabs__content {
+  //   flex: 1;
+  //   overflow: scroll;
+  // }
+  // .section .van-tabs>div:first-child {
+  //   overflow: visible;
+  // }
+  // .section .van-tabs>div:last-child {
+  //   flex: 1;
+  //   overflow: scroll;
+  // }
 
   //改van-tag颜色 成功
   .bindClass0.van-tag--primary.van-tag--plain {
@@ -422,7 +449,7 @@ export default {
   }
   .bindClass1.van-tag--primary.van-tag--plain {
     // color: goldenrod;
-    color: #07C160;
+    color: #f30;
   }
   .bindClass2.van-tag--primary.van-tag--plain {
     color: #07C160;

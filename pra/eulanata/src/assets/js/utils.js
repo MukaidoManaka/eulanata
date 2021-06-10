@@ -49,13 +49,33 @@ export function timestamp (val) {
 //解析url的query字符串
 //console.log(decodeurl('www.fnif.com?name=wawa&age=10&sex=男&id=100'))
 export function decodeurl(url){
-    var params = [], h;
+    var params = [], h,obj = {};
     var hash = url.slice(url.indexOf("?") + 1).split('&'); //将变量放在数组里面，形如[fr=iks,word=slice,ie=gbk]
     for(var i = 0; i<hash.length; i++) {
     h = hash[i].split("=");                             //形如[fr,iks]
     params[h[0]] = h[1];
     // params.h[0] = h[1]
+    obj = {...params}
     }
-    return params;
+    return obj;
 }
 
+//特定的获得某个属性  好像没卵用
+// export function getUrlParam(name) {
+//     var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+//     let url = window.location.href.split('#')[0]
+//     let search = url.split('?')[1]
+//     if (search) {
+//       var r = search.substr(0).match(reg)
+//       if (r !== null)
+//         return unescape(r[2])
+//       return null
+//     } else
+//       return null
+//   }
+
+export function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
