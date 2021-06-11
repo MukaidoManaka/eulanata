@@ -4,16 +4,15 @@ module.exports = {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal'];
         types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
     },
+    lintOnSave: false,
     devServer: {
         overlay: {
             warnings: false,
             errors: false
         },
-        lintOnSave: false,
         proxy: {
             '/api': {
-                // 此处的写法，目的是为了 将 /api 替换成 https://www.baidu.com/
-                target: 'https://www.baidu.com/',
+                target: 'http://192.168.2.109:8000', //擦,这里不写http://会出错
                 // 允许跨域
                 changeOrigin: true,
                 ws: true,

@@ -56,7 +56,7 @@ export default {
         },3000)
 
         console.log(window.location.href)
-        let url = 'https://www.abcd.com/user/edit?age=10&name=zhangsan&sex=男&openid=200'
+        let url = 'https://www.abcd.com/user/edit?age=10&name=zhangsan&sex=男&openid=200&code=123'
         console.log('11',decodeurl(url))
         console.log('22',getUrlParam('code'))
 

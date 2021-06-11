@@ -79,3 +79,16 @@ export function getUrlParam(name) {
     var r = window.location.search.substr(1).match(reg);
     if (r != null) return unescape(r[2]); return null;
 }
+
+// 获取 localStorage
+export function getStorage(key) {
+    return window.localStorage.getItem(key)
+  }
+  // 设置 localStorage
+  export function setStorage(key, value) {
+    return window.localStorage.setItem(key, value)
+  }
+  // 删除 localStorage
+  export function removeStorage(key) {
+    return Cookies.remove(key)
+  }

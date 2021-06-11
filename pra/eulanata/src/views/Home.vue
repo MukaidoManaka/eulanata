@@ -58,7 +58,8 @@
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
                     <p>销售合同号: {{item.xshth}} </p>
-                    <p>交货日期：{{item.jhrq}} </p>
+                    <!-- <p>交货日期：{{item.jhrq}} </p> -->
+                    <p>交货日期：{{item.fsrq}} </p>
                     <p>合计不含税金额：{{item.hjbhsje}} </p>
                   </div>
                 </div>
@@ -147,7 +148,8 @@ export default {
       radio: "1", //这东西是得字符串，就能默认选中了
       searchParams: {
 
-      }
+      },
+      page: 1
     }
   },
   methods: {
@@ -317,8 +319,12 @@ export default {
   created() {
     //读本地json当作是请求
     console.log(require('../../mock3.json'))
-    console.log('json值',json)
-    this.data1 = json
+    // this.data1 = json
+
+    this.$axios.get(`/api/orderforms?page=${this.page}`).then(res => {
+      console.log('res',res)
+      this.data1 = res.data.results
+    })
 
   }
 }
@@ -354,7 +360,7 @@ export default {
   .list_item {
     display: flex;
     border-bottom: 1px solid gray;
-    font-size: .12rem;
+    font-size: .12px;
     .left_item {
       width: 1rem;
       height: 1rem;

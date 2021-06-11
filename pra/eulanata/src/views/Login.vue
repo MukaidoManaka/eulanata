@@ -116,7 +116,7 @@
         width: 80px;
         margin: 0 auto .8rem;
         padding-top: .8rem;
-        font-size: .16rem;
+        font-size: 16px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -143,7 +143,7 @@
         margin: 0 auto;
         .loginBtn {
             height: .44rem;
-            font-size: .16rem;
+            font-size: 16px;
             margin-top: .2rem;
             // background: linear-gradient(to bottom right, #2aa3df , #2ac3df);
         }

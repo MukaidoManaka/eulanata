@@ -14,11 +14,11 @@ import { Toast, Dialog } from 'vant'
 Vue.prototype.$toast = Toast;
 Vue.prototype.$dialog = Dialog;
 
-// Vue.prototype.$axios = axios;
-Vue.prototype.$axios = axios.create({
-  timeout: 10000,
-  // baseURL: ''
-});
+Vue.prototype.$axios = axios;
+// Vue.prototype.$axios = axios.create({
+//   timeout: 10000,
+//   // baseURL: ''
+// });
 
 Vue.use(Vant);
 // Vue.use(Vant).use(Tabbar).use(TabbarItem).use(List).use(PullRefresh).use(NavBar).use(Tab).use(Tabs).use(Devider)

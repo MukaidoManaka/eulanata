@@ -50,4 +50,5 @@ a {
 .home .section .van-tabs.van-tabs--line .van-tabs__content {
   flex: 1;
   overflow: scroll;
+  font-size: 14px;
 }

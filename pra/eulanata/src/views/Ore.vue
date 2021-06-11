@@ -122,21 +122,21 @@
     margin: .1rem 0;
   }
   p {
-    font-size: .18rem;
+    font-size: 18px;
   }
 }
 .order {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  font-size: .14rem;
+  font-size: 14px;
   .order_item {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   .order_item>p:first-child {
-    font-size: .2rem;
+    font-size: 20px;
   }
 }
 .share {
