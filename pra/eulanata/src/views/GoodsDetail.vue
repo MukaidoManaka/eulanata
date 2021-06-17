@@ -29,20 +29,21 @@ export default {
   data() {
     return {
       routerData: [],
-      id:null,
+      djbh:null,
       //当前展开的折叠面板 有什么值，就展开对应name
       activeNames:[],
     }
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'ListDetail',params: {id: this.id}})
+      this.$router.push({name: 'ListDetail',params: {djbh: this.djbh}})
     }
   },
   created() {
+
     this.routerData = this.$route.params.routerData
-    //暂时先这样解决，不一路带着ID走的话，返回ListDetail会出错
-    this.id = this.$route.params.id
+    //暂时先这样解决，不一路带着djbh走的话，返回ListDetail会出错
+    this.djbh = this.$route.params.djbh
     console.log('routerData多少',this.routerData)
     
     //不用var居然会报i not defined

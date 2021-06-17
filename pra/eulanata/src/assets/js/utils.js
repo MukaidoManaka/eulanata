@@ -38,7 +38,8 @@ export function dateFormat2 (val) {
     })
     console.log(newArr)
     //月份得减1, 天数得根据是start还是end + - 1的，但是判断条件太复杂，就直接当天了
-    return new Date(newArr[0],newArr[1] - 1,newArr[2])
+    //return 的是一个new Date()，为了迎合data里currentDate的格式
+    return new Date(newArr[0],newArr[1] - 1,newArr[2] + 1)
 }
 
 // val: 2021 06-06  转成shijianchuo

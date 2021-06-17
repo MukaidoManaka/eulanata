@@ -12,7 +12,7 @@ module.exports = {
         },
         proxy: {
             '/api': {
-                target: 'http://192.168.2.109:8000', //擦,这里不写http://会出错
+                target: 'http://127.0.0.1:8000', //擦,这里不写http://会出错
                 // 允许跨域
                 changeOrigin: true,
                 ws: true,

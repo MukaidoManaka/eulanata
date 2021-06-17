@@ -3,19 +3,21 @@
     <div class="header">
       <van-nav-bar title="主页" color="white">
         <template #right>
-          <van-icon name="search" size="18" @click="search"/>
+          <van-icon name="search" size="18" @click="search" v-show="!whetherSearching"/>
+          <van-icon name="search" size="24" @click="search" v-show="whetherSearching" dot class="searchIcon"/>
         </template>
       </van-nav-bar>
+      <!-- 搜索按钮的弹出框 -->
       <van-overlay :show="show" @click="overlay">
         <van-cell-group>
           <div class="cross">
             <van-icon name="cross" @click="closeSearch"/>
           </div>
-          <van-field label="关键字" placeholder="输入关键字(选填)" v-model="keyword"></van-field>
+          <van-field label="客户合同号" placeholder="输入客户合同号" v-model="searchParams.khhth"></van-field>
           <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间"></van-field>
           <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间"></van-field>
           <van-radio-group v-model="radio" checked-color="#60C08B">
-            <van-row type="flex" justify="space-around" class="van_row">
+            <!-- <van-row type="flex" justify="space-around" class="van_row">
               <van-col span="1"></van-col>
               <van-col span="11"><van-radio name="1">全部</van-radio></van-col>
               <van-col span="11"><van-radio name="2">待发货</van-radio></van-col>
@@ -26,16 +28,22 @@
               <van-col span="11"><van-radio name="3">送货中</van-radio></van-col>
               <van-col span="11"><van-radio name="4">已完成</van-radio></van-col>
               <van-col span="1"></van-col>
+            </van-row> -->
+            <van-row type="flex" justify="space-around" class="van_row">
+              <van-col span="8"><van-radio name="1">待发货</van-radio></van-col>
+              <van-col span="8"><van-radio name="2">送货中</van-radio></van-col>
+              <van-col span="8"><van-radio name="3">已完成</van-radio></van-col>
             </van-row>
           </van-radio-group>
-          <div>
+          <div class="btn">
+            <van-button plain color="#333" class="reset" @click="reset">重 置</van-button>
             <van-button type="primary" class="search" @click="submit">搜 索</van-button>
           </div>
         </van-cell-group>
       </van-overlay>
     </div>
     <div class="section">
-      <van-tabs v-model="active2" @click="tabClick" @change="tabChange" swipeable color="#06AE56">
+      <van-tabs v-model="active" @click="tabClick" @change="tabChange" swipeable color="#06AE56">
         <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
@@ -44,21 +52,22 @@
               finished-text="没有更多了"
               @load="onLoad"
             >
-              <div class="list_item" v-for="item in data1" :key="item.id" :title="item.hjbhsje" @click="enterDetail(item.id)">
+              <div class="list_item" v-for="item in currentArr" :key="item.id" :title="item.hjbhsje" @click="enterDetail(item.djbh)">
+                <!-- 左边图片 -->
                 <div class="left_item">
                   <img src="@/assets/image/f_qq1.png" alt="">
                 </div>
+                <!-- 右边订单相关数据 -->
                 <div class="right_item">
                   <div class="_top">
                     <span>客户合同号：{{item.khhth}}</span>
-                    <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : (item.status == 1 ? '送货中' : '已完成')}}</van-tag>
+                    <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '待发货' : (searchParams.status === 'going' ? '送货中' : '已完成')}}</van-tag>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : '已完成'}}</van-tag> -->
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
                     <p>销售合同号: {{item.xshth}} </p>
-                    <!-- <p>交货日期：{{item.jhrq}} </p> -->
                     <p>交货日期：{{item.fsrq}} </p>
                     <p>合计不含税金额：{{item.hjbhsje}} </p>
                   </div>
@@ -86,9 +95,10 @@
 </template>
 
 <script>
-import json from '../../mock3.json'
+// import json from '../../mock3.json'
 import Footer from '@/components/Footer'
 import { dateFormat, dateFormat2, timestamp } from '@/assets/js/utils'
+import { homeList, homeListDetail } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -104,8 +114,7 @@ export default {
       
       show: false,//overlay的显隐
       showPop: false,//popup的显隐
-      // active: 0,
-      active2: 0,
+      active: 0,  //tab处于哪一栏
       minDate: new Date(2018, 0, 1),
       maxDate: new Date(2025, 5, 1),
       currentDate: new Date(2021, 5, 15),
@@ -113,8 +122,8 @@ export default {
       x_date: '',
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
-      dict1:['全部','待发货','送货中','已完成'],
-      // dict1:['全部','待发货','已完成'],
+      // dict1:['全部','待发货','送货中','已完成'],
+      dict1:['待发货','送货中','已完成'],
       x_status: 0,
       x_name: '',
 
@@ -122,56 +131,65 @@ export default {
       startDate: '',
       endDate: '',
 
-      date: '2021-06-06 10:11:12',
-      kehu: '嘉兴凯隆智能有限公司',
-      data1:[],
-      oneItem: {
-        "id": 833,
-        "arrivalNo": "DH2021050900002",
-        "arrivalDate": "2021-05-20",
-        "purchaseNo": "D000000067          ",
-        "supplierCode": null,
-        "supplierName": "梁山群达工贸有限公司",
-        "status": "0",
-        "createBy": "keepAdmin",
-        "createTime": "2021-05-09 17:52:40",
-        "verifyBy": "",
-        "verifyTime": null,
-        "remark": null,
-        "deliveryNo": null,
-        "saleNo": "100426A",
-        "source": null
-      },
+      currentArr:[],
+      waitArr:[],
+      goingArr:[],
+      finishedArr:[],
       formatDate: '',
-      keyword: '',//搜索关键字
       startOrEnd: '', //此时是在选择起始还是截至时间  start/end
-      radio: "1", //这东西是得字符串，就能默认选中了
+      radio: "1", //这东西得是字符串，就能默认选中了
       searchParams: {
-
+        khhth: '',
+        startdate: '',
+        enddate: '',
+        status: 'wait', //默认显示wait待发货
       },
-      page: 1
+      page: 1,
+      whetherSearching: false, //搜索条件是否正在生效
     }
   },
   methods: {
     onLoad() {
-      setTimeout(() => {
-        // if (this.refreshing) {
-        //   this.data1 = require('../../mock3.json')
-        //   this.refreshing = false
+      //判断是在哪一栏执行这个上拉加载动作
+      if(this.active === 0) {
+        //如果这个为true，就说明目前是有搜索条件在的，是onload一个搜索条件下的剩余列表 ，page什么的至少也是第二第三页
+        // if(this.whetherSearching) {
+        //   this.page += 1
+        //   this.searchParams.page = this.page
+        //   homeList(this.searchParams).then(res => {
+        //     console.log('某某搜索条件下的onload',res)
+        //     if (res.results.length > 0) {
+        //       this.currentArr = [...currentArr,...res.results]
+        //       this.waitArr = this.currentArr
+        //     }
+        //   })
+        // }else {
+
         // }
 
-        // if(this.data1.length <= 10) {
-        //   this.data1.push(this.oneItem)
-        //   this.loading = false
-        // }
+      }
 
-        this.finished = true
-        this.loading = false
-        this.refreshing = false
-       
-      }, 1000)
+
+      this.page += 1
+      this.searchParams.page = this.page
+      homeList(this.searchParams).then(res => {
+        console.log('某某搜索条件下的onload',res)
+        if (res.results.length > 0) {
+          this.currentArr = [...this.currentArr,...res.results]
+          this.waitArr = this.currentArr
+          this.loading = false
+          this.refreshing = false
+        }else { // length = 0
+          this.loading = false
+          this.refreshing = false
+          this.finished = true
+        }
+      })
+      
     },
     onRefresh() {
+
+
       setTimeout(() => {
         // 清空列表数据
         this.finished = false
@@ -182,66 +200,99 @@ export default {
         this.onLoad()
       },1000)
     },
-    enterDetail(id) {
-      console.log('看看id',id)
-      console.log('acttive2',this.active2)
-      //0表示待填写，就去填写页
-      if (this.active2 == 1 ) {
-        this.$router.push({name: 'WriteOrder', params: {id: 83}})
+    enterDetail(djbh) {
+      console.log('看看djbh',djbh)
+      console.log('active',this.active)
+      //0表示点击事件时tab处于待发货这一栏，就去填写页
+      if (this.active == 0 ) {
+        this.$router.push({name: 'WriteOrder', params: {djbh: djbh}})
       }else {
-        this.$router.push({name:'ListDetail',params:{id:83}})
+        this.$router.push({name:'ListDetail',params:{djbh:djbh}})
       }
       
     },
     tabClick(name,title) {
-      console.log('name',name)
       console.log('title',title)
-      if(name == 1) {
-        this.newJson = require('../../mock3.json')
-        this.data1 = this.newJson.filter((item) => {
-          return item.status == 0
-        })
+
+      this.clearSearch()
+      if(name == 0) {
+        //如果waitArr里面没值，就去请求
+        if(this.waitArr.length === 0) {
+          this.searchParams.status = 'wait'
+          homeList(this.searchParams).then(res => {
+            this.currentArr = res.results
+            this.waitArr = res.results
+          })
+        }else {
+          this.currentArr = this.waitArr
+        }
+      }else if (name == 1) {
+        //如果goingArr里面没值，就去请求
+        if(this.goingArr.length === 0) {
+          this.searchParams.status = 'going'
+          homeList(this.searchParams).then(res => {
+            this.currentArr = res.results
+            this.goingArr = res.results
+          })
+        }else {
+          this.currentArr = this.goingArr
+        }
       }else if (name == 2) {
-        this.newJson = require('../../mock3.json')
-        this.data1 = this.newJson.filter((item) => {
-          return item.status == 1
-        })
-      }else if (name == 3) {
-        this.newJson = require('../../mock3.json')
-        this.data1 = this.newJson.filter((item) => {
-          return item.status == 2
-        })
-      }else {
-        this.data1 = require('../../mock3.json')
+        //如果finishedArr里面没值，就去请求
+        if(this.finishedArr.length === 0) {
+          this.searchParams.status = 'finished'
+          homeList(this.searchParams).then(res => {
+            this.currentArr = res.results
+            this.finishedArr = res.results
+          })
+        }else {
+          this.currentArr = this.finishedArr
+        }
       }
 
-      console.log('filter之后的数据',this.data1)
     },
     tabChange(name,title) {
-      console.log('name',name)
       console.log('title',title)
-      console.log("active",this.active2)
 
-      if(name == 1) {
-        this.newJson = require('../../mock3.json')
-        this.data1 = this.newJson.filter((item) => {
-          return item.status == 0
-        })
+      this.clearSearch()
+      if(name == 0) {
+        //如果waitArr里面没值，就去请求
+        if(this.waitArr.length === 0) {
+          this.searchParams.status = 'wait'
+          homeList(this.searchParams).then(res => {
+            console.log('待发货',res)
+            this.currentArr = res.results
+            this.waitArr = res.results
+          })
+        }else {
+          this.currentArr = this.waitArr
+        }
+      }else if (name == 1) {
+        //如果goingArr里面没值，就去请求
+        if(this.goingArr.length === 0) {
+          this.searchParams.status = 'going'
+          homeList(this.searchParams).then(res => {
+            console.log('送货中',res)
+            this.currentArr = res.results
+            this.goingArr = res.results
+          })
+        }else {
+          this.currentArr = this.goingArr
+        }
       }else if (name == 2) {
-        this.newJson = require('../../mock3.json')
-        this.data1 = this.newJson.filter((item) => {
-          return item.status == 1
-        })
-      }else if (name == 3) {
-        this.newJson = require('../../mock3.json')
-        this.data1 = this.newJson.filter((item) => {
-          return item.status == 2
-        })
-      }else {
-        this.data1 = require('../../mock3.json')
+        //如果finishedArr里面没值，就去请求
+        if(this.finishedArr.length === 0) {
+          this.searchParams.status = 'finished'
+          homeList(this.searchParams).then(res => {
+            console.log('已完成',res)
+            this.currentArr = res.results
+            this.finishedArr = res.results
+          })
+        }else {
+          this.currentArr = this.finishedArr
+        }
       }
 
-      console.log('filter之后的数据',this.data1)
     },
     search() {
       this.show = !this.show
@@ -288,21 +339,51 @@ export default {
       this.startOrEnd = val
     },
     submit() {
-      //如果搜索框的 起始时间 > 截至时间 ，不通过
+      //如果搜索框的 起始时间 > 截至时间 ，不通过(化成时间戳来比较) 4320000000=3600*24*50*1000
       let time1 = timestamp(this.startDate)
       let time2 = timestamp(this.endDate)
       if(time1 > time2 ) {
         this.$toast.fail('日期选择不规范！')
       } else {
-        if(this.keyword.length > 10 ) {
+        if(this.searchParams.khhth.length > 10 ) {
           this.$toast.fail('查询关键字长度不能大于10！')
         }else {
-          this.searchParams.startDate = this.startDate
-          this.searchParams.endDate = this.endDate
-          this.searchParams.keyword = this.keyword
-          this.searchParams.radio = this.radio
-          console.log('searchParams',this.searchParams)
-          this.show = !this.show
+          if(time2 - time1 > 4320000000) {
+            console.log('time',time2 - time1)
+            this.$toast.fail('查询时间跨度不能大于50天!')
+          }else {
+            this.searchParams.startDate = this.startDate
+            this.searchParams.endDate = this.endDate
+            // this.searchParams.khhth = this.khhth
+            if (this.radio == '1') {
+              this.searchParams.status = 'wait'
+            }else if (this.radio == '2') {
+              this.searchParams.status = 'going'
+            }else {
+              this.searchParams.status = 'finished'
+            }
+            
+            console.log('searchParams',this.searchParams)
+            //searchParams组装好了 发请求
+            homeList(this.searchParams).then(res => {
+              console.log('搜索时的res',res)
+              if (res.results.length > 0) {
+                this.currentArr = res.results
+
+                // this.clearSearch()
+                //页面跳到对应的那栏
+                
+                this.active = this.radio - 1
+                this.whetherSearching = true
+                this.show = !this.show
+              }else {
+                console.log('搜索到的数据为0条')
+              }
+            })
+            
+           
+            
+          }
         }
       }
       
@@ -314,17 +395,45 @@ export default {
     },
     closeSearch() {
       this.show = !this.show
+    },
+    //清空条件
+    clearSearch() {
+      this.searchParams.status = ''
+      this.searchParams.khhth = ''
+      this.searchParams.startdate = ''
+      this.searchParams.enddate = ''
+    },
+    reset() {
+      this.clearSearch()
+      this.whetherSearching = false
+      //清空之后重新定位到待发货那一栏去
+      this.searchParams.status = 'wait'
+      this.active = 0
+      homeList(this.searchParams).then(res => {
+        this.currentArr = res.results
+      })
     }
   },
   created() {
     //读本地json当作是请求
-    console.log(require('../../mock3.json'))
-    // this.data1 = json
+    // console.log(require('../../mock3.json'))
+    // this.currentArr = json.filter((item) => {
+    //   return item.status == 0
+    // })
 
-    this.$axios.get(`/api/orderforms?page=${this.page}`).then(res => {
-      console.log('res',res)
-      this.data1 = res.data.results
+    // this.$axios.get(`/api/orderforms?page=${this.page}`).then(res => {
+    //   console.log('res',res)
+    //   this.currentArr = res.data.results
+    // })
+
+    homeList(this.searchParams).then(res => {
+      console.log('初始化wait',res)
+      this.currentArr = res.results
     })
+
+    // homeListDetail('D000126235').then(res => {
+    //   console.log('编号',res)
+    // })
 
   }
 }
@@ -388,10 +497,24 @@ export default {
     width: .8rem;
     height: .36rem;
     border-radius: 5px;
-    margin: 10px auto 0;
-    display: block;
+    
+  }
+  .reset {
+    width: .8rem;
+    height: .36rem;
+    border-radius: 5px;
+    
   }
 
+  .searchIcon {
+    font-weight: 1000;
+  }
+
+  .btn {
+    padding-top: 5px;
+    display: flex;
+    justify-content: space-evenly;
+  }
   // 改(覆盖) 一些UI的默认样式
 
   .header .van-nav-bar {
@@ -449,15 +572,15 @@ export default {
   // }
 
   //改van-tag颜色 成功
-  .bindClass0.van-tag--primary.van-tag--plain {
+  .bindClasswait.van-tag--primary.van-tag--plain {
     // color: #1989FA;
     color: goldenrod;
   }
-  .bindClass1.van-tag--primary.van-tag--plain {
+  .bindClassgoing.van-tag--primary.van-tag--plain {
     // color: goldenrod;
     color: #f30;
   }
-  .bindClass2.van-tag--primary.van-tag--plain {
+  .bindClassfinished.van-tag--primary.van-tag--plain {
     color: #07C160;
   }
 

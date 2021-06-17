@@ -1,5 +1,26 @@
-import qs from 'qs'
-import request from '@/utils/request'
+// import qs from 'qs'
+const qs = require('qs');
+import request from '@/utils/request.js'
+
+
+export function homeList(params) {
+  console.log("请求的search",qs.stringify(params))
+  return request({
+    url: '/orderforms',
+    method: 'get',
+    // params: qs.stringify(params)
+    params: params  //我服了，用别人的模板键名data是错的，正确是params，还有也不能qs 四准fy ，就这样最简单的模样是正确的请求姿势！！
+    // data: params
+  })
+}
+
+export function homeListDetail(params) {
+  return request({
+    url: '/orderforms/' + params,
+    method: 'get',
+    // data: qs.stringify(params)
+  })
+}
 
 /**
  * 登录接口请求token与userinfo

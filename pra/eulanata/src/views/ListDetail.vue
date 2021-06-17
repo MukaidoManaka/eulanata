@@ -5,42 +5,44 @@
     </div>
     <div class="section">
       <van-cell-group>
-        <van-cell title="送货商名称" :value="data.supplierName" />
-        <van-cell title="送货商ID" :value="id" />
+        <van-cell title="单据编号" :value="data.djbh" />
+        <van-cell title="交货日期" :value="data.fsrq" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="送货日期" :value="data.arrivalDate" />
-        <van-cell title="送货单号" :value="data.arrivalNo" />
+        <van-cell title="合计不含税金额" :value="data.hjbhsje" />
+        <van-cell title="合计含税金额" :value="data.hjhsje" />
+        <van-cell title="合计商品税额" :value="data.hjspse" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="送货人" :value="data.createBy" />
-        <van-cell title="生成订单时间" :value="data.createTime" />
+        <van-cell title="客户合同号" :value="data.khhth" />
+        <van-cell title="销售合同号" :value="data.xshth" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="合同号" :value="data.saleNo" />
         <van-cell title="订单状态" :value="data.status" />
+        <van-cell title="交货地址" :value="data.jhdz" />
       </van-cell-group>
+      
       <van-cell-group>
         <van-cell title="货物详情" is-link @click="readGoods" />
       </van-cell-group>
       <div class="remark">
         <span>备注:</span>
-        <p> {{data.remark}} </p>
+        <!-- <p> {{data.remark}} </p> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { homeListDetail } from '@/api/all.js'
 export default {
   name: 'ListDetail',
   data() {
     return {
       data:{},
       data1:[],
-      json:[],
-      //进来这页面的是哪个id
-      id:null,
+      //进来这页面的是哪个djbh
+      djbh:'',
     }
   },
   methods: {
@@ -48,21 +50,17 @@ export default {
       this.$router.push('/home')
     },
     readGoods() {
-      this.$router.push({name: 'GoodsDetail',params: {routerData:this.data.goods,id: this.id}})
+      this.$router.push({name: 'GoodsDetail',params: {routerData:this.data.commodity}})
     }
   },
   created() {
-    console.log('外面传进来的id',this.$route.params.id)
-    this.id = this.$route.params.id
-    //根据以上id拿到详情
-    this.json = require('../../mock.json')
-    console.log('先看看json',this.json)
-    this.data1 = this.json.filter((item) => {
-      console.log(1)
-      return item.id == this.id
+    console.log('外面传进来的djbh',this.$route.params.djbh)
+    this.djbh = this.$route.params.djbh
+    //根据以上djbh拿到详情
+    homeListDetail(this.djbh).then(res => {
+      console.log('created时的res',res)
+      this.data = res
     })
-    this.data = this.data1[0]
-    console.log('现在的data',this.data)
 
   }
 }

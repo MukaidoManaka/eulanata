@@ -7,6 +7,7 @@ import {
 //   api
 // } from '@/config'
 // create an axios instance
+axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 const service = axios.create({
   // baseURL: api.base_api, // url = base url + request url
   baseURL: process.env.VUE_APP_BASE_API_URL,
