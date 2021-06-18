@@ -14,6 +14,14 @@ export function homeList(params) {
   })
 }
 
+export function goodsDetail(params) {
+  return request({
+    url: '/order-detail',
+    method: 'get',
+    params: params
+  })
+}
+
 export function homeListDetail(params) {
   return request({
     url: '/orderforms/' + params,

@@ -23,7 +23,7 @@
       </van-cell-group>
       
       <van-cell-group>
-        <van-cell title="货物详情" is-link @click="readGoods" />
+        <van-cell title="去填写" is-link @click="readGoods" />
       </van-cell-group>
       <!-- <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea> -->
       <van-button type="primary" class="submit">提 交</van-button>
@@ -32,15 +32,13 @@
 </template>
 
 <script>
-import { homeListDetail } from '@/api/all.js'
+// import { homeListDetail } from '@/api/all.js'
 export default {
   name: 'ListDetail',
   data() {
     return {
       data:{},
       data1:[],
-      //进来这页面的是哪个djbh
-      djbh:'',
     }
   },
   methods: {
@@ -48,17 +46,20 @@ export default {
       this.$router.push('/home')
     },
     readGoods() {
-      this.$router.push({name: 'GoodsDetail',params: {routerData:this.data.commodity,djbh:djbh}})
+      this.$router.push({name: 'WriteGoods',params: {djbh:this.data.djbh,item: this.$route.params.item, status: this.data.status}})
     }
   },
   created() {
-    console.log('外面传进来的djbh',this.$route.params.djbh)
-    this.djbh = this.$route.params.djbh
-    //根据以上djbh拿到详情
-    homeListDetail(this.djbh).then(res => {
-      console.log('created时的res',res)
-      this.data = res
-    })
+    console.log('外面传进来的item',this.$route.params.item)
+    this.data = this.$route.params.item
+    this.data.status = this.$route.params.status
+
+
+    // //根据以上item拿到详情
+    // homeListDetail(this.item).then(res => {
+    //   console.log('created时的res',res)
+    //   this.data = res
+    // })
 
   }
 }

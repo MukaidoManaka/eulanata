@@ -43,7 +43,7 @@
       </van-overlay>
     </div>
     <div class="section">
-      <van-tabs v-model="active" @click="tabClick" @change="tabChange" swipeable color="#06AE56">
+      <van-tabs v-model="active" @change="tabChange" swipeable color="#06AE56">
         <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
@@ -51,8 +51,10 @@
               :finished="finished"
               finished-text="没有更多了"
               @load="onLoad"
+              :offset="10"
+              :immediate-check="false"
             >
-              <div class="list_item" v-for="item in currentArr" :key="item.id" :title="item.hjbhsje" @click="enterDetail(item.djbh)">
+              <div class="list_item" v-for="item in currentArr" :key="item.id" :title="item.hjbhsje" @click="enterDetail(item)">
                 <!-- 左边图片 -->
                 <div class="left_item">
                   <img src="@/assets/image/f_qq1.png" alt="">
@@ -61,7 +63,8 @@
                 <div class="right_item">
                   <div class="_top">
                     <span>客户合同号：{{item.khhth}}</span>
-                    <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '待发货' : (searchParams.status === 'going' ? '送货中' : '已完成')}}</van-tag>
+                    <van-tag plain type='primary' :class="'bindClass' + `${active}`">{{active === 0 ? '待发货' : (active === 1 ? '送货中' : '已完成')}}</van-tag>
+                    <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '待发货' : (searchParams.status === 'going' ? '送货中' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '待发货' : '已完成'}}</van-tag> -->
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
                   </div>
@@ -95,10 +98,9 @@
 </template>
 
 <script>
-// import json from '../../mock3.json'
 import Footer from '@/components/Footer'
 import { dateFormat, dateFormat2, timestamp } from '@/assets/js/utils'
-import { homeList, homeListDetail } from '@/api/all.js'
+import { homeList } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -107,7 +109,6 @@ export default {
   data() {
     return {
       //区分审核或者通过火已完成3中状态 所需要的中间件
-      newJson: [],
       loading: false,
       finished: false,
       refreshing: false,
@@ -131,10 +132,15 @@ export default {
       startDate: '',
       endDate: '',
 
-      currentArr:[],
+      currentArr:[],  //当前数组，用来渲染list
       waitArr:[],
       goingArr:[],
       finishedArr:[],
+      nextPage: '', //用来存请求接口获得的next值，如果为null表示加载完 没有下一页了
+      waitPage: '',
+      goingPage: '',
+      finishedPage: '',
+
       formatDate: '',
       startOrEnd: '', //此时是在选择起始还是截至时间  start/end
       radio: "1", //这东西得是字符串，就能默认选中了
@@ -144,151 +150,407 @@ export default {
         enddate: '',
         status: 'wait', //默认显示wait待发货
       },
-      page: 1,
-      whetherSearching: false, //搜索条件是否正在生效
+      page: 1,  //分页の第一页
+      whetherSearching: false, //搜索条件是否正在生效,
+      testMSG: '加载加载',
     }
   },
   methods: {
     onLoad() {
       //判断是在哪一栏执行这个上拉加载动作
+      // if(this.active === 0) {
+      //   //如果这个为true，就说明目前是有搜索条件在的，是onload一个搜索条件下的剩余列表 ，page什么的至少也是第二第三页
+      //   if(this.whetherSearching) {
+      //     this.page += 1
+      //     this.searchParams.page = this.page
+      //     homeList(this.searchParams).then(res => {
+      //       console.log('某某搜索条件下的onload',res)
+      //       if (res.results.length > 0) {
+      //         this.currentArr = [...currentArr,...res.results]
+      //         this.waitArr = this.currentArr
+      //       }
+      //     })
+      //   }else {
+
+      //   }
+
+      // }
+
+
+      //onload时有两种情况的考虑：①此时是否有搜索条件？反正每次请求的东东都在searchParams里存的好好的，有无搜索条件都用searchParams就没错
+      //②此时列表处于哪一栏？每次切换栏目的时候都clear了searchParams，所以也没事
+      //综上，昨天“灵机一动”地去定义whetherSearching这个变量以及还去区分是哪一栏进行的onload动作的我是个🤡了
+      //不对，②还是有必要的，已经onlaod过的数据放waitArr goingArr finishedArr里面，不然三栏互相切换的时候每次都只有新请求10条
+
       if(this.active === 0) {
-        //如果这个为true，就说明目前是有搜索条件在的，是onload一个搜索条件下的剩余列表 ，page什么的至少也是第二第三页
-        // if(this.whetherSearching) {
-        //   this.page += 1
-        //   this.searchParams.page = this.page
-        //   homeList(this.searchParams).then(res => {
-        //     console.log('某某搜索条件下的onload',res)
-        //     if (res.results.length > 0) {
-        //       this.currentArr = [...currentArr,...res.results]
-        //       this.waitArr = this.currentArr
-        //     }
-        //   })
-        // }else {
+        if(this.waitPage === null) {
+          this.finished = true
+          this.currentArr = this.waitArr
+          this.loading = false
+          this.refreshing = false
+        }else {
+          //假如length为11-20，就说明已经加载过第二页了，要么已经加载完 要么从第三页开始
+          const p = Math.ceil(this.waitArr.length/10)
+          this.page = 1 + p
+          this.searchParams.page = this.page
 
-        // }
+          homeList(this.searchParams).then(res => {
+            console.log('onload时的res',res)
+            if (res.results.length > 0) {
 
+              this.currentArr = [...this.currentArr,...res.results]
+              this.waitArr = this.currentArr
+              this.nextPage = res.next
+              this.loading = false
+              this.refreshing = false
+
+              if(res.next === null) {
+                this.waitPage = null
+                console.log("wait已加载完")
+              }
+              
+            }else { // length = 0
+              this.loading = false
+              this.refreshing = false
+              this.finished = true
+            }
+          }).catch(err => {
+            console.log("error------------",err.code)
+          })
+        }
+      }else if (this.active === 1) {
+        if(this.goingPage === null) {
+          this.finished = true
+          this.currentArr = this.goingArr
+          this.loading = false
+          this.refreshing = false
+        }else {
+          //假如length为11-20，就说明已经加载过第二页了，要么已经加载完 要么从第三页开始
+          const p = Math.ceil(this.goingArr.length/10)
+          this.page = 1 + p
+          this.searchParams.page = this.page
+
+          homeList(this.searchParams).then(res => {
+            console.log('onload时的res',res)
+            if (res.results.length > 0) {
+
+              this.currentArr = [...this.currentArr,...res.results]
+              this.goingArr = this.currentArr
+              this.nextPage = res.next
+              this.loading = false
+              this.refreshing = false
+
+              if(res.next === null) {
+                this.goingPage = null
+                console.log("going已加载完")
+              }
+              
+            }else { // length = 0
+              this.loading = false
+              this.refreshing = false
+              this.finished = true
+            }
+          }).catch(err => {
+            console.log("error------------",err.code)
+          })
+        }
+      }else {
+        if(this.finishedPage === null) {
+          this.finished = true
+          this.currentArr = this.finishedArr
+          this.loading = false
+          this.refreshing = false
+        }else {
+          //假如length为11-20，就说明已经加载过第二页了，要么已经加载完 要么从第三页开始
+          const p = Math.ceil(this.finishedArr.length/10)
+          this.page = 1 + p
+          this.searchParams.page = this.page
+
+          homeList(this.searchParams).then(res => {
+            console.log('onload时的res',res)
+            if (res.results.length > 0) {
+
+              this.currentArr = [...this.currentArr,...res.results]
+              this.finishedArr = this.currentArr
+              this.nextPage = res.next
+              this.loading = false
+              this.refreshing = false
+
+              if(res.next === null) {
+                this.finishedPage = null
+                console.log("已完成已加载完")
+              }
+              
+            }else { // length = 0
+              this.loading = false
+              this.refreshing = false
+              this.finished = true
+            }
+          }).catch(err => {
+            console.log("error------------",err.code)
+          })
+        }
       }
 
+      // if(this.nextPage === null) {
+      //   this.finished = true
+      //   this.loading = false
+      // }else {
+      //   this.page += 1
+      //   this.searchParams.page = this.page
+      //   homeList(this.searchParams).then(res => {
+      //     console.log('onload时的res',res)
+      //     if (res.results.length > 0) {
 
-      this.page += 1
-      this.searchParams.page = this.page
-      homeList(this.searchParams).then(res => {
-        console.log('某某搜索条件下的onload',res)
-        if (res.results.length > 0) {
-          this.currentArr = [...this.currentArr,...res.results]
-          this.waitArr = this.currentArr
-          this.loading = false
-          this.refreshing = false
-        }else { // length = 0
-          this.loading = false
-          this.refreshing = false
-          this.finished = true
-        }
-      })
+      //       this.currentArr = [...this.currentArr,...res.results]
+      //       // this.waitArr = this.currentArr
+      //       this.nextPage = res.next
+      //       this.loading = false
+      //       this.refreshing = false
+
+      //       //存一存
+      //       if(this.active == 0) {
+      //         this.waitArr = [...this.currentArr,...res.results]
+      //         if(res.next === null) {
+      //           this.waitPage = null
+      //         }
+      //       }else if(this.active == 1) {
+      //         this.goingArr = [...this.currentArr,...res.results]
+      //         if(res.next === null) {
+      //           this.goingPage = null
+      //         }
+      //       }else {
+      //         this.finishedArr = [...this.currentArr,...res.results]
+      //         if(res.next === null) {
+      //           this.finishedPage = null
+      //         }
+      //       }
+
+      //     }else { // length = 0
+      //       this.loading = false
+      //       this.refreshing = false
+      //       this.finished = true
+      //     }
+      //   })
+      // }
+
+      
       
     },
     onRefresh() {
+      //刷新得时候，page置1
+      this.page = 1
+      this.searchParams.page = this.page
+      if(this.active === 0) {
+        this.searchParams.status = 'wait'
+        this.waitPage = ''
+      }else if(this.active ===1) {
+        this.searchParams.status = 'going'
+        this.goingPage = ''
+      }else {
+        this.searchParams.status = 'finished'
+        this.finishedPage = ''
+      }
 
-
-      setTimeout(() => {
-        // 清空列表数据
+      homeList(this.searchParams).then(res => {
+        console.log('下拉刷新时的res',res)
+        this.currentArr = res.results
+        this.nextPage = res.next
+        this.refreshing = false
+        //刷新完之后得把它重置
         this.finished = false
+      })
 
-        // 重新加载数据
-        // 将 loading 设置为 true，表示处于加载状态
-        this.loading = true
-        this.onLoad()
-      },1000)
+      // setTimeout(() => {
+      //   // 清空列表数据
+      //   this.finished = false
+
+      //   // 重新加载数据
+      //   // 将 loading 设置为 true，表示处于加载状态
+      //   this.loading = true
+      //   this.onLoad()
+      // },1000)
     },
-    enterDetail(djbh) {
-      console.log('看看djbh',djbh)
+    enterDetail(item) {
+      console.log('看看item',item)
       console.log('active',this.active)
       //0表示点击事件时tab处于待发货这一栏，就去填写页
-      if (this.active == 0 ) {
-        this.$router.push({name: 'WriteOrder', params: {djbh: djbh}})
+      if (this.active === 0 ) {
+        this.$router.push({name: 'WriteOrder', params: {item, status: '待发货'}})
+      }else if(this.active === 1) {
+        this.$router.push({name:'ListDetail',params:{item, status: '送货中'}})
       }else {
-        this.$router.push({name:'ListDetail',params:{djbh:djbh}})
+        this.$router.push({name:'ListDetail',params:{item, status: '已完成'}})
       }
       
     },
-    tabClick(name,title) {
-      console.log('title',title)
+    // tabClick(name,title) {
 
-      this.clearSearch()
-      if(name == 0) {
-        //如果waitArr里面没值，就去请求
-        if(this.waitArr.length === 0) {
-          this.searchParams.status = 'wait'
-          homeList(this.searchParams).then(res => {
-            this.currentArr = res.results
-            this.waitArr = res.results
-          })
-        }else {
-          this.currentArr = this.waitArr
-        }
-      }else if (name == 1) {
-        //如果goingArr里面没值，就去请求
-        if(this.goingArr.length === 0) {
-          this.searchParams.status = 'going'
-          homeList(this.searchParams).then(res => {
-            this.currentArr = res.results
-            this.goingArr = res.results
-          })
-        }else {
-          this.currentArr = this.goingArr
-        }
-      }else if (name == 2) {
-        //如果finishedArr里面没值，就去请求
-        if(this.finishedArr.length === 0) {
-          this.searchParams.status = 'finished'
-          homeList(this.searchParams).then(res => {
-            this.currentArr = res.results
-            this.finishedArr = res.results
-          })
-        }else {
-          this.currentArr = this.finishedArr
-        }
-      }
+    //   // console.log('title',title)
 
-    },
+      
+
+    //   // //栏目切换了 clear一下
+    //   // this.clearSearch()
+
+    //   // this.page = 1
+    //   // this.searchParams.page = this.page
+
+      
+      
+    //   // if(name == 0) {
+    //   //   //如果waitArr里面没值，就去请求
+    //   //   if(this.waitArr.length === 0) {
+    //   //      //给个loading画面，不然看到的效果是 上一栏的数据(currentArr) 突然变成现在的数据(请求成功)
+    //   //     this.$toast.loading({
+    //   //       message: this.testMSG,
+    //   //       forbidClick: true,
+    //   //       duration: 0
+    //   //     });
+
+    //   //     this.searchParams.status = 'wait'
+
+    //   //     homeList(this.searchParams).then(res => {
+    //   //       this.currentArr = res.results
+    //   //       this.waitArr = res.results
+    //   //       this.nextPage = res.next
+    //   //       this.finished = false
+    //   //       this.$toast.clear()
+    //   //     })
+    //   //   }else {
+    //   //     this.currentArr = this.waitArr
+    //   //   }
+    //   // }else if (name == 1) {
+    //   //   //如果goingArr里面没值，就去请求
+    //   //   if(this.goingArr.length === 0) {
+    //   //     this.$toast.loading({
+    //   //       message: this.testMSG,
+    //   //       forbidClick: true,
+    //   //       duration: 0
+    //   //     });
+    //   //     this.searchParams.status = 'going'
+    //   //     homeList(this.searchParams).then(res => {
+    //   //       this.currentArr = res.results
+    //   //       this.goingArr = res.results
+    //   //       this.nextPage = res.next
+    //   //       this.finished = false
+    //   //       this.$toast.clear()
+    //   //     })
+    //   //   }else {
+    //   //     this.currentArr = this.goingArr
+    //   //   }
+    //   // }else if (name == 2) {
+    //   //   //如果finishedArr里面没值，就去请求
+    //   //   if(this.finishedArr.length === 0) {
+    //   //     this.$toast.loading({
+    //   //       message: this.testMSG,
+    //   //       forbidClick: true,
+    //   //       duration: 0
+    //   //     });
+    //   //     this.searchParams.status = 'finished'
+    //   //     homeList(this.searchParams).then(res => {
+    //   //       this.currentArr = res.results
+    //   //       this.finishedArr = res.results
+    //   //       this.finished = false
+    //   //       this.$toast.clear()
+    //   //     })
+    //   //   }else {
+    //   //     this.currentArr = this.finishedArr
+    //   //   }
+    //   // }
+
+    // },
     tabChange(name,title) {
       console.log('title',title)
+      console.log('name',name)
 
+      //栏目切换了 clear一下
       this.clearSearch()
-      if(name == 0) {
+
+      this.currentArr = []
+
+      this.page = 1
+      this.searchParams.page = this.page
+
+      this.finished = false
+      
+      if(name == 0) { //用name还是active好像没区别吧
         //如果waitArr里面没值，就去请求
         if(this.waitArr.length === 0) {
+          //给个loading画面，不然看到的效果是 上一栏的数据(currentArr) 突然变成现在的数据(请求成功)
+          this.$toast.loading({
+            message: this.testMSG,
+            forbidClick: true,
+            duration: 0
+          });
+
           this.searchParams.status = 'wait'
+
           homeList(this.searchParams).then(res => {
             console.log('待发货',res)
             this.currentArr = res.results
             this.waitArr = res.results
+            this.nextPage = res.next
+            this.finished = false
+            if(res.next === null) {
+              this.waitPage = null
+            }
+            this.$toast.clear()
           })
         }else {
+          this.searchParams.status = 'wait'
           this.currentArr = this.waitArr
         }
       }else if (name == 1) {
         //如果goingArr里面没值，就去请求
         if(this.goingArr.length === 0) {
+          this.$toast.loading({
+            message: this.testMSG,
+            forbidClick: true,
+            duration: 0
+          });
+
           this.searchParams.status = 'going'
+
           homeList(this.searchParams).then(res => {
             console.log('送货中',res)
             this.currentArr = res.results
             this.goingArr = res.results
+            this.nextPage = res.next
+            this.finished = false
+            if(res.next === null) {
+              this.goingPage = null
+            }
+            this.$toast.clear()
           })
         }else {
+          this.searchParams.status = 'going'
           this.currentArr = this.goingArr
         }
       }else if (name == 2) {
         //如果finishedArr里面没值，就去请求
         if(this.finishedArr.length === 0) {
+          this.$toast.loading({
+            message: this.testMSG,
+            forbidClick: true,
+            duration: 0
+          });
+
           this.searchParams.status = 'finished'
+
           homeList(this.searchParams).then(res => {
             console.log('已完成',res)
             this.currentArr = res.results
             this.finishedArr = res.results
+            this.nextPage = res.next
+            this.finished = false
+            if(res.next === null) {
+              this.finishedPage = null
+            }
+            this.$toast.clear()
           })
         }else {
+          this.searchParams.status = 'finished'
           this.currentArr = this.finishedArr
         }
       }
@@ -337,6 +599,9 @@ export default {
     showPopup(val) {
       this.showPop = !this.showPop
       this.startOrEnd = val
+      // if(val == 'start') {
+      //   this.
+      // }
     },
     submit() {
       //如果搜索框的 起始时间 > 截至时间 ，不通过(化成时间戳来比较) 4320000000=3600*24*50*1000
@@ -352,8 +617,15 @@ export default {
             console.log('time',time2 - time1)
             this.$toast.fail('查询时间跨度不能大于50天!')
           }else {
-            this.searchParams.startDate = this.startDate
-            this.searchParams.endDate = this.endDate
+
+             this.$toast.loading({
+              message: this.testMSG,
+              forbidClick: true,
+              duration: 0
+            });
+
+            this.searchParams.startdate = this.startDate
+            this.searchParams.enddate = this.endDate
             // this.searchParams.khhth = this.khhth
             if (this.radio == '1') {
               this.searchParams.status = 'wait'
@@ -369,12 +641,14 @@ export default {
               console.log('搜索时的res',res)
               if (res.results.length > 0) {
                 this.currentArr = res.results
+                this.nextPage = res.next
 
                 // this.clearSearch()
                 //页面跳到对应的那栏
                 
                 this.active = this.radio - 1
                 this.whetherSearching = true
+                this.$toast.clear()
                 this.show = !this.show
               }else {
                 console.log('搜索到的数据为0条')
@@ -411,6 +685,8 @@ export default {
       this.active = 0
       homeList(this.searchParams).then(res => {
         this.currentArr = res.results
+        this.nextPage = res.next
+        this.waitArr = res.results
       })
     }
   },
@@ -426,9 +702,23 @@ export default {
     //   this.currentArr = res.data.results
     // })
 
+    //一进来先让他无限加载，请求拿到res之后就给他clear掉
+    this.$toast.loading({
+      message: this.testMSG,
+      forbidClick: true,
+      duration: 0
+    });
     homeList(this.searchParams).then(res => {
       console.log('初始化wait',res)
+      
       this.currentArr = res.results
+      this.waitArr = res.results
+      this.nextPage = res.next
+
+      if(res.next === null) {
+        this.waitPage = null
+      }
+      this.$toast.clear()
     })
 
     // homeListDetail('D000126235').then(res => {
@@ -572,15 +862,15 @@ export default {
   // }
 
   //改van-tag颜色 成功
-  .bindClasswait.van-tag--primary.van-tag--plain {
+  .bindClass0.van-tag--primary.van-tag--plain {
     // color: #1989FA;
     color: goldenrod;
   }
-  .bindClassgoing.van-tag--primary.van-tag--plain {
+  .bindClass1.van-tag--primary.van-tag--plain {
     // color: goldenrod;
     color: #f30;
   }
-  .bindClassfinished.van-tag--primary.van-tag--plain {
+  .bindClass2.van-tag--primary.van-tag--plain {
     color: #07C160;
   }
 
