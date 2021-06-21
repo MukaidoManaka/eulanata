@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { homeListDetail } from '@/api/all.js'
+// import { homeListDetail } from '@/api/all.js'
 export default {
   name: 'ListDetail',
   data() {
@@ -50,17 +50,13 @@ export default {
       this.$router.push('/home')
     },
     readGoods() {
-      this.$router.push({name: 'GoodsDetail',params: {routerData:this.data.commodity}})
+      this.$router.push({name: 'GoodsDetail',params: {djbh:this.data.djbh,item: this.$route.params.item, status: this.data.status}})
     }
   },
   created() {
-    console.log('外面传进来的djbh',this.$route.params.djbh)
-    this.djbh = this.$route.params.djbh
-    //根据以上djbh拿到详情
-    homeListDetail(this.djbh).then(res => {
-      console.log('created时的res',res)
-      this.data = res
-    })
+    console.log('外面传进来的item',this.$route.params.item)
+    this.data = this.$route.params.item
+    this.data.status = this.$route.params.status
 
   }
 }

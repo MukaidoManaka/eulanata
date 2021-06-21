@@ -143,7 +143,7 @@ export default {
 
       formatDate: '',
       startOrEnd: '', //此时是在选择起始还是截至时间  start/end
-      radio: "1", //这东西得是字符串，就能默认选中了
+      radio: "1", //搜索框中的单选按钮，这东西得是字符串，就能默认选中了
       searchParams: {
         khhth: '',
         startdate: '',
@@ -153,6 +153,7 @@ export default {
       page: 1,  //分页の第一页
       whetherSearching: false, //搜索条件是否正在生效,
       testMSG: '加载加载',
+      loadload: 20000,  //20秒
     }
   },
   methods: {
@@ -193,6 +194,7 @@ export default {
           const p = Math.ceil(this.waitArr.length/10)
           this.page = 1 + p
           this.searchParams.page = this.page
+          console.log("onload之前的page是多少",this.page,'------p是多少',p)
 
           homeList(this.searchParams).then(res => {
             console.log('onload时的res',res)
@@ -219,6 +221,7 @@ export default {
           })
         }
       }else if (this.active === 1) {
+        //如果页面的这个标记是null，那么代表根本没有下一页了
         if(this.goingPage === null) {
           this.finished = true
           this.currentArr = this.goingArr
@@ -229,6 +232,7 @@ export default {
           const p = Math.ceil(this.goingArr.length/10)
           this.page = 1 + p
           this.searchParams.page = this.page
+          console.log("onload之前的page是多少",this.page,'------p是多少',p)
 
           homeList(this.searchParams).then(res => {
             console.log('onload时的res',res)
@@ -265,6 +269,7 @@ export default {
           const p = Math.ceil(this.finishedArr.length/10)
           this.page = 1 + p
           this.searchParams.page = this.page
+          console.log("onload之前的page是多少",this.page,'------p是多少',p)
 
           homeList(this.searchParams).then(res => {
             console.log('onload时的res',res)
@@ -291,65 +296,19 @@ export default {
           })
         }
       }
-
-      // if(this.nextPage === null) {
-      //   this.finished = true
-      //   this.loading = false
-      // }else {
-      //   this.page += 1
-      //   this.searchParams.page = this.page
-      //   homeList(this.searchParams).then(res => {
-      //     console.log('onload时的res',res)
-      //     if (res.results.length > 0) {
-
-      //       this.currentArr = [...this.currentArr,...res.results]
-      //       // this.waitArr = this.currentArr
-      //       this.nextPage = res.next
-      //       this.loading = false
-      //       this.refreshing = false
-
-      //       //存一存
-      //       if(this.active == 0) {
-      //         this.waitArr = [...this.currentArr,...res.results]
-      //         if(res.next === null) {
-      //           this.waitPage = null
-      //         }
-      //       }else if(this.active == 1) {
-      //         this.goingArr = [...this.currentArr,...res.results]
-      //         if(res.next === null) {
-      //           this.goingPage = null
-      //         }
-      //       }else {
-      //         this.finishedArr = [...this.currentArr,...res.results]
-      //         if(res.next === null) {
-      //           this.finishedPage = null
-      //         }
-      //       }
-
-      //     }else { // length = 0
-      //       this.loading = false
-      //       this.refreshing = false
-      //       this.finished = true
-      //     }
-      //   })
-      // }
-
-      
-      
     },
     onRefresh() {
+      //清除搜索条件（如果有的话）
+      this.reset()
       //刷新得时候，page置1
       this.page = 1
       this.searchParams.page = this.page
       if(this.active === 0) {
         this.searchParams.status = 'wait'
-        this.waitPage = ''
       }else if(this.active ===1) {
         this.searchParams.status = 'going'
-        this.goingPage = ''
       }else {
         this.searchParams.status = 'finished'
-        this.finishedPage = ''
       }
 
       homeList(this.searchParams).then(res => {
@@ -357,19 +316,33 @@ export default {
         this.currentArr = res.results
         this.nextPage = res.next
         this.refreshing = false
+
+        //刷新完还得重置缓存的数据数组，不然执行onload时里面的p变量会不对
+        if(this.active === 0) {
+          this.waitArr = res.results
+          if(res.next === null) {
+            this.waitPage = null
+          }else {
+            this.waitPage = ''
+          }
+        }else if(this.active === 1) {
+          this.goingArr = res.results
+          if(res.next === null) {
+            this.goingPage = null
+          }else {
+            this.goingPage = ''
+          }
+        }else {
+          this.finishedArr = res.results
+          if(res.next === null) {
+            this.finishedPage = null
+          }else {
+            this.finishedPage = ''
+          }
+        }
         //刷新完之后得把它重置
         this.finished = false
       })
-
-      // setTimeout(() => {
-      //   // 清空列表数据
-      //   this.finished = false
-
-      //   // 重新加载数据
-      //   // 将 loading 设置为 true，表示处于加载状态
-      //   this.loading = true
-      //   this.onLoad()
-      // },1000)
     },
     enterDetail(item) {
       console.log('看看item',item)
@@ -384,88 +357,12 @@ export default {
       }
       
     },
-    // tabClick(name,title) {
-
-    //   // console.log('title',title)
-
-      
-
-    //   // //栏目切换了 clear一下
-    //   // this.clearSearch()
-
-    //   // this.page = 1
-    //   // this.searchParams.page = this.page
-
-      
-      
-    //   // if(name == 0) {
-    //   //   //如果waitArr里面没值，就去请求
-    //   //   if(this.waitArr.length === 0) {
-    //   //      //给个loading画面，不然看到的效果是 上一栏的数据(currentArr) 突然变成现在的数据(请求成功)
-    //   //     this.$toast.loading({
-    //   //       message: this.testMSG,
-    //   //       forbidClick: true,
-    //   //       duration: 0
-    //   //     });
-
-    //   //     this.searchParams.status = 'wait'
-
-    //   //     homeList(this.searchParams).then(res => {
-    //   //       this.currentArr = res.results
-    //   //       this.waitArr = res.results
-    //   //       this.nextPage = res.next
-    //   //       this.finished = false
-    //   //       this.$toast.clear()
-    //   //     })
-    //   //   }else {
-    //   //     this.currentArr = this.waitArr
-    //   //   }
-    //   // }else if (name == 1) {
-    //   //   //如果goingArr里面没值，就去请求
-    //   //   if(this.goingArr.length === 0) {
-    //   //     this.$toast.loading({
-    //   //       message: this.testMSG,
-    //   //       forbidClick: true,
-    //   //       duration: 0
-    //   //     });
-    //   //     this.searchParams.status = 'going'
-    //   //     homeList(this.searchParams).then(res => {
-    //   //       this.currentArr = res.results
-    //   //       this.goingArr = res.results
-    //   //       this.nextPage = res.next
-    //   //       this.finished = false
-    //   //       this.$toast.clear()
-    //   //     })
-    //   //   }else {
-    //   //     this.currentArr = this.goingArr
-    //   //   }
-    //   // }else if (name == 2) {
-    //   //   //如果finishedArr里面没值，就去请求
-    //   //   if(this.finishedArr.length === 0) {
-    //   //     this.$toast.loading({
-    //   //       message: this.testMSG,
-    //   //       forbidClick: true,
-    //   //       duration: 0
-    //   //     });
-    //   //     this.searchParams.status = 'finished'
-    //   //     homeList(this.searchParams).then(res => {
-    //   //       this.currentArr = res.results
-    //   //       this.finishedArr = res.results
-    //   //       this.finished = false
-    //   //       this.$toast.clear()
-    //   //     })
-    //   //   }else {
-    //   //     this.currentArr = this.finishedArr
-    //   //   }
-    //   // }
-
-    // },
     tabChange(name,title) {
       console.log('title',title)
       console.log('name',name)
 
       //栏目切换了 clear一下
-      this.clearSearch()
+      this.reset()
 
       this.currentArr = []
 
@@ -481,7 +378,7 @@ export default {
           this.$toast.loading({
             message: this.testMSG,
             forbidClick: true,
-            duration: 0
+            duration: this.loadload
           });
 
           this.searchParams.status = 'wait'
@@ -491,9 +388,10 @@ export default {
             this.currentArr = res.results
             this.waitArr = res.results
             this.nextPage = res.next
-            this.finished = false
+            
             if(res.next === null) {
               this.waitPage = null
+              this.finished = true
             }
             this.$toast.clear()
           })
@@ -507,7 +405,7 @@ export default {
           this.$toast.loading({
             message: this.testMSG,
             forbidClick: true,
-            duration: 0
+            duration: this.loadload
           });
 
           this.searchParams.status = 'going'
@@ -517,9 +415,10 @@ export default {
             this.currentArr = res.results
             this.goingArr = res.results
             this.nextPage = res.next
-            this.finished = false
+            
             if(res.next === null) {
               this.goingPage = null
+              this.finished = true
             }
             this.$toast.clear()
           })
@@ -533,7 +432,7 @@ export default {
           this.$toast.loading({
             message: this.testMSG,
             forbidClick: true,
-            duration: 0
+            duration: this.loadload
           });
 
           this.searchParams.status = 'finished'
@@ -543,9 +442,10 @@ export default {
             this.currentArr = res.results
             this.finishedArr = res.results
             this.nextPage = res.next
-            this.finished = false
+            
             if(res.next === null) {
               this.finishedPage = null
+              this.finished = true
             }
             this.$toast.clear()
           })
@@ -605,6 +505,9 @@ export default {
     },
     submit() {
       //如果搜索框的 起始时间 > 截至时间 ，不通过(化成时间戳来比较) 4320000000=3600*24*50*1000
+      //搜索所得到的数据就只保存在currentArr中，要是左右切换了，再切回来想看之前那个搜索条件下的数据，需要再搜索一次
+      this.page = 1
+      this.searchParams.page = this.page
       let time1 = timestamp(this.startDate)
       let time2 = timestamp(this.endDate)
       if(time1 > time2 ) {
@@ -621,7 +524,7 @@ export default {
              this.$toast.loading({
               message: this.testMSG,
               forbidClick: true,
-              duration: 0
+              duration: this.loadload
             });
 
             this.searchParams.startdate = this.startDate
@@ -639,18 +542,38 @@ export default {
             //searchParams组装好了 发请求
             homeList(this.searchParams).then(res => {
               console.log('搜索时的res',res)
-              if (res.results.length > 0) {
+              if (res.results.length > 0 && res.results.length <= 9) {
+                this.currentArr = []
                 this.currentArr = res.results
                 this.nextPage = res.next
+
+                if(res.next === null) {
+                  if(this.radio == '1') {
+                    this.waitPage = null
+                  }else if(this.radio == '2') {
+                    this.goingPage = null
+                  }else {
+                    this.finishedPage = null
+                  }
+                }
+
+                this.finished = true
 
                 // this.clearSearch()
                 //页面跳到对应的那栏
                 
                 this.active = this.radio - 1
                 this.whetherSearching = true
-                this.$toast.clear()
+                
                 this.show = !this.show
+                this.$toast.loading({
+                  message: this.testMSG,
+                  forbidClick: true,
+                  duration: 2000
+                })
+                this.$toast.clear()
               }else {
+                this.$toast.fail('未搜索到相应数据!')
                 console.log('搜索到的数据为0条')
               }
             })
@@ -676,37 +599,22 @@ export default {
       this.searchParams.khhth = ''
       this.searchParams.startdate = ''
       this.searchParams.enddate = ''
+      this.startDate = ''
+      this.endDate = ''
+      this.currentDate = ''
     },
     reset() {
       this.clearSearch()
+      this.radio = '1'
       this.whetherSearching = false
-      //清空之后重新定位到待发货那一栏去
-      this.searchParams.status = 'wait'
-      this.active = 0
-      homeList(this.searchParams).then(res => {
-        this.currentArr = res.results
-        this.nextPage = res.next
-        this.waitArr = res.results
-      })
     }
   },
   created() {
-    //读本地json当作是请求
-    // console.log(require('../../mock3.json'))
-    // this.currentArr = json.filter((item) => {
-    //   return item.status == 0
-    // })
-
-    // this.$axios.get(`/api/orderforms?page=${this.page}`).then(res => {
-    //   console.log('res',res)
-    //   this.currentArr = res.data.results
-    // })
-
     //一进来先让他无限加载，请求拿到res之后就给他clear掉
     this.$toast.loading({
       message: this.testMSG,
       forbidClick: true,
-      duration: 0
+      duration: this.loadload
     });
     homeList(this.searchParams).then(res => {
       console.log('初始化wait',res)
@@ -721,10 +629,22 @@ export default {
       this.$toast.clear()
     })
 
-    // homeListDetail('D000126235').then(res => {
-    //   console.log('编号',res)
+  },
+  beforeRouteLeave(to, from, next){
+    console.log('window',window.scrollY)
+    let position = window.scrollY
+    console.log('position的值',position)
+    this.$store.commit('savePosition', position) //离开路由时把位置存起来
+    next()
+  },
+  activated() {
+    console.log('activeted')
+    let position = this.$store.state.position //返回页面取出来
+    window.scrollTo(0, 800)
+    // this.$nextTick(() => {
+    //   let position = this.$store.state.position //返回页面取出来
+    //   window.scrollTo(0, 300 + position)
     // })
-
   }
 }
 </script>

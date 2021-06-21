@@ -25,20 +25,25 @@
       <van-cell-group>
         <van-cell title="去填写" is-link @click="readGoods" />
       </van-cell-group>
-      <!-- <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" :value="data.remark"></textarea> -->
-      <van-button type="primary" class="submit">提 交</van-button>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" v-model="submitObj.remark"></textarea>
+      <van-button type="primary" class="submit" @click="submit">提 交</van-button>
     </div> 
   </div>
 </template>
 
 <script>
-// import { homeListDetail } from '@/api/all.js'
+import { submitGoods } from '@/api/all.js'
 export default {
   name: 'ListDetail',
   data() {
     return {
       data:{},
-      data1:[],
+      submitObj: {
+        djbh: '',
+        xshth: '',
+        remark: '',
+        sp: []
+      }
     }
   },
   methods: {
@@ -47,6 +52,18 @@ export default {
     },
     readGoods() {
       this.$router.push({name: 'WriteGoods',params: {djbh:this.data.djbh,item: this.$route.params.item, status: this.data.status}})
+    },
+    submit() {
+      this.submitObj.djbh = this.data.djbh
+      this.submitObj.xshth = this.data.xshth
+      this.submitObj.sp = this.$route.params.sp
+      console.log('wwwwwwwww',this.$route.params.sp)
+
+      console.log('提交前的submitObj',this.submitObj)
+
+      submitGoods(JSON.stringify(this.submitObj)).then(res => {
+        console.log('提交啦',res)
+      })
     }
   },
   created() {

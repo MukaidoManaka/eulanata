@@ -13,7 +13,7 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API_URL,
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 30000 ,// request timeout,
-  headers: {'open_id': 'foobar'}
+  headers: {'Openid': 'G00016openid'}
 })
 
 // request拦截器 request interceptor

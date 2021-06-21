@@ -23,7 +23,8 @@ const routes = [
     // name: 'Login',
     component: Login,
     meta: {
-      title: '登录'
+      title: '登录',
+      keepAlive: false
     }
   },
   {
@@ -31,7 +32,8 @@ const routes = [
     name: 'Login',
     component: Login,
     meta: {
-      title: '登录a'
+      title: '登录a',
+      keepAlive: false
     }
   },
   {
@@ -39,7 +41,8 @@ const routes = [
     name: 'Index',
     component: Index,
     meta: {
-      title: '首页aa'
+      title: '首页aa',
+      keepAlive: false
     }
   },
   {
@@ -47,7 +50,8 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: '首页'
+      title: '首页',
+      keepAlive: true
     }
   },
   {
@@ -55,7 +59,8 @@ const routes = [
     name: 'About',
     component: About,
     meta: {
-      title: '关于'
+      title: '关于',
+      keepAlive: false
     }
   },
   {
@@ -63,7 +68,8 @@ const routes = [
     name: 'Ore',
     component: Ore,
     meta: {
-      title: '个人中心'
+      title: '个人中心',
+      keepAlive: false
     }
   },
   {
@@ -71,7 +77,8 @@ const routes = [
     name: 'Message',
     component: Message,
     meta: {
-      title: '送货'
+      title: '送货',
+      keepAlive: false
     }
   },
   {
@@ -79,7 +86,8 @@ const routes = [
     name: 'ListDetail',
     component: ListDetail,
     meta: {
-      title: '送货单详情'
+      title: '送货单详情',
+      keepAlive: false
     }
   },
   {
@@ -87,7 +95,8 @@ const routes = [
     name: 'GoodsDetail',
     component: GoodsDetail,
     meta: {
-      title: '货物详情'
+      title: '货物详情',
+      keepAlive: false
     }
   },
   {
@@ -95,7 +104,8 @@ const routes = [
     name: 'WriteOrder',
     component: WriteOrder,
     meta: {
-      title: '订单填写'
+      title: '订单填写',
+      keepAlive: false
     }
   },
   {
@@ -103,7 +113,8 @@ const routes = [
     name: 'WriteGoods',
     component: WriteGoods,
     meta: {
-      title: '货物填写'
+      title: '货物填写',
+      keepAlive: false
     }
   },
   {
@@ -111,7 +122,8 @@ const routes = [
     name: 'OrderDetail',
     component: OrderDetail,
     meta: {
-      title: '订单详情'
+      title: '订单详情',
+      keepAlive: false
     }
   },
   {
@@ -119,7 +131,8 @@ const routes = [
     name: 'BindUser',
     component: BindUser,
     meta: {
-      title: '订单详情'
+      title: '订单详情',
+      keepAlive: false
     }
   }
 ]

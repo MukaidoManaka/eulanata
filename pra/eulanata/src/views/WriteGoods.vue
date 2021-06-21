@@ -14,17 +14,14 @@
           <van-collapse v-model="activeNames">
             <van-collapse-item title="扩展属性" :name="item.spmc">{{item.spjbsx}}</van-collapse-item>
           </van-collapse>
-          <van-cell title="应发" :value="item.require_num"/>
-          <!-- <div class="relative">
-            <van-cell title="应发" :value="item.require_num"/>
-            <span>{{item.spjldw}}</span>
-          </div> -->
           <div class="relative">
-            <van-field v-model="recv_num" label="实发" required input-align="right" placeholder="请输入" />
-            <span>{{item.spjldw}}</span>
+            <van-cell title="应发" :value="item.require_num"/>
+            <span class="span">{{item.spjldw}}</span>
           </div>
-          
-          <!-- <van-cell title="实发数量" :value="item.buhegeNO" /> -->
+          <div class="relative">
+            <van-field v-model="num[index]" label="实发" required input-align="right" @blur="checkValue(item,index)" placeholder="请输入" :error-message="errorMsg" />
+            <span class="span">{{item.spjldw}}</span>
+          </div>
         </van-cell-group>
       </div>
     </div>
@@ -43,11 +40,13 @@ export default {
       data: [],
       //当前展开的折叠面板 有什么值，就展开对应name
       activeNames: [],
-      recv_num: null,
+      num: [],  //input框>=2的话，只能用数组
       djbh: '', //单据编号
       searchParams: {
         djbh: ''
-      }
+      },
+      sp: [],
+      errorMsg: ''
     }
   },
   methods: {
@@ -55,7 +54,30 @@ export default {
       this.$router.push({name: 'WriteOrder',params: {item: this.$route.params.item,status: this.$route.params.status}})
     },
     save() {
-      this.$toast('保存')
+      console.log('保存时的num',this.num)
+      for(let i in this.num) {
+        const obj = {}
+        if(this.num[i] - 0 > 0) {
+          
+          obj.spbm = this.data[i].spbm
+          obj.spmc = this.data[i].spmc
+          obj.num = this.num[i] - 0
+        }
+        this.sp.push(obj)
+      }
+
+      console.log('sppppppp-------',this.sp)
+
+      this.$router.push({name:'WriteOrder',params: {item: this.$route.params.item,status: this.$route.params.status, sp: this.sp}})
+    },
+    checkValue(item,index) {
+      console.log('item---index',item,index,this.num[index])
+      console.log('num',this.num)
+      if(this.num[index] - 0 > this.data[index].require_num) {
+        this.errorMsg = '填写不规范'
+      }else {
+        this.errorMsg = ''
+      }
     }
   },
   created() {
@@ -64,7 +86,7 @@ export default {
       console.log('res',res)
       this.data = res
 
-      //不用var居然会报i not defined
+      //不用var会报i not defined,把i当vue data里的变量
       for (var i in this.data) {
         this.activeNames.push(this.data[i].spmc)
       }
@@ -72,6 +94,9 @@ export default {
     })
     
     
+  },
+  updated() {
+    // console.log('num',this.num)
   }
 }
 </script>
@@ -99,7 +124,7 @@ export default {
 .relative {
   position: relative;
   padding-right: .3rem;
-  span {
+  .span {
     position: absolute;
     right: .2rem;
     z-index: 10;

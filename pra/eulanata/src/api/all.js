@@ -22,6 +22,15 @@ export function goodsDetail(params) {
   })
 }
 
+export function submitGoods(params) {
+  return request({
+    url: '/deliver',
+    method: 'post',
+    params: params
+    // params: qs.stringify(params)
+  })
+}
+
 export function homeListDetail(params) {
   return request({
     url: '/orderforms/' + params,
