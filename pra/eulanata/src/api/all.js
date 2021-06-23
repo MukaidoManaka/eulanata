@@ -2,11 +2,11 @@
 const qs = require('qs');
 import request from '@/utils/request.js'
 
-
+//列表页
 export function homeList(params) {
   console.log("请求的search",qs.stringify(params))
   return request({
-    url: '/orderforms',
+    url: '/pubdatanew/orderforms',
     method: 'get',
     // params: qs.stringify(params)
     params: params  //我服了，用别人的模板键名data是错的，正确是params，还有也不能qs 四准fy ，就这样最简单的模样是正确的请求姿势！！
@@ -14,20 +14,22 @@ export function homeList(params) {
   })
 }
 
+//详情页
 export function goodsDetail(params) {
   return request({
-    url: '/order-detail',
+    url: '/pubdatanew/order-detail',
     method: 'get',
     params: params
   })
 }
 
+//提交
 export function submitGoods(params) {
   return request({
     url: '/deliver',
     method: 'post',
-    params: params
-    // params: qs.stringify(params)
+    // params: params
+    data: qs.parse(params)  //post时得是data，params会报错
   })
 }
 

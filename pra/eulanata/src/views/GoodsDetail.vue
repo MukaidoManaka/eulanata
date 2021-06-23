@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'WriteOrder',params: {item: this.$route.params.item,status: this.$route.params.status}})
+      this.$router.push({name: 'ListDetail',params: {item: this.$route.params.item,status: this.$route.params.status}})
     },
   },
   created() {

@@ -1,5 +1,5 @@
 <template>
-  <div class="writeGoods">
+  <div class="wwcDetail">
     <div class="header">
        <van-nav-bar title="商品发货填写" left-text="返回" right-text="保存" @click-right="save" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
@@ -18,8 +18,12 @@
             <van-cell title="应发" :value="item.require_num"/>
             <span class="span">{{item.spjldw}}</span>
           </div>
-          <div class="relative">
+          <div class="relative" v-if="item.recv_num - 0 === 0">
             <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入" :error="error" />
+            <span class="span">{{item.spjldw}}</span>
+          </div>
+          <div class="relative" v-if="item.recv_num - 0 > 0">
+            <van-cell title="实发" :value="item.recv_num"/>
             <span class="span">{{item.spjldw}}</span>
           </div>
         </van-cell-group>
@@ -34,7 +38,7 @@
 <script>
 import { goodsDetail } from '@/api/all.js'
 export default {
-  name: 'WriteGoods',
+  name: 'wwcDetail',
   data() {
     return {
       data: [],
@@ -49,11 +53,12 @@ export default {
       error: false,
       checkNum: [],
       canSubmit: true, //是否能提交
+      hasData: false
     }
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'WriteOrder',params: {item: this.$route.params.item,status: this.$route.params.status}})
+      this.$router.push({name: 'Wwc',params: {item: this.$route.params.item,status: this.$route.params.status}})
     },
     save() {
       console.log('保存时的num',this.num)
@@ -122,6 +127,7 @@ export default {
     goodsDetail(this.searchParams).then(res => {
       console.log('res',res)
       this.data = res
+      
 
       //不用var会报i not defined,把i当vue data里的变量
       for (var i in this.data) {
@@ -139,13 +145,13 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .writeGoods {
+  .wwcDetail {
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
   }
-.writeGoods .section {
+.wwcDetail .section {
   flex: 1;
   overflow-y: scroll;
 }
@@ -154,7 +160,7 @@ export default {
   padding: .1rem .16rem;
   font-weight: 700;
 }
-.writeGoods .van-cell--required::before {
+.wwcDetail .van-cell--required::before {
   top:14px;
   font-size: 18px;
 }

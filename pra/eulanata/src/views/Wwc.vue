@@ -1,5 +1,6 @@
 <template>
-  <div class="writeOrder">
+<!-- wwc是未完成的缩写 -->
+  <div class="wwc">
     <div class="header">
        <van-nav-bar title="送货单详情" left-text="返回" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
@@ -8,11 +9,6 @@
         <van-cell title="单据编号" :value="data.djbh" />
         <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
-      <!-- <van-cell-group>
-        <van-cell title="合计不含税金额" :value="data.hjbhsje" />
-        <van-cell title="合计含税金额" :value="data.hjhsje" />
-        <van-cell title="合计商品税额" :value="data.hjspse" />
-      </van-cell-group> -->
       <van-cell-group>
         <van-cell title="采购合同号" :value="data.khhth" />
         <van-cell title="销售合同号" :value="data.xshth" />
@@ -53,7 +49,7 @@ export default {
     },
     readGoods() {
       if(Object.keys(this.$route.params).includes('num')) {
-        this.$router.push({name: 'WriteGoods',params: {
+        this.$router.push({name: 'WwcDetail',params: {
           djbh:this.data.djbh,
           item: this.$route.params.item, 
           status: this.data.status,
@@ -61,7 +57,7 @@ export default {
           }
         })
       }else {
-        this.$router.push({name: 'WriteGoods',params: {
+        this.$router.push({name: 'WwcDetail',params: {
           djbh:this.data.djbh,
           item: this.$route.params.item, 
           status: this.data.status,
@@ -103,7 +99,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .writeOrder {
+  .wwc {
     display: flex;
     flex-direction: column;
     height: 100%;

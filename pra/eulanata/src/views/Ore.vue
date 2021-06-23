@@ -8,11 +8,11 @@
       <div class="order">
         <div class="order_item">
           <p>5</p>
-          <p>待发货</p>
+          <p>未发货</p>
         </div>
         <div class="order_item">
           <p>3</p>
-          <p>送货中</p>
+          <p>未完成</p>
         </div>
         <div class="order_item">
           <p>58</p>
@@ -31,14 +31,24 @@
     </div>
     <div class="section">
       <van-cell-group>
-        <van-cell title="送货人" value="凯隆智能" />
+        <van-cell title="我的姓名" value="张三" />
+        <van-cell title="我的电话" value="18408246666" />
         <van-cell title="生成订单时间" value="2021-09-09" />
-        <van-cell title="生成订单时间" value="2021-09-09" />
-        <van-cell title="生成订单时间" value="2021-09-09" />
-        <van-cell title="我的消息" value="凯隆智能" />
+        
+        <van-cell title="我的消息" value="查看" />
+        <van-cell title="我的公司" value="凯隆智能" />
+        <!-- <van-field clickable label="公司" :value="value" placeholder="选择公司" :is-link="true" input-align="right" @click="changeCompany" class="company"/> -->
       </van-cell-group>
       <van-button type="danger" @click="logout" class="logout">退 出</van-button>
     </div>
+    <!-- <van-popup v-model="showPicker" round position="bottom">
+      <van-picker
+        show-toolbar
+        :columns="company"
+        @cancel="showPicker = false"
+        @confirm="confirmCompany"
+      />
+    </van-popup> -->
     <Footer />
   </div>
 </template>
@@ -69,6 +79,9 @@
                 { name: '小程序码', icon: 'weapp-qrcode' },
               ],
             ],
+            company: [],
+            value: '选择公司查看送货单',
+            showPicker: false,
         }
     },
     methods: {
@@ -87,7 +100,18 @@
         console.log("分享的option",option)
         console.log("分享的index",index)
         this.showShare = !this.showShare
+      },
+      changeCompany() {
+        this.showPicker = true
+      },
+      confirmCompany(val,index) {
+        console.log('val--index',val,index)
+        this.value = val
+        this.showPicker =false
       }
+    },
+    created() {
+      this.company = this.$store.state.company
     }
   }
 </script>
@@ -159,4 +183,5 @@
 .footer {
   height: .5rem;
 }
+
 </style>

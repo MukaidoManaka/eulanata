@@ -10,12 +10,14 @@ export default new Vuex.Store({
     //当前选择订单id
     curOrderId: 0,
     position: 0,
-    keepalive:['Home','WriteOrder']
+    keepalive:['Home','WriteOrder'],
+    company: ['平湖凯隆新材料科技有限公司','平湖市兆涌五金塑胶制造有限公司','嘉兴凯隆智能科技股份有限公司'],
+    curCompany: '',
   },
   mutations: {
     savePosition(state,position) {
       state.position = position
-    }
+    },
   },
   actions: {
   },

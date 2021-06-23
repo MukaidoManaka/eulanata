@@ -52,3 +52,7 @@ a {
   overflow: scroll;
   font-size: 14px;
 }
+
+.ore .section .company .van-field__control {
+  color: #969799;
+}

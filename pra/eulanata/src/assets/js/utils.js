@@ -93,3 +93,8 @@ export function getStorage(key) {
   export function removeStorage(key) {
     return Cookies.remove(key)
   }
+
+//2021-06-27T00:00:00 这种值变成2021-06-27,T切割不稳，万一以后不是T呢
+export function date(date) {
+    return date.slice(0,10)
+}

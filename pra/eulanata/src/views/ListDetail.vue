@@ -6,27 +6,28 @@
     <div class="section">
       <van-cell-group>
         <van-cell title="单据编号" :value="data.djbh" />
-        <van-cell title="交货日期" :value="data.fsrq" />
+        <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
-      <van-cell-group>
+      <!-- <van-cell-group>
         <van-cell title="合计不含税金额" :value="data.hjbhsje" />
         <van-cell title="合计含税金额" :value="data.hjhsje" />
         <van-cell title="合计商品税额" :value="data.hjspse" />
-      </van-cell-group>
+      </van-cell-group> -->
       <van-cell-group>
-        <van-cell title="客户合同号" :value="data.khhth" />
+        <van-cell title="采购合同号" :value="data.khhth" />
         <van-cell title="销售合同号" :value="data.xshth" />
       </van-cell-group>
       <van-cell-group>
         <van-cell title="订单状态" :value="data.status" />
         <van-cell title="交货地址" :value="data.jhdz" />
+        <van-cell title="所属公司" value="凯隆凯龙开龙铠龙" />
       </van-cell-group>
       
       <van-cell-group>
         <van-cell title="货物详情" is-link @click="readGoods" />
       </van-cell-group>
       <div class="remark">
-        <span>备注:</span>
+        <!-- <span>备注:</span> -->
         <!-- <p> {{data.remark}} </p> -->
       </div>
     </div>

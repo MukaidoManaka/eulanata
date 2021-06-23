@@ -16,6 +16,8 @@ const WriteGoods = resolve => require(['@/views/WriteGoods'], resolve);
 const Index = resolve => require(['@/views/Index'], resolve);
 const OrderDetail = resolve => require(['@/views/OrderDetail'], resolve);
 const BindUser = resolve => require(['@/views/BindUser'], resolve);
+const Wwc = resolve => require(['@/views/Wwc'], resolve);
+const WwcDetail = resolve => require(['@/views/WwcDetail'], resolve);
 
 const routes = [
   {
@@ -131,10 +133,28 @@ const routes = [
     name: 'BindUser',
     component: BindUser,
     meta: {
-      title: '订单详情',
+      title: '用户绑定',
       keepAlive: false
     }
-  }
+  },
+  {
+    path: '/wwc',
+    name: 'Wwc',
+    component: Wwc,
+    meta: {
+      title: '未完成',
+      keepAlive: false
+    }
+  },
+  {
+    path: '/wwcDetail',
+    name: 'WwcDetail',
+    component: WwcDetail,
+    meta: {
+      title: '未完成详情',
+      keepAlive: false
+    }
+  },
 ]
 
 //不写这个的话，如果一直点同一个路由 console会报错

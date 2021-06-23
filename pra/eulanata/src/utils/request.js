@@ -8,6 +8,7 @@ import {
 // } from '@/config'
 // create an axios instance
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 const service = axios.create({
   // baseURL: api.base_api, // url = base url + request url
   baseURL: process.env.VUE_APP_BASE_API_URL,
@@ -45,10 +46,13 @@ service.interceptors.response.use(
     const res = response.data
     // 这里注意修改成你访问的服务端接口规则
     // 登录超时,重新登录
+    console.log('resresres--------========',res)
     if (res.code === 401) {
-      store.dispatch('user/fedLogOut').then(() => {
-        location.reload()
-      })
+      
+    }
+
+    if(res.code === 404) {
+      console.log(404)
     }
 
     if (res.code && res.code == 500) {
@@ -60,7 +64,7 @@ service.interceptors.response.use(
   },
   error => {
     // Toast.clear()
-    console.log('err' + error) // for debug
+    console.log('八嘎！', error) // for debug
     return Promise.reject(error)
   }
 )
