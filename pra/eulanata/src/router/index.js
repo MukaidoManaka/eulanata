@@ -54,6 +54,7 @@ const routes = [
     meta: {
       title: '首页',
       keepAlive: true
+      // keepAlive: false
     }
   },
   {

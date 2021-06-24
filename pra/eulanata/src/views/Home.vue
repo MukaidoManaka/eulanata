@@ -43,7 +43,7 @@
       </van-overlay>
     </div>
     <div class="section">
-      <van-tabs v-model="active" @change="tabChange" swipeable color="#06AE56">
+      <van-tabs v-model="active" @click="tabChange" color="#06AE56">
         <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
@@ -102,7 +102,7 @@
 <script>
 import Footer from '@/components/Footer'
 import { dateFormat, timestamp } from '@/assets/js/utils'
-import { homeList, goodsDetail } from '@/api/all.js'
+import { homeList, goodsDetail, userInfo } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -131,7 +131,7 @@ export default {
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
       // dict1:['全部','未发货','未完成','已完成'],
-      dict1:['未发货','未完成','已完成'],
+      dict1:[`未发货(${this.$store.state.count_no})`,`未完成(${this.$store.state.count_ing})`,`已完成(${this.$store.state.count_finished})`],
       x_status: 0,
       x_name: '',
 
@@ -253,7 +253,7 @@ export default {
                 var obj2 = {djbh:''}
                 
                 obj2.djbh = res.results[i].djbh
-                goodsDetail(obj2).then(res => {
+                goodsDetail(obj2,res.results[i].company).then(res => {
                   
                   console.log('详细信息---',res)
                   var require = 0
@@ -686,7 +686,7 @@ export default {
           for (var i in res.results) {
             var obj2 = {djbh:''}
             obj2.djbh = res.results[i].djbh
-            goodsDetail(obj2).then(res => {
+            goodsDetail(obj2,res.results[i].company).then(res => {
               console.log('详细信息---',res)
               var require = 0
               var receive = 0
@@ -728,6 +728,33 @@ export default {
         this.waitPage = null
       }
       this.$toast.clear()
+      //待发货的总count
+      this.$store.commit('changeNo',res.count)
+    })
+
+    //拿未完成的总count
+    let _ing = JSON.parse(JSON.stringify(this.searchParams))
+    _ing.status = 'going'
+    homeList(_ing).then(res => {
+      console.log(111111,res.count)
+      this.$store.commit('changeIng',res.count)
+    })
+
+    //拿已完成的总count
+    let _finished = JSON.parse(JSON.stringify(this.searchParams))
+    _finished.status = 'finished'
+    homeList(_finished).then(res => {
+      console.log(22222,res.count)
+      this.$store.commit('changeFinished',res.count)
+    })
+
+    //获取厂商信息
+    userInfo().then(res => {
+      console.log('厂商信息',res)
+      this.$store.commit('saveCSBM',res.csbm)
+      this.$store.commit('saveCSMC',res.csmc)
+      this.$store.commit('changeName',res.name)
+      this.$store.commit('changePhone',res.phone)
     })
 
   },
@@ -761,7 +788,7 @@ export default {
         for (var i in res.results) {
           var obj2 = {djbh:''}
           obj2.djbh = res.results[i].djbh
-          goodsDetail(obj2).then(res => {
+          goodsDetail(obj2,res.results[i].company).then(res => {
             console.log('详细信息---',res)
             var require = 0
             var receive = 0

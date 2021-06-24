@@ -6,7 +6,7 @@ import request from '@/utils/request.js'
 export function homeList(params) {
   console.log("请求的search",qs.stringify(params))
   return request({
-    url: '/pubdatanew/orderforms',
+    url: '/api/orderforms',
     method: 'get',
     // params: qs.stringify(params)
     params: params  //我服了，用别人的模板键名data是错的，正确是params，还有也不能qs 四准fy ，就这样最简单的模样是正确的请求姿势！！
@@ -15,9 +15,9 @@ export function homeList(params) {
 }
 
 //详情页
-export function goodsDetail(params) {
+export function goodsDetail(params,company) {
   return request({
-    url: '/pubdatanew/order-detail',
+    url: `/api/${company}/order-detail`,
     method: 'get',
     params: params
   })
@@ -26,10 +26,36 @@ export function goodsDetail(params) {
 //提交
 export function submitGoods(params) {
   return request({
-    url: '/deliver',
+    url: '/api/deliver',
     method: 'post',
     // params: params
     data: qs.parse(params)  //post时得是data，params会报错
+  })
+}
+
+//获取厂商信息
+export function userInfo() {
+  return request({
+    url: '/supplier/wechat-userinfo',
+    method: 'get'
+  })
+}
+
+//更改姓名
+export function editName(params) {
+  return request({
+    url: '/supplier/wechat-userinfo',
+    method: 'patch',
+    data: qs.parse(params)
+  })
+}
+
+//更改电话
+export function editPhone(params) {
+  return request({
+    url: '/supplier/wechat-userinfo',
+    method: 'patch',
+    data: qs.parse(params)
   })
 }
 

@@ -85,16 +85,22 @@ export function getUrlParam(name) {
 export function getStorage(key) {
     return window.localStorage.getItem(key)
   }
-  // 设置 localStorage
-  export function setStorage(key, value) {
-    return window.localStorage.setItem(key, value)
-  }
-  // 删除 localStorage
-  export function removeStorage(key) {
-    return Cookies.remove(key)
-  }
+// 设置 localStorage
+export function setStorage(key, value) {
+return window.localStorage.setItem(key, value)
+}
+// 删除 localStorage
+export function removeStorage(key) {
+return Cookies.remove(key)
+}
 
 //2021-06-27T00:00:00 这种值变成2021-06-27,T切割不稳，万一以后不是T呢
 export function date(date) {
     return date.slice(0,10)
+}
+
+//2020年最新的手机号检测
+export function checkMobile(num) {
+    let reg = /^1(3[0-9]|4[5,7]|5[0,1,2,3,5,6,7,8,9]|6[2,5,6,7]|7[0,1,7,8]|8[0-9]|9[1,8,9])\d{8}$/;
+    return reg.test(num);
 }

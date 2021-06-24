@@ -15,17 +15,35 @@
             <van-collapse-item title="扩展属性" :name="item.spmc">{{item.spjbsx}}</van-collapse-item>
           </van-collapse>
           <div class="relative">
-            <van-cell title="应发" :value="item.require_num"/>
+            <van-cell title="总计应发" :value="item.require_num"/>
             <span class="span">{{item.spjldw}}</span>
           </div>
-          <div class="relative" v-if="item.recv_num - 0 === 0">
-            <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入" :error="error" />
+          <!-- <div class="relative">
+            <van-cell title="已发" :value="item.recv_num"/>
             <span class="span">{{item.spjldw}}</span>
           </div>
-          <div class="relative" v-if="item.recv_num - 0 > 0">
+          <div class="relative">
+            <van-cell title="剩余" :value="(item.require_num - 0) - (item.recv_num - 0)"/>
+            <span class="span">{{item.spjldw}}</span>
+          </div> -->
+          <div class="relative omae">
+            <p>已发</p>
+            <div class="ku">
+              <div>{{item.recv_num}}</div>
+              <div class="shengyu">/(剩余{{(item.require_num - 0) - (item.recv_num - 0)}})</div>
+            </div>
+            <span class="span">{{item.spjldw}}</span>
+          </div>
+
+          <!-- 如果接收数量大于0且小于总数  说明此货物是发了一定数量 还剩一些数量 给input框 -->
+          <div class="relative" v-if="item.recv_num - 0 >= 0 && item.recv_num - 0 < item.require_num">
+            <van-field v-model="num[index]" label="此次发送" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入数量" :error="error" />
+            <span class="span">{{item.spjldw}}</span>
+          </div>
+          <!-- <div class="relative" v-if="item.recv_num - 0 > 0">
             <van-cell title="实发" :value="item.recv_num"/>
             <span class="span">{{item.spjldw}}</span>
-          </div>
+          </div> -->
         </van-cell-group>
       </div>
     </div>
@@ -53,7 +71,8 @@ export default {
       error: false,
       checkNum: [],
       canSubmit: true, //是否能提交
-      hasData: false
+      hasData: false,
+      company: ''
     }
   },
   methods: {
@@ -66,7 +85,7 @@ export default {
       for(let i in this.num) {
         const obj = {}
         //num大于0 小于require数量
-        if(this.num[i] - 0 > 0 && this.num[i] - 0 <= this.data[i].require_num) {
+        if(this.num[i] - 0 > 0 && this.num[i] - 0 <= (item.require_num - 0) - (item.recv_num - 0)) {
           //num这个数组里可能会出现[10,'',20,30]这种情况，场景：在第二个input框里面输入值然后删了，就会出现空字符串，会被vmodel同步到num里去，所以判断一下
           if(this.num[i] != '') {
             obj.spbm = this.data[i].spbm
@@ -104,10 +123,11 @@ export default {
         })
       }
     },
+    //输入框失焦的时候就判断一下值
     checkValue(item,index) {
       console.log('item---index',item,index,this.num[index])
       console.log('num',this.num)
-      if(this.num[index] - 0 > this.data[index].require_num) {
+      if(this.num[index] - 0 > (this.data[index].require_num-0) - (this.data[index].require_num-0)) {
         this.error = true
       }else {
       }
@@ -122,9 +142,11 @@ export default {
       console.log('不包含num')
     }
     // this.num = this.$route.params.num
+    //路由携带的公司
+    this.company = this.$route.params.company
 
     this.searchParams.djbh = this.$route.params.djbh
-    goodsDetail(this.searchParams).then(res => {
+    goodsDetail(this.searchParams,this.company).then(res => {
       console.log('res',res)
       this.data = res
       
@@ -172,6 +194,25 @@ export default {
     right: .2rem;
     z-index: 10;
     top: .1rem;
+  }
+}
+.omae {
+  display: flex;
+  font-size: 14px;
+  padding: 10px 16px;
+  justify-content: space-between;
+  line-height: 24px;
+  
+  .ku {
+    display: flex;
+    padding-right: 22px;
+    color: #969799;
+  }
+  .shengyu {
+    font-size: 12px;
+  }
+  .span {
+    font-size: .16rem;
   }
 }
 .footer {

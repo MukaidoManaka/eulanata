@@ -49,6 +49,7 @@ export default {
       error: false,
       checkNum: [],
       canSubmit: true, //是否能提交
+      company: '',
     }
   },
   methods: {
@@ -116,10 +117,12 @@ export default {
     }else {
       console.log('不包含num')
     }
-    // this.num = this.$route.params.num
+    
+    //路由携带的公司
+    this.company = this.$route.params.company
 
     this.searchParams.djbh = this.$route.params.djbh
-    goodsDetail(this.searchParams).then(res => {
+    goodsDetail(this.searchParams,this.company).then(res => {
       console.log('res',res)
       this.data = res
 

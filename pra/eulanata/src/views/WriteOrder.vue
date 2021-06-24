@@ -20,7 +20,9 @@
       <van-cell-group>
         <van-cell title="订单状态" :value="data.status" />
         <van-cell title="交货地址" :value="data.jhdz" />
-        <van-cell title="所属公司" value="凯隆凯龙开龙铠龙" />
+        <van-cell title="所属公司" value="平湖凯隆新材料科技有限公司" v-if="data.company === 'pubdatanew'" class="_company"/>
+        <van-cell title="所属公司" value="嘉兴凯隆智能科技股份有限公司" v-if="data.company === 'zy_erp'" class="_company"/>
+        <van-cell title="所属公司" value="平湖市兆涌五金塑胶制造有限公司" v-if="data.company === 'wjfc'" class="_company"/>
       </van-cell-group>
       
       <van-cell-group>
@@ -43,7 +45,9 @@ export default {
         djbh: '',
         xshth: '',
         remark: '',
-        sp: []
+        sp: [],
+        csmc: `${this.$store.state.csmc}`,
+        csbm: `${this.$store.state.csbm}`,
       }
     }
   },
@@ -57,7 +61,8 @@ export default {
           djbh:this.data.djbh,
           item: this.$route.params.item, 
           status: this.data.status,
-          num: this.$route.params.num
+          num: this.$route.params.num,
+          company: this.data.company
           }
         })
       }else {
@@ -65,6 +70,7 @@ export default {
           djbh:this.data.djbh,
           item: this.$route.params.item, 
           status: this.data.status,
+          company: this.data.company
           }
         })
       }

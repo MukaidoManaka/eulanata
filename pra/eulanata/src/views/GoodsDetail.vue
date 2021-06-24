@@ -44,7 +44,8 @@ export default {
       djbh: '', //单据编号
       searchParams: {
         djbh: ''
-      }
+      },
+      company: ''
     }
   },
   methods: {
@@ -54,7 +55,9 @@ export default {
   },
   created() {
     this.searchParams.djbh = this.$route.params.djbh
-    goodsDetail(this.searchParams).then(res => {
+    this.company = this.$route.params.company
+
+    goodsDetail(this.searchParams,this.company).then(res => {
       console.log('res',res)
       this.data = res
 

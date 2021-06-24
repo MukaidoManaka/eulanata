@@ -44,6 +44,11 @@ a {
   background-color: #06AE56;
 }
 
+textarea {
+  border-radius: 10px;
+}
+
+/* 解决主页列表的tab头会跟着列表项下滑的问题，写到Home.vue里面不生效 */
 .home .section .van-tabs.van-tabs--line .van-tabs__wrap {
   overflow: visible;
 }
@@ -55,4 +60,12 @@ a {
 
 .ore .section .company .van-field__control {
   color: #969799;
+}
+
+/* 解决详情页 所属公司 名称太长 会换行 */
+.van-cell._company .van-cell__title {
+  flex: 2;
+}
+.van-cell._company .van-cell__value {
+  flex: 3;
 }
