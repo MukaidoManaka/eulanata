@@ -84,8 +84,8 @@ export default {
       
       for(let i in this.num) {
         const obj = {}
-        //num大于0 小于require数量
-        if(this.num[i] - 0 > 0 && this.num[i] - 0 <= (item.require_num - 0) - (item.recv_num - 0)) {
+        //num大于0 小于require-recv数量
+        if(this.num[i] - 0 > 0 && this.num[i] - 0 <= (this.data[i].require_num - 0) - (this.data[i].recv_num - 0)) {
           //num这个数组里可能会出现[10,'',20,30]这种情况，场景：在第二个input框里面输入值然后删了，就会出现空字符串，会被vmodel同步到num里去，所以判断一下
           if(this.num[i] != '') {
             obj.spbm = this.data[i].spbm
@@ -106,6 +106,7 @@ export default {
 
       console.log('sppppppp-------',this.sp)
       console.log('checkNum----',this.checkNum)
+      //checkNum里面但凡有一个false都不能提交
       if(this.checkNum.includes(false)) {
         this.canSubmit = false
       }else {
@@ -127,8 +128,9 @@ export default {
     checkValue(item,index) {
       console.log('item---index',item,index,this.num[index])
       console.log('num',this.num)
-      if(this.num[index] - 0 > (this.data[index].require_num-0) - (this.data[index].require_num-0)) {
-        this.error = true
+      if(this.num[index] - 0 > (this.data[index].require_num-0) - (this.data[index].recv_num-0)) {
+        // this.error = true
+        console.log('有值填错了')
       }else {
       }
     }

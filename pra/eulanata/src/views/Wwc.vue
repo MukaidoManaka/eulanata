@@ -84,7 +84,10 @@ export default {
 
       submitGoods(this.submitObj).then(res => {
         console.log('提交啦',res)
-        this.$router.push({name: 'Home'})
+        if(res.detail == 'success') {
+          this.$toast.success('提交成功！')
+          this.$router.push({name: 'Home'})
+        }
       })
     }
   },

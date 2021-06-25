@@ -37,8 +37,8 @@
         <van-cell title="我的电话" value="18408246666" /> -->
         <!-- <van-cell title="生成订单时间" value="2021-09-09" /> -->
         
-        <van-cell title="我的消息" value="查看" />
-        <van-cell title="我的公司" value="凯隆智能" />
+        <!-- <van-cell title="我的消息" value="查看" /> -->
+        <van-cell title="我的公司" :value="$store.state.csmc" />
         <!-- <van-field clickable label="公司" :value="value" placeholder="选择公司" :is-link="true" input-align="right" @click="changeCompany" class="company"/> -->
       </van-cell-group>
       <!-- <van-button type="danger" @click="logout" class="logout">退 出</van-button> -->
@@ -140,6 +140,7 @@
         }else {
           this.nameError = false
           editName({name: this.name}).then(res => {
+            this.$toast.success('送货人姓名修改成功')
             console.log('修改名字',res)
           })
         }
@@ -148,6 +149,7 @@
         if(checkMobile(this.phone)) {
           this.phoneError = false
           editPhone({phone: this.phone}).then(res => {
+            this.$toast.success('手机号修改成功！')
             console.log('修改手机号',res)
           })
         }else {

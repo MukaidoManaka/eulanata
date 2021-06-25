@@ -13,7 +13,7 @@
           <div class="cross">
             <van-icon name="cross" @click="closeSearch"/>
           </div>
-          <van-field label="合同号" placeholder="输入采购/销售合同号" v-model="searchParams.khhth"></van-field>
+          <van-field label="合同号" placeholder="输入采购/销售合同号" v-model="searchParams.khhth" clearable></van-field>
           <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间"></van-field>
           <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间"></van-field>
           <van-radio-group v-model="radio" checked-color="#60C08B">
@@ -53,6 +53,7 @@
               @load="onLoad"
               :offset="5"
               :immediate-check="false"
+              id="postion"
             >
               <div class="list_item" v-for="(item,idx) in currentArr" :key="item.idx" :title="item.hjbhsje" @click="enterDetail(item)">
                 <!-- 左边图片 -->
@@ -63,7 +64,8 @@
                 <!-- 右边订单相关数据 -->
                 <div class="right_item">
                   <div class="_top">
-                    <span>采购合同号：{{item.khhth}}</span>
+                    <span v-if="!(item.khhth === '' && item.xshth === '')">采购合同号：{{item.khhth}}</span>
+                    <span v-if="item.khhth === '' && item.xshth === ''">单据编号：{{item.djbh}}</span>
                     <van-tag plain type='primary' :class="'bindClass' + `${active}`">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '未发货' : '已完成'}}</van-tag> -->
@@ -71,10 +73,15 @@
                   </div>
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
-                    <p>销售合同号: {{item.xshth}} </p>
-                    <p>交货日期：{{$date(item.fsrq)}} </p>
-                    <!-- <p>合计不含税金额：{{item.hjbhsje}} </p> -->
-                    <span class="progress" v-show="active === 1"> 已送：约{{item.percent}}% </span>
+                    <div class="_bottom_left">
+                      <p>销售合同号: {{item.xshth}} </p>
+                      <p>交货日期：{{$date(item.fsrq)}} </p>
+                    </div>
+                    <!-- <span class="progress" v-show="active === 1"> 已送：约{{item.percent}}% </span> -->
+                    <div class="progress _bottom_right" >
+                      <!-- 只有未完成这栏才显示百分比  如果运行出错了，undefined就不显示 -->
+                      <van-progress color="#07C160" v-if="active === 1" :percentage="item.percent" v-show="item.percent != undefined"/>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -110,7 +117,7 @@ export default {
   },
   data() {
     return {
-      //区分审核或者通过火已完成3中状态 所需要的中间件
+      //区分审核或者通过火已完成3中状态 
       loading: false,
       finished: false,
       refreshing: false,
@@ -123,7 +130,7 @@ export default {
       show: false,//overlay的显隐
       showPop: false,//popup的显隐
       active: 0,  //tab处于哪一栏
-      minDate: new Date(2018, 0, 1),
+      minDate: new Date(2021, 0, 1),
       maxDate: new Date(2025, 5, 1),
       currentDate: new Date(),
       //不管先选起止还是截至，x_date来标记时间
@@ -131,7 +138,8 @@ export default {
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
       // dict1:['全部','未发货','未完成','已完成'],
-      dict1:[`未发货(${this.$store.state.count_no})`,`未完成(${this.$store.state.count_ing})`,`已完成(${this.$store.state.count_finished})`],
+      // dict1:[`未发货(${this.$store.state.count_no})`,`未完成(${this.$store.state.count_ing})`,`已完成(${this.$store.state.count_finished})`],
+      dict1:[`未发货(${this.a})`,`未完成(${this.b})`,`已完成(${this.c})`],
       x_status: 0,
       x_name: '',
 
@@ -162,8 +170,11 @@ export default {
       testMSG: '加载加载',
       loadload: 20000,  //20秒
 
-      percentArr: [],
-      emptyArr: []
+      percentArr: [], //装百分比的数组
+      emptyArr: [],
+      a:0,
+      b:0,
+      c:0,
     }
   },
   methods: {
@@ -247,37 +258,48 @@ export default {
           homeList(this.searchParams).then(res => {
             console.log('onload时的res',res)
             this.emptyArr = res.results
+            var res_length = 0  //mounted()
             if (res.results.length > 0) {
+              res_length = res.results.length
               //给percentArr里面新增数据
-              for (var i in res.results) {
+              for (let i in res.results) {
                 var obj2 = {djbh:''}
                 
                 obj2.djbh = res.results[i].djbh
-                goodsDetail(obj2,res.results[i].company).then(res => {
+                goodsDetail(obj2,res.results[i].company).then(response => {
                   
-                  console.log('详细信息---',res)
+                  console.log('详细信息---',response)
                   var require = 0
                   var receive = 0
-                  for(var k in res) {
+                  for(let k in response) {
                     
-                    require = require + Number(res[k].require_num)
-                    receive = receive + Number(res[k].recv_num)
+                    require = require + Number(response[k].require_num)
+                    receive = receive + Number(response[k].recv_num)
                   }
                   console.log('打印前的require ',require)
                   console.log('打印前的receive',receive)
                   var percent = (receive/require).toFixed(2) * 100
                   console.log('百分比------',percent)
-                  this.percentArr.push(percent)
-                }).then(res => {
+                  this.percentArr.push(Math.trunc(percent))
+                }).then(() => {
+                  // this.percentArr.push(percent)
                   console.log('onload时更新percent',this.percentArr)
-                  this.currentArr = [...this.currentArr,...this.emptyArr]
-                  this.goingArr = this.currentArr
-                  for (var j in this.currentArr) {
-                    this.currentArr[j].percent = this.percentArr[j]
+                  console.log("res_length和i的值",res_length,i)
+                  //当下面条件成立时，for in此时执行最后一次，这最后一次时处理数组
+                  if(res_length - 1 == i) {
+                    console.log("res_length和i的值",res_length,i)
+                    this.currentArr = [...this.currentArr,...this.emptyArr]  
+                    this.goingArr = this.currentArr
+                    for (let j in this.currentArr) {
+                      this.currentArr[j].percent = this.percentArr[j]
+                    }
                   }
                 })
 
               }
+
+              
+              
 
               // this.currentArr = [...this.currentArr,...res.results]
               console.log('----------------------------percent',this.percentArr)
@@ -300,8 +322,6 @@ export default {
               this.refreshing = false
               this.finished = true
             }
-          }).catch(err => {
-            console.log("error------------",err.code)
           })
         }
       }else {
@@ -344,6 +364,7 @@ export default {
       }
     },
     onRefresh() {
+      this.loading = false
       //清除搜索条件（如果有的话）
       this.reset()
       //刷新得时候，page置1
@@ -568,15 +589,18 @@ export default {
     submit() {
       //如果搜索框的 起始时间 > 截至时间 ，不通过(化成时间戳来比较) 4320000000=3600*24*50*1000
       //搜索所得到的数据就只保存在currentArr中，要是左右切换了，再切回来想看之前那个搜索条件下的数据，需要再搜索一次
+    
       this.page = 1
       this.searchParams.page = this.page
+      //如果之前划到底了 finished就为true，搜索时置false
+      this.finished = false
       let time1 = timestamp(this.startDate)
       let time2 = timestamp(this.endDate)
       if(time1 > time2 ) {
         this.$toast.fail('日期选择不规范！')
       } else {
-        if(this.searchParams.khhth.length > 10 ) {
-          this.$toast.fail('查询关键字长度不能大于10！')
+        if(this.searchParams.khhth.length > 20 ) {
+          this.$toast.fail('查询关键字长度不能大于20！')
         }else {
           if(time2 - time1 > 4320000000) {
             console.log('time',time2 - time1)
@@ -594,20 +618,40 @@ export default {
             // this.searchParams.khhth = this.khhth
             if (this.radio == '1') {
               this.searchParams.status = 'wait'
+              //有可能之前是null，搜索之前置为空字符串
+              this.waitPage = ''
+              //这个数组不置空的话 onload时可能p会出错
+              this.waitArr = []
             }else if (this.radio == '2') {
               this.searchParams.status = 'going'
+              this.goingPage = ''
+              this.goingArr = []
             }else {
               this.searchParams.status = 'finished'
+              this.finishedPage = ''
+              this.finishedArr = []
             }
             
             console.log('searchParams',this.searchParams)
             //searchParams组装好了 发请求
             homeList(this.searchParams).then(res => {
               console.log('搜索时的res',res)
-              if (res.results.length > 0 && res.results.length <= 9) {
+              if (res.results.length > 0) {
                 this.currentArr = []
                 this.currentArr = res.results
+                console.log("这个currentArr是没变么",this.currentArr)
                 this.nextPage = res.next
+
+                if(this.radio == '1') {
+                  this.waitArr = res.results
+                }else if(this.radio == '2') {
+                  this.goingArr = res.results
+                  for (var j in this.currentArr) {
+                    this.currentArr[j].percent = this.percentArr[j]
+                  }
+                }else {
+                  this.finishedArr = res.results
+                }
 
                 if(res.next === null) {
                   if(this.radio == '1') {
@@ -619,28 +663,32 @@ export default {
                   }
                 }
 
-                this.finished = true
+                // this.finished = true
 
                 // this.clearSearch()
                 //页面跳到对应的那栏
                 
                 this.active = this.radio - 1
                 this.whetherSearching = true
+
+                this.$nextTick(() => {
+                  document.querySelector('.van-list').scrollTop = 0
+                })
+                console.log('aaaa',document.querySelector('.van-list'))
                 
                 this.show = !this.show
-                this.$toast.loading({
-                  message: this.testMSG,
-                  forbidClick: true,
-                  duration: 2000
-                })
+                // this.$toast.loading({
+                //   message: this.testMSG,
+                //   forbidClick: true,
+                //   duration: 2000
+                // })
                 this.$toast.clear()
               }else {
                 this.$toast.fail('未搜索到相应数据!')
                 console.log('搜索到的数据为0条')
+                this.finished = true
               }
             })
-            
-           
             
           }
         }
@@ -670,45 +718,6 @@ export default {
       this.radio = '1'
       this.whetherSearching = false
     },
-    percent() {
-      let count = 0
-      let arr = []
-      const obj = {
-        'khhth': '',
-        'startdate': '',
-        'enddate': '',
-        'status': 'going',
-        'page': 1
-      }
-      homeList(obj).then(res => {
-        console.log('mounted的res',res)
-        if(res.results.length > 0) {
-          for (var i in res.results) {
-            var obj2 = {djbh:''}
-            obj2.djbh = res.results[i].djbh
-            goodsDetail(obj2,res.results[i].company).then(res => {
-              console.log('详细信息---',res)
-              var require = 0
-              var receive = 0
-              for(var k in res) {
-                
-                require = require + Number(res[k].require_num)
-                receive = receive + Number(res[k].recv_num)
-              }
-              console.log('打印前的require ',require)
-              console.log('打印前的receive',receive)
-              var percent = (receive/require).toFixed(2) * 100
-              console.log('百分比------',percent)
-              arr.push(percent)
-            }).then(res => {
-              console.log('neng够这样用吗',arr)
-            })
-
-          }
-          console.log('总的arr',arr)
-        }
-      })
-    }
   },
   created() {
     //一进来先让他无限加载，请求拿到res之后就给他clear掉
@@ -717,6 +726,35 @@ export default {
       forbidClick: true,
       duration: this.loadload
     });
+
+    //获取厂商信息
+    userInfo().then(res => {
+      console.log('厂商信息',res)
+      this.$store.commit('saveCSBM',res.csbm)
+      this.$store.commit('saveCSMC',res.csmc)
+      this.$store.commit('changeName',res.name)
+      this.$store.commit('changePhone',res.phone)
+    })
+
+    //拿未完成的总count
+    let _ing = JSON.parse(JSON.stringify(this.searchParams))
+    _ing.status = 'going'
+    homeList(_ing).then(res => {
+      this.b = res.count
+      console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbb',this.b)
+      this.$store.commit('changeIng',res.count)
+      
+    })
+
+    //拿已完成的总count
+    let _finished = JSON.parse(JSON.stringify(this.searchParams))
+    _finished.status = 'finished'
+    homeList(_finished).then(res => {
+      this.c = res.count
+      this.$store.commit('changeFinished',res.count)
+      
+    })
+
     homeList(this.searchParams).then(res => {
       console.log('初始化wait',res)
       
@@ -727,34 +765,11 @@ export default {
       if(res.next === null) {
         this.waitPage = null
       }
-      this.$toast.clear()
+      this.a = res.count
       //待发货的总count
       this.$store.commit('changeNo',res.count)
-    })
-
-    //拿未完成的总count
-    let _ing = JSON.parse(JSON.stringify(this.searchParams))
-    _ing.status = 'going'
-    homeList(_ing).then(res => {
-      console.log(111111,res.count)
-      this.$store.commit('changeIng',res.count)
-    })
-
-    //拿已完成的总count
-    let _finished = JSON.parse(JSON.stringify(this.searchParams))
-    _finished.status = 'finished'
-    homeList(_finished).then(res => {
-      console.log(22222,res.count)
-      this.$store.commit('changeFinished',res.count)
-    })
-
-    //获取厂商信息
-    userInfo().then(res => {
-      console.log('厂商信息',res)
-      this.$store.commit('saveCSBM',res.csbm)
-      this.$store.commit('saveCSMC',res.csmc)
-      this.$store.commit('changeName',res.name)
-      this.$store.commit('changePhone',res.phone)
+      
+      this.$toast.clear()
     })
 
   },
@@ -782,14 +797,16 @@ export default {
       'status': 'going',
       'page': 1
     }
+    
     homeList(obj).then(res => {
       console.log('mounted的res',res)
       if(res.results.length > 0) {
-        for (var i in res.results) {
+        for (let i in res.results) {
           var obj2 = {djbh:''}
           obj2.djbh = res.results[i].djbh
           goodsDetail(obj2,res.results[i].company).then(res => {
             console.log('详细信息---',res)
+            
             var require = 0
             var receive = 0
             for(var k in res) {
@@ -801,9 +818,9 @@ export default {
             console.log('打印前的receive',receive)
             var percent = (receive/require).toFixed(2) * 100
             console.log('百分比------',percent)
-            this.percentArr.push(percent)
+            this.percentArr.push(Math.trunc(percent))
           }).then(res => {
-            console.log('neng够这样用吗',this.percentArr)
+            console.log('mounted里面初始化的10个',this.percentArr)
           })
 
         }
@@ -824,20 +841,13 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-    // position: relative;
   }
   .header {
     width: 100%;
-    // position: fixed;
-    // left: 0;
-    // top: 0;
-    // z-index: 100;
-    // margin-bottom: .46rem;
   }
   .section {
     flex: 1;
     overflow: scroll;
-    // margin-top: .46rem;
   }
   .footer {
     width: 100%;
@@ -885,11 +895,11 @@ export default {
       padding-bottom: 3px;
       position: relative;
     }
-    .right_item ._bottom .progress {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-    }
+    // .right_item ._bottom .progress {
+    //   position: absolute;
+    //   bottom: 0;
+    //   right: 0;
+    // }
   }
   
   .search {
@@ -913,6 +923,18 @@ export default {
     padding-top: 5px;
     display: flex;
     justify-content: space-evenly;
+  }
+  ._bottom {
+    display: flex;
+    ._bottom_left {
+      flex: 1;
+    }
+    ._bottom_right {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 7px;
+    }
   }
   // 改(覆盖) 一些UI的默认样式
 
@@ -938,38 +960,13 @@ export default {
   .van_row {
     margin: .05rem 0;
   }
-  // .section {
-  //   position: relative;
-  // }
-  // .section .van-tabs--line .van-tabs__wrap {
-  //   position: fixed;
-  //   top: 0;
-  //   left: 0;
-  //   z-index: 101;
-  //   margin-top: .9rem;
-  // }
-
-  //想让van-tabs那四个选项像header一样固定在顶部不动，还未成功  成功了，写到init.css里面就生效了
+  
   .section .van-tabs {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
-  // .section .van-tabs.van-tabs--line .van-tabs__wrap {
-  //   overflow: visible;
-  // }
-  // .section .van-tabs.van-tabs--line .van-tabs__content {
-  //   flex: 1;
-  //   overflow: scroll;
-  // }
-  // .section .van-tabs>div:first-child {
-  //   overflow: visible;
-  // }
-  // .section .van-tabs>div:last-child {
-  //   flex: 1;
-  //   overflow: scroll;
-  // }
-
+  
   //改van-tag颜色 成功
   .bindClass0.van-tag--primary.van-tag--plain {
     // color: #1989FA;
@@ -998,13 +995,6 @@ export default {
     justify-content: center;
     align-items: center;
   }
-
-  // .home .van-tab__pane {
-  //   height: 100%;
-  // }
-  // .home .van-pull-refresh {
-  //   height: 101%;
-  // }
 </style>
 
 <style >

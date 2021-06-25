@@ -46,17 +46,22 @@ service.interceptors.response.use(
     const res = response.data
     // 这里注意修改成你访问的服务端接口规则
     // 登录超时,重新登录
-    console.log('resresres--------========',res)
-    if (res.code === 401) {
+    // console.log('------resresres拦截器',response)
+    if (response.code === 401) {
       
     }
-
-    if(res.code === 404) {
-      console.log(404)
+    if(response.status === 200) {
+      console.log(200)
     }
 
-    if (res.code && res.code == 500) {
-      // Toast.fail(res.message);
+    if(response.status === 404) {
+      console.log(404)
+      this.loading = false
+      this.finished = true
+    }
+
+    if (response.code && response.code == 500) {
+      // Toast.fail(response.message);
       return Promise.reject(res || 'error')
     } else {
       return Promise.resolve(res)
