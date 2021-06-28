@@ -25,13 +25,13 @@
         <van-cell title="去填写数量" is-link @click="readGoods" />
       </van-cell-group>
       <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" v-model="submitObj.remark"></textarea>
-      <van-button type="primary" class="submit" @click="submit">提 交</van-button>
-    </div> 
+      <van-button type="primary" class="submit" @click="submit" :disabled="disabled">提 交</van-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { submitGoods } from '@/api/all.js'
+import { submitGoods, gzhJump } from '@/api/all.js'
 export default {
   name: 'ListDetail',
   data() {
@@ -44,7 +44,8 @@ export default {
         sp: [],
         csmc: `${this.$store.state.csmc}`,
         csbm: `${this.$store.state.csbm}`,
-      }
+      },
+      disabled: false,
     }
   },
   methods: {
@@ -52,6 +53,8 @@ export default {
       this.$router.push('/home')
     },
     readGoods() {
+      //场景： 在detail页面填过一次数据回到Wwc页面，还想再进去WwcDetail页面看看/改改，detail页面里面填过的输入框应该显示刚刚填的值
+      //如果包含num属性 那就说明在那边填过
       if(Object.keys(this.$route.params).includes('num')) {
         this.$router.push({name: 'WwcDetail',params: {
           djbh:this.data.djbh,
@@ -92,9 +95,24 @@ export default {
     }
   },
   created() {
-    console.log('外面传进来的item',this.$route.params.item)
-    this.data = this.$route.params.item
-    this.data.status = this.$route.params.status
+    if(this.$route.params.item) {
+      console.log('外面传进来的item',this.$route.params.item)
+      this.data = this.$route.params.item
+      this.data.status = this.$route.params.status
+    }else {
+      console.log(22222222222)
+      gzhJump("D000124879").then(res => {
+        console.log("shuaxin--",res)
+        this.data = res
+        if(res.shbz == 1) {
+          this.data.status = '未完成'
+        }else if(res.shbz == 0) {
+          this.data.status = '未发货'
+        }else {
+          this.data.status = '已完成'
+        }
+      })
+    }
 
 
     // //根据以上item拿到详情

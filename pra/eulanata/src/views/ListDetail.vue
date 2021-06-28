@@ -63,9 +63,25 @@ export default {
     }
   },
   created() {
-    console.log('外面传进来的item',this.$route.params.item)
-    this.data = this.$route.params.item
-    this.data.status = this.$route.params.status
+    if(this.$route.params.item) {
+      console.log('外面传进来的item',this.$route.params.item)
+      this.data = this.$route.params.item
+      this.data.status = this.$route.params.status
+    }else {
+      console.log(22222222222)
+      gzhJump("D000124879").then(res => {
+        console.log("shuaxin--",res)
+        this.data = res
+        if(res.shbz == 1) {
+          this.data.status = '未完成'
+        }else if(res.shbz == 0) {
+          this.data.status = '未发货'
+        }else {
+          this.data.status = '已完成'
+        }
+      })
+    }
+    
 
   }
 }

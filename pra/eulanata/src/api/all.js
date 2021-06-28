@@ -59,6 +59,14 @@ export function editPhone(params) {
   })
 }
 
+//公众号跳转 送货单的详情页面
+export function gzhJump(params) {
+  return request({
+    url: '/api/orderforms/' + params,
+    method: 'get',
+  })
+}
+
 export function homeListDetail(params) {
   return request({
     url: '/orderforms/' + params,

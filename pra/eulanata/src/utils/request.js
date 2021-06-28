@@ -51,7 +51,7 @@ service.interceptors.response.use(
       
     }
     if(response.status === 200) {
-      console.log(200)
+      // console.log(200)
     }
 
     if(response.status === 404) {

@@ -44,7 +44,7 @@
     </div>
     <div class="section">
       <van-tabs v-model="active" @click="tabChange" color="#06AE56">
-        <van-tab :key="index" v-for="(item,index) in dict1" :title="item">
+        <van-tab :key="index" v-for="(item,index) in dict" :title="item">
           <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
             <van-list
               v-model="loading"
@@ -78,9 +78,9 @@
                       <p>交货日期：{{$date(item.fsrq)}} </p>
                     </div>
                     <!-- <span class="progress" v-show="active === 1"> 已送：约{{item.percent}}% </span> -->
-                    <div class="progress _bottom_right" >
-                      <!-- 只有未完成这栏才显示百分比  如果运行出错了，undefined就不显示 -->
-                      <van-progress color="#07C160" v-if="active === 1" :percentage="item.percent" v-show="item.percent != undefined"/>
+                    <div class="progress _bottom_right"  ref="progrs">
+                      <!-- 只有未完成这栏才显示百分比  如果运行出错了，undefined就不显示 v-show="active === 1" v-if="item.percent != undefined"-->
+                      <van-progress color="#07C160" v-show="active === 1" :percentage="item.percent" ref="progress" v-if="item.percent != undefined"/>
                     </div>
                   </div>
                 </div>
@@ -117,9 +117,8 @@ export default {
   },
   data() {
     return {
-      //区分审核或者通过火已完成3中状态 
-      loading: false,
-      finished: false,
+      loading: false, //是否处于加载状态，加载过程中不触发load事件
+      finished: false,  //是否已加载完成，加载完成后不再触发load事件
       refreshing: false,
       currentRate: 55,
       gradientColor: {
@@ -137,9 +136,9 @@ export default {
       x_date: '',
       pink: 'pink',
       //区分审核或者通过火已完成3中状态
-      // dict1:['全部','未发货','未完成','已完成'],
-      // dict1:[`未发货(${this.$store.state.count_no})`,`未完成(${this.$store.state.count_ing})`,`已完成(${this.$store.state.count_finished})`],
-      dict1:[`未发货(${this.a})`,`未完成(${this.b})`,`已完成(${this.c})`],
+      // dict:['全部','未发货','未完成','已完成'],
+      // dict:[`未发货(${this.$store.state.count_no})`,`未完成(${this.$store.state.count_ing})`,`已完成(${this.$store.state.count_finished})`],
+      dict:[`未发货(${this.a})`,`未完成(${this.b})`,`已完成(${this.c})`],
       x_status: 0,
       x_name: '',
 
@@ -152,7 +151,7 @@ export default {
       goingArr:[],
       finishedArr:[],
       nextPage: '', //用来存请求接口获得的next值，如果为null表示加载完 没有下一页了
-      waitPage: '',
+      waitPage: '', //等于null时，表示待发货一栏已加载完
       goingPage: '',
       finishedPage: '',
 
@@ -172,9 +171,10 @@ export default {
 
       percentArr: [], //装百分比的数组
       emptyArr: [],
-      a:0,
+      a:0,  //a b c分别代表 未发货未完成已完成的数量，和上面的dict与$set一起食用
       b:0,
       c:0,
+      x_arr: [],  //用来存goingArr，初始就计算好going第一页的percent
     }
   },
   methods: {
@@ -258,7 +258,7 @@ export default {
           homeList(this.searchParams).then(res => {
             console.log('onload时的res',res)
             this.emptyArr = res.results
-            var res_length = 0  //mounted()
+            var res_length = 0  
             if (res.results.length > 0) {
               res_length = res.results.length
               //给percentArr里面新增数据
@@ -280,19 +280,24 @@ export default {
                   console.log('打印前的receive',receive)
                   var percent = (receive/require).toFixed(2) * 100
                   console.log('百分比------',percent)
-                  this.percentArr.push(Math.trunc(percent))
+                  // this.percentArr.push(Math.trunc(percent))
+                  // res.results[i].percent = Math.trunc(percent)
+                  // this.currentArr.percent = Math.trunc(percent)
+                  this.emptyArr[i].percent = Math.trunc(percent)
+                  // this.goingArr[i].percent = Math.trunc(percent)
                 }).then(() => {
                   // this.percentArr.push(percent)
-                  console.log('onload时更新percent',this.percentArr)
-                  console.log("res_length和i的值",res_length,i)
+                  // console.log('onload时更新percent',this.percentArr)
+                  // console.log("res_length和i的值",res_length,i)
                   //当下面条件成立时，for in此时执行最后一次，这最后一次时处理数组
                   if(res_length - 1 == i) {
                     console.log("res_length和i的值",res_length,i)
-                    this.currentArr = [...this.currentArr,...this.emptyArr]  
+                    this.currentArr = [...this.goingArr,...this.emptyArr]
                     this.goingArr = this.currentArr
-                    for (let j in this.currentArr) {
-                      this.currentArr[j].percent = this.percentArr[j]
-                    }
+                    console.log("onload 里 currentArr的值",this.currentArr)
+                    // for (let j in this.currentArr) {
+                    //   this.currentArr[j].percent = this.percentArr[j]
+                    // }
                   }
                 })
 
@@ -394,11 +399,33 @@ export default {
           }
         }else if(this.active === 1) {
           //找active为1时的各种情况 给currentArr绑定percent属性
-          for (var j in this.currentArr) {
-            this.currentArr[j].percent = this.percentArr[j]
-          }
+          // for (var j in this.currentArr) {
+          //   this.currentArr[j].percent = this.percentArr[j]
+          // }
+          
+          this.currentArr = this.x_arr 
+          this.goingArr = this.x_arr 
+          // this.goingArr = res.results
 
-          this.goingArr = res.results
+          // for (let i in res.results) {
+          //   var obj2 = {djbh:''}
+          //   obj2.djbh = res.results[i].djbh
+          //   goodsDetail(obj2,res.results[i].company).then(res => {
+          //     var require = 0
+          //     var receive = 0
+          //     for(var k in res) {
+          //       require = require + Number(res[k].require_num)
+          //       receive = receive + Number(res[k].recv_num)
+          //     }
+          //     var percent = (receive/require).toFixed(2) * 100
+          //     console.log('百分比------',percent)
+          //     this.currentArr[i].percent = Math.trunc(percent)
+          //     this.goingArr[i].percent = Math.trunc(percent)
+          //   })
+          // }
+          
+
+          
           if(res.next === null) {
             this.goingPage = null
           }else {
@@ -433,15 +460,25 @@ export default {
       console.log('title',title)
       console.log('name',name)
 
+      //神之一true，被遗忘的loading这么强大，切换tab的时候置个true 再也不用怕瞎逼自动onload数据导致的各种报错了
+      this.loading = true
+
       //栏目切换了 clear一下
       this.reset()
-
+      this.$nextTick(() => {
+        document.querySelector('.van-pull-refresh').scrollTop = 21
+        document.querySelector('.van-pull-refresh').scrollTo(0,33)
+        console.log("scrollTop--------",document.querySelector('.van-pull-refresh'))
+        console.log("scrollTop--------",document.querySelector('.van-pull-refresh').scrollTop)
+      })
       this.currentArr = []
 
       this.page = 1
       this.searchParams.page = this.page
 
       this.finished = false
+
+     
       
       if(name == 0) { //用name还是active好像没区别吧
         //如果waitArr里面没值，就去请求
@@ -460,6 +497,7 @@ export default {
             this.currentArr = res.results
             this.waitArr = res.results
             this.nextPage = res.next
+            this.loading = false
             
             if(res.next === null) {
               this.waitPage = null
@@ -470,6 +508,7 @@ export default {
         }else {
           this.searchParams.status = 'wait'
           this.currentArr = this.waitArr
+          this.loading = false
         }
       }else if (name == 1) {
         //如果goingArr里面没值，就去请求
@@ -482,29 +521,58 @@ export default {
 
           this.searchParams.status = 'going'
 
+          this.currentArr = this.x_arr
+          this.goingArr = this.x_arr
+
           homeList(this.searchParams).then(res => {
-            console.log('未完成',res)
-            this.currentArr = res.results
-            this.goingArr = res.results
+            // console.log('未完成',res)
+            // this.currentArr = this.x_arr
+            // this.currentArr = res.results
+            // this.goingArr = res.results
+
+            // for (let i in res.results) {
+            //   var obj2 = {djbh:''}
+            //   obj2.djbh = res.results[i].djbh
+            //   goodsDetail(obj2,res.results[i].company).then(res => {
+            //     var require = 0
+            //     var receive = 0
+            //     for(var k in res) {
+            //       require = require + Number(res[k].require_num)
+            //       receive = receive + Number(res[k].recv_num)
+            //     }
+            //     var percent = (receive/require).toFixed(2) * 100
+            //     console.log('百分比------',percent)
+            //     this.currentArr[i].percent = Math.trunc(percent)
+            //     this.goingArr[i].percent = Math.trunc(percent)
+            //   })
+            // }
+            
+            
             this.nextPage = res.next
+            this.loading = false
             
             if(res.next === null) {
               this.goingPage = null
               this.finished = true
             }
             //显示百分比的
-            for (var j in this.currentArr) {
-              this.currentArr[j].percent = this.percentArr[j]
-            }
+            // for (var j in this.currentArr) {
+            //   this.currentArr[j].percent = this.percentArr[j]
+            // }
             this.$toast.clear()
+            
+            
           })
         }else {
           this.searchParams.status = 'going'
+          console.log("已经有goingArr的情况进else时",this.goingArr)
           this.currentArr = this.goingArr
+          this.loading =false
           //显示百分比
-          for (var j in this.currentArr) {
-            this.currentArr[j].percent = this.percentArr[j]
-          }
+          // for (var j in this.currentArr) {
+          //   this.currentArr[j].percent = this.percentArr[j]
+          // }
+          // this.$refs.progress.resize();
         }
 
         
@@ -525,6 +593,7 @@ export default {
             this.currentArr = res.results
             this.finishedArr = res.results
             this.nextPage = res.next
+            this.loading = false
             
             if(res.next === null) {
               this.finishedPage = null
@@ -535,6 +604,7 @@ export default {
         }else {
           this.searchParams.status = 'finished'
           this.currentArr = this.finishedArr
+          this.loading = false
         }
       }
 
@@ -672,9 +742,9 @@ export default {
                 this.whetherSearching = true
 
                 this.$nextTick(() => {
-                  document.querySelector('.van-list').scrollTop = 0
+                  document.querySelector('.van-tabs__content').scrollTop = 0
                 })
-                console.log('aaaa',document.querySelector('.van-list'))
+                console.log('aaaa',document.querySelector('.van-tabs__content'))
                 
                 this.show = !this.show
                 // this.$toast.loading({
@@ -743,6 +813,7 @@ export default {
       this.b = res.count
       console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbb',this.b)
       this.$store.commit('changeIng',res.count)
+      this.$set(this.dict,1,`未完成(${this.b})`)
       
     })
 
@@ -752,7 +823,7 @@ export default {
     homeList(_finished).then(res => {
       this.c = res.count
       this.$store.commit('changeFinished',res.count)
-      
+      this.$set(this.dict,2,`已完成(${this.c})`)
     })
 
     homeList(this.searchParams).then(res => {
@@ -768,8 +839,47 @@ export default {
       this.a = res.count
       //待发货的总count
       this.$store.commit('changeNo',res.count)
+
+      this.$set(this.dict,0,`未发货(${this.a})`)
       
       this.$toast.clear()
+    })
+
+    const obj = {
+      'khhth': '',
+      'startdate': '',
+      'enddate': '',
+      'status': 'going',
+      'page': 1
+    }
+    
+    homeList(obj).then(res => {
+      console.log('mounted的res',res)
+      this.x_arr = res.results
+      if(res.results.length > 0) {
+        for (let i in res.results) {
+          var obj2 = {djbh:''}
+          obj2.djbh = res.results[i].djbh
+          goodsDetail(obj2,res.results[i].company).then(res => {
+            console.log('详细信息---',res)
+            
+            var require = 0
+            var receive = 0
+            for(var k in res) {
+              
+              require = require + Number(res[k].require_num)
+              receive = receive + Number(res[k].recv_num)
+            }
+            var percent = (receive/require).toFixed(2) * 100
+            console.log('百分比------',percent)
+            // this.percentArr.push(Math.trunc(percent))
+            // res.results[i].percent = Math.trunc(percent)
+            this.currentArr[i].percent = Math.trunc(percent)
+            this.x_arr[i].percent = Math.trunc(percent)
+          })
+
+        }
+      }
     })
 
   },
@@ -790,44 +900,39 @@ export default {
     // })
   },
   mounted() {
-    const obj = {
-      'khhth': '',
-      'startdate': '',
-      'enddate': '',
-      'status': 'going',
-      'page': 1
-    }
+    // const obj = {
+    //   'khhth': '',
+    //   'startdate': '',
+    //   'enddate': '',
+    //   'status': 'going',
+    //   'page': 1
+    // }
     
-    homeList(obj).then(res => {
-      console.log('mounted的res',res)
-      if(res.results.length > 0) {
-        for (let i in res.results) {
-          var obj2 = {djbh:''}
-          obj2.djbh = res.results[i].djbh
-          goodsDetail(obj2,res.results[i].company).then(res => {
-            console.log('详细信息---',res)
+    // homeList(obj).then(res => {
+    //   console.log('mounted的res',res)
+    //   if(res.results.length > 0) {
+    //     for (let i in res.results) {
+    //       var obj2 = {djbh:''}
+    //       obj2.djbh = res.results[i].djbh
+    //       goodsDetail(obj2,res.results[i].company).then(res => {
+    //         console.log('详细信息---',res)
             
-            var require = 0
-            var receive = 0
-            for(var k in res) {
+    //         var require = 0
+    //         var receive = 0
+    //         for(var k in res) {
               
-              require = require + Number(res[k].require_num)
-              receive = receive + Number(res[k].recv_num)
-            }
-            console.log('打印前的require ',require)
-            console.log('打印前的receive',receive)
-            var percent = (receive/require).toFixed(2) * 100
-            console.log('百分比------',percent)
-            this.percentArr.push(Math.trunc(percent))
-          }).then(res => {
-            console.log('mounted里面初始化的10个',this.percentArr)
-          })
-
-        }
-        // console.log('总的percent',this.percentArr)
-      }
-    })
-    
+    //           require = require + Number(res[k].require_num)
+    //           receive = receive + Number(res[k].recv_num)
+    //         }
+    //         console.log('打印前的require ',require)
+    //         console.log('打印前的receive',receive)
+    //         var percent = (receive/require).toFixed(2) * 100
+    //         console.log('百分比------',percent)
+    //         this.percentArr.push(Math.trunc(percent))
+    //       })
+    //     }
+    //   }
+    // })
   },
   updated() {
     
@@ -874,6 +979,7 @@ export default {
       border: 1px solid #37AE52;
       font-size: 22px;
       text-align: center;
+      vertical-align: middle;
       color: #666;
     }
     // .left_item img {
@@ -994,6 +1100,10 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+
+  .van-progress {
+    width: 100%;
   }
 </style>
 
