@@ -45,19 +45,19 @@ export default {
       searchParams: {
         djbh: ''
       },
-      company: ''
+      company: '',
+      id: 0,
     }
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'ListDetail',params: {item: this.$route.params.item,status: this.$route.params.status}})
+      this.$router.push({name: 'ListDetail',params: {id: this.$route.params.id,status: this.$route.params.status}})
     },
   },
   created() {
-    this.searchParams.djbh = this.$route.params.djbh
-    this.company = this.$route.params.company
+    this.id = this.$route.params.id
 
-    goodsDetail(this.searchParams,this.company).then(res => {
+    goodsDetail({"order":this.id}).then(res => {
       console.log('res',res)
       this.data = res
 

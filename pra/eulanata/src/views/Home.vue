@@ -13,9 +13,9 @@
           <div class="cross">
             <van-icon name="cross" @click="closeSearch"/>
           </div>
-          <van-field label="合同号" placeholder="输入采购/销售合同号" v-model="searchParams.khhth" clearable></van-field>
-          <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间"></van-field>
-          <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间"></van-field>
+          <van-field label="合同号" placeholder="输入采购/销售合同号" v-model="searchParams.xshth" clearable></van-field>
+          <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间" @focus="focusStart" ref="start"></van-field>
+          <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间" @focus="focusEnd" ref="end"></van-field>
           <van-radio-group v-model="radio" checked-color="#60C08B">
             <!-- <van-row type="flex" justify="space-around" class="van_row">
               <van-col span="1"></van-col>
@@ -51,21 +51,21 @@
               :finished="finished"
               finished-text="没有更多了"
               @load="onLoad"
-              :offset="5"
+              :offset="20"
               :immediate-check="false"
               id="postion"
             >
-              <div class="list_item" v-for="(item,idx) in currentArr" :key="item.idx" :title="item.hjbhsje" @click="enterDetail(item)">
+              <div class="list_item" v-for="(item,idx) in currentArr" :key="item.id" :title="item.hjbhsje" @click="enterDetail(item.id)">
                 <!-- 左边图片 -->
                 <div class="left_item">
                   <!-- <img src="@/assets/image/f_qq1.png" alt=""> -->
-                  <p> {{idx + 1}} </p>
+                  <p>{{idx + 1}}</p>
                 </div>
                 <!-- 右边订单相关数据 -->
                 <div class="right_item">
                   <div class="_top">
-                    <span v-if="!(item.khhth === '' && item.xshth === '')">采购合同号：{{item.khhth}}</span>
-                    <span v-if="item.khhth === '' && item.xshth === ''">单据编号：{{item.djbh}}</span>
+                    <span v-if="!(item.xshth === '' && item.khhth === '')">客户合同号：{{item.khhth}}</span>
+                    <span v-if="item.xshth === '' && item.khhth === ''">单据编号：{{item.djbh}}</span>
                     <van-tag plain type='primary' :class="'bindClass' + `${active}`">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '未发货' : '已完成'}}</van-tag> -->
@@ -94,7 +94,7 @@
       <van-datetime-picker
         v-model="currentDate"
         type="date"
-        title="选择年月"
+        title="选择查询日期"
         :min-date="minDate"
         :max-date="maxDate"
         :formatter="formatter"
@@ -102,14 +102,15 @@
         @cancel="cancelDate"
       />
     </van-popup>
-    <Footer />
+    <Footer :currentIndex = '0' />
+    <!-- <div class="blankFooter"></div> -->
   </div>
 </template>
 
 <script>
 import Footer from '@/components/Footer'
 import { dateFormat, timestamp } from '@/assets/js/utils'
-import { homeList, goodsDetail, userInfo } from '@/api/all.js'
+import { homeList, goodsDetail, userInfo, getDate } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -159,7 +160,7 @@ export default {
       startOrEnd: '', //此时是在选择起始还是截至时间  start/end
       radio: "1", //搜索框中的单选按钮，这东西得是字符串，就能默认选中了
       searchParams: {
-        khhth: '',
+        xshth: '',
         startdate: '',
         enddate: '',
         status: 'wait', //默认显示wait未发货
@@ -263,10 +264,10 @@ export default {
               res_length = res.results.length
               //给percentArr里面新增数据
               for (let i in res.results) {
-                var obj2 = {djbh:''}
+                var obj2 = {order:0}
                 
-                obj2.djbh = res.results[i].djbh
-                goodsDetail(obj2,res.results[i].company).then(response => {
+                obj2.order = res.results[i].id
+                goodsDetail(obj2).then(response => {
                   
                   console.log('详细信息---',response)
                   var require = 0
@@ -443,16 +444,16 @@ export default {
         this.finished = false
       })
     },
-    enterDetail(item) {
-      console.log('看看item',item)
+    enterDetail(id) {
+      console.log('看看id',id)
       console.log('active',this.active)
       //0表示点击事件时tab处于未发货这一栏，就去填写页
       if (this.active === 0 ) {
-        this.$router.push({name: 'WriteOrder', params: {item, status: '未发货'}})
+        this.$router.push({name: 'WriteOrder', params: {id, status: '未发货'}})
       }else if(this.active === 1) {
-        this.$router.push({name:'Wwc',params:{item, status: '未完成'}})
+        this.$router.push({name:'Wwc',params:{id, status: '未完成'}})
       }else {
-        this.$router.push({name:'ListDetail',params:{item, status: '已完成'}})
+        this.$router.push({name:'ListDetail',params:{id, status: '已完成'}})
       }
       
     },
@@ -669,7 +670,7 @@ export default {
       if(time1 > time2 ) {
         this.$toast.fail('日期选择不规范！')
       } else {
-        if(this.searchParams.khhth.length > 20 ) {
+        if(this.searchParams.xshth.length > 20 ) {
           this.$toast.fail('查询关键字长度不能大于20！')
         }else {
           if(time2 - time1 > 4320000000) {
@@ -685,7 +686,7 @@ export default {
 
             this.searchParams.startdate = this.startDate
             this.searchParams.enddate = this.endDate
-            // this.searchParams.khhth = this.khhth
+            // this.searchParams.xshth = this.xshth
             if (this.radio == '1') {
               this.searchParams.status = 'wait'
               //有可能之前是null，搜索之前置为空字符串
@@ -766,7 +767,7 @@ export default {
       
 
       // 采购合同号，销售合同号，交货日期，合计不含税金额，单据编号
-      // khhth，xshth，fsrq，hjbhsje djbh
+      // xshth，xshth，fsrq，hjbhsje djbh
 
 
     },
@@ -776,7 +777,7 @@ export default {
     //清空条件
     clearSearch() {
       this.searchParams.status = ''
-      this.searchParams.khhth = ''
+      this.searchParams.xshth = ''
       this.searchParams.startdate = ''
       this.searchParams.enddate = ''
       this.startDate = ''
@@ -788,6 +789,13 @@ export default {
       this.radio = '1'
       this.whetherSearching = false
     },
+    //监听focus事件， 当field一focus就让他blur，手机端就不会弹出输入法了
+    focusStart() {
+      this.$refs.start.blur()
+    },
+    focusEnd() {
+      this.$refs.end.blur()
+    }
   },
   created() {
     //一进来先让他无限加载，请求拿到res之后就给他clear掉
@@ -826,6 +834,12 @@ export default {
       this.$set(this.dict,2,`已完成(${this.c})`)
     })
 
+    //获取当天时间
+    getDate().then(res => {
+      console.log("今天时间---",res.time)
+      this.$store.commit('saveDate',res.time)
+    })
+
     homeList(this.searchParams).then(res => {
       console.log('初始化wait',res)
       
@@ -846,7 +860,7 @@ export default {
     })
 
     const obj = {
-      'khhth': '',
+      'xshth': '',
       'startdate': '',
       'enddate': '',
       'status': 'going',
@@ -858,9 +872,9 @@ export default {
       this.x_arr = res.results
       if(res.results.length > 0) {
         for (let i in res.results) {
-          var obj2 = {djbh:''}
-          obj2.djbh = res.results[i].djbh
-          goodsDetail(obj2,res.results[i].company).then(res => {
+          var obj2 = {order:0}
+          obj2.order = res.results[i].id
+          goodsDetail(obj2).then(res => {
             console.log('详细信息---',res)
             
             var require = 0
@@ -900,39 +914,6 @@ export default {
     // })
   },
   mounted() {
-    // const obj = {
-    //   'khhth': '',
-    //   'startdate': '',
-    //   'enddate': '',
-    //   'status': 'going',
-    //   'page': 1
-    // }
-    
-    // homeList(obj).then(res => {
-    //   console.log('mounted的res',res)
-    //   if(res.results.length > 0) {
-    //     for (let i in res.results) {
-    //       var obj2 = {djbh:''}
-    //       obj2.djbh = res.results[i].djbh
-    //       goodsDetail(obj2,res.results[i].company).then(res => {
-    //         console.log('详细信息---',res)
-            
-    //         var require = 0
-    //         var receive = 0
-    //         for(var k in res) {
-              
-    //           require = require + Number(res[k].require_num)
-    //           receive = receive + Number(res[k].recv_num)
-    //         }
-    //         console.log('打印前的require ',require)
-    //         console.log('打印前的receive',receive)
-    //         var percent = (receive/require).toFixed(2) * 100
-    //         console.log('百分比------',percent)
-    //         this.percentArr.push(Math.trunc(percent))
-    //       })
-    //     }
-    //   }
-    // })
   },
   updated() {
     
@@ -942,6 +923,7 @@ export default {
 
 <style scoped lang="less">
   .home {
+    flex: 1;
     width: 100%;
     height: 100%;
     display: flex;
@@ -978,8 +960,9 @@ export default {
       border-radius: .3rem;
       border: 1px solid #37AE52;
       font-size: 22px;
-      text-align: center;
-      vertical-align: middle;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       color: #666;
     }
     // .left_item img {
@@ -1072,6 +1055,10 @@ export default {
     flex-direction: column;
     height: 100%;
   }
+  // .blankFooter {
+  //   width: 100%;
+  //   height: 50px;
+  // }
   
   //改van-tag颜色 成功
   .bindClass0.van-tag--primary.van-tag--plain {

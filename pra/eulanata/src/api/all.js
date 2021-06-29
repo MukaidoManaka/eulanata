@@ -6,7 +6,7 @@ import request from '@/utils/request.js'
 export function homeList(params) {
   console.log("请求的search",qs.stringify(params))
   return request({
-    url: '/api/orderforms',
+    url: '/api/dbcache/order-forms',
     method: 'get',
     // params: qs.stringify(params)
     params: params  //我服了，用别人的模板键名data是错的，正确是params，还有也不能qs 四准fy ，就这样最简单的模样是正确的请求姿势！！
@@ -15,9 +15,9 @@ export function homeList(params) {
 }
 
 //详情页
-export function goodsDetail(params,company) {
+export function goodsDetail(params) {
   return request({
-    url: `/api/${company}/order-detail`,
+    url: `/api/dbcache/commodities`,
     method: 'get',
     params: params
   })
@@ -59,10 +59,18 @@ export function editPhone(params) {
   })
 }
 
-//公众号跳转 送货单的详情页面
-export function gzhJump(params) {
+//公众号跳转到送货单的详情页面
+export function gzhJump(id) {
   return request({
-    url: '/api/orderforms/' + params,
+    url: '/api/dbcache/order-forms/' + id,
+    method: 'get',
+  })
+}
+
+//获得时间,前端获得的可能不准
+export function getDate() {
+  return request({
+    url: '/api/nowdate',
     method: 'get',
   })
 }

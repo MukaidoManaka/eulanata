@@ -31,8 +31,8 @@
     </div>
     <div class="section">
       <van-cell-group>
-        <van-field label="送货人" placeholder="请输入姓名" @blur="changeName" v-model="name" input-align="right" clearable :error="nameError" :error-message="nameErrorMsg"/>
-        <van-field label="手机号" placeholder="请输入手机号" @blur="changePhone" v-model="phone" input-align="right" clearable :error="phoneError" :error-message="phoneErrorMsg"/>
+        <van-field label="送货人" placeholder="请输入姓名" @blur="changeName" v-model="name" input-align="right" clearable :error="nameError" />
+        <van-field label="手机号" placeholder="请输入手机号" @blur="changePhone" v-model="phone" input-align="right" clearable :error="phoneError" />
         <!-- <van-cell title="我的姓名" value="张三" />
         <van-cell title="我的电话" value="18408246666" /> -->
         <!-- <van-cell title="生成订单时间" value="2021-09-09" /> -->
@@ -57,13 +57,13 @@
       </div>
 
     </van-overlay>
-    <Footer />
+    <Footer :currentIndex = '1' />
   </div>
 </template>
 
 <script>
   import Footer from '@/components/Footer'
-  import { editName, editPhone } from '@/api/all.js'
+  import { editName, editPhone, userInfo } from '@/api/all.js'
   import { checkMobile } from '@/assets/js/utils.js'
   export default {
     name: 'Ore',
@@ -136,25 +136,33 @@
         if(this.name === '') {
           this.$toast.fail('送货人姓名不能为空！')
           this.nameError = true
-          // this.nameErrorMsg = "姓名不能为空"
         }else {
-          this.nameError = false
-          editName({name: this.name}).then(res => {
-            this.$toast.success('送货人姓名修改成功')
-            console.log('修改名字',res)
-          })
+          if(this.name === this.$store.state.name) {
+            //无操作
+          }else {
+            this.nameError = false
+            editName({name: this.name}).then(res => {
+              this.$toast.success('送货人姓名修改成功')
+              console.log('修改名字',res)
+              this.$store.commit("changeName",this.name)
+            })
+          }
         }
       },
       changePhone() {
         if(checkMobile(this.phone)) {
-          this.phoneError = false
-          editPhone({phone: this.phone}).then(res => {
-            this.$toast.success('手机号修改成功！')
-            console.log('修改手机号',res)
-          })
+          if(this.phone === this.$store.state.phone) {
+
+          }else {
+            this.phoneError = false
+            editPhone({phone: this.phone}).then(res => {
+              this.$toast.success('手机号修改成功！')
+              console.log('修改手机号',res)
+              this.$store.commit('changePhone',this.phone)
+            })
+          }
         }else {
           this.phoneError = true
-          // this.phoneErrorMsg = "请填写正确的手机号"
           this.$toast.fail('请填写正确的手机号！')
         }
         

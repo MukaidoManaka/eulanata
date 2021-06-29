@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     position: 0,
-    keepalive:['Home','WriteOrder'],
+    keepalive:['Home','WriteOrder'],  //缓存的页面
     // company: ['平湖凯隆新材料科技有限公司','平湖市兆涌五金塑胶制造有限公司','嘉兴凯隆智能科技股份有限公司'],
     // curCompany: '',
     count_no: 0,  //no：不 
@@ -17,6 +17,8 @@ export default new Vuex.Store({
     csmc: '',
     name: '',
     phone: '',
+
+    date: '', //今天日期
   },
   mutations: {
     //保存当前页面Y轴的滚动条位置
@@ -47,6 +49,9 @@ export default new Vuex.Store({
     },
     changePhone(state,val) {
       state.phone = val
+    },
+    saveDate(state, val) {
+      state.date = val
     }
   },
   actions: {

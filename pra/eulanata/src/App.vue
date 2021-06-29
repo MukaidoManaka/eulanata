@@ -5,15 +5,20 @@
     </keep-alive>
 
     <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <!-- <Footer /> -->
   </div>
 </template>
 
 <script>
+import Footer from '@/components/Footer'
   export default {
     data() {
       return {
-        active: 0
+        
       }
+    },
+    components: {
+      Footer
     }
   }
 </script>

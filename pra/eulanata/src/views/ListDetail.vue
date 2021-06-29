@@ -26,7 +26,7 @@
       </van-cell-group>
       
       <van-cell-group>
-        <van-cell title="货物详情" is-link @click="readGoods" />
+        <van-cell title="货物详情" is-link @click="readGoods" class="readGoods"/>
       </van-cell-group>
       <div class="remark">
         <!-- <span>备注:</span> -->
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-// import { homeListDetail } from '@/api/all.js'
+import { gzhJump } from '@/api/all.js'
 export default {
   name: 'ListDetail',
   data() {
@@ -46,6 +46,7 @@ export default {
       data1:[],
       //进来这页面的是哪个djbh
       djbh:'',
+      id: 0,
     }
   },
   methods: {
@@ -54,32 +55,23 @@ export default {
     },
     readGoods() {
       this.$router.push({name: 'GoodsDetail',params: {
-        djbh:this.data.djbh,
-        item: this.$route.params.item, 
+        id: this.$route.params.id, 
         status: this.data.status,
-        company: this.data.company
         }
       })
     }
   },
   created() {
-    if(this.$route.params.item) {
-      console.log('外面传进来的item',this.$route.params.item)
-      this.data = this.$route.params.item
+    if(this.$route.params.id) {
+      console.log('外面传进来的id',this.$route.params.id)
+      this.id = this.$route.params.id
+      gzhJump(this.id).then(res => {
+        this.data = res
+      })
       this.data.status = this.$route.params.status
     }else {
       console.log(22222222222)
-      gzhJump("D000124879").then(res => {
-        console.log("shuaxin--",res)
-        this.data = res
-        if(res.shbz == 1) {
-          this.data.status = '未完成'
-        }else if(res.shbz == 0) {
-          this.data.status = '未发货'
-        }else {
-          this.data.status = '已完成'
-        }
-      })
+      
     }
     
 
@@ -108,5 +100,9 @@ export default {
       padding-left: 20px;
       border:1px solid #333;
     }
+  }
+  .readGoods {
+    margin-top: .05rem;
+    font-weight: 600;
   }
 </style>

@@ -19,7 +19,7 @@
             <span class="span">{{item.spjldw}}</span>
           </div>
           <div class="relative">
-            <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入" :error="error" />
+            <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入" />
             <span class="span">{{item.spjldw}}</span>
           </div>
         </van-cell-group>
@@ -50,11 +50,12 @@ export default {
       checkNum: [],
       canSubmit: true, //是否能提交
       company: '',
+      id: 0,
     }
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'WriteOrder',params: {item: this.$route.params.item,status: this.$route.params.status}})
+      this.$router.push({name: 'WriteOrder',params: {id: this.$route.params.id,status: this.$route.params.status}})
     },
     save() {
       console.log('保存时的num',this.num)
@@ -92,7 +93,7 @@ export default {
       //为true才让保存 并跳转
       if(this.canSubmit) {
         this.$router.push({name:'WriteOrder',params: {
-          item: this.$route.params.item,
+          id: this.$route.params.id,
           status: this.$route.params.status,
           sp: this.sp,
           num: this.num
@@ -118,11 +119,7 @@ export default {
       console.log('不包含num')
     }
     
-    //路由携带的公司
-    this.company = this.$route.params.company
-
-    this.searchParams.djbh = this.$route.params.djbh
-    goodsDetail(this.searchParams,this.company).then(res => {
+    goodsDetail({"order": this.$route.params.id}).then(res => {
       console.log('res',res)
       this.data = res
 

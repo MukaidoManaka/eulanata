@@ -22,7 +22,7 @@
       </van-cell-group>
       
       <van-cell-group>
-        <van-cell title="去填写数量" is-link @click="readGoods" />
+        <van-cell title="填写送货单" is-link @click="readGoods" class="readGoods"/>
       </van-cell-group>
       <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" v-model="submitObj.remark"></textarea>
       <van-button type="primary" class="submit" @click="submit" :disabled="disabled">提 交</van-button>
@@ -46,6 +46,7 @@ export default {
         csbm: `${this.$store.state.csbm}`,
       },
       disabled: false,
+      id: 0,
     }
   },
   methods: {
@@ -57,19 +58,15 @@ export default {
       //如果包含num属性 那就说明在那边填过
       if(Object.keys(this.$route.params).includes('num')) {
         this.$router.push({name: 'WwcDetail',params: {
-          djbh:this.data.djbh,
-          item: this.$route.params.item, 
+          id: this.$route.params.id,
           status: this.data.status,
           num: this.$route.params.num,
-          company: this.data.company
           }
         })
       }else {
         this.$router.push({name: 'WwcDetail',params: {
-          djbh:this.data.djbh,
-          item: this.$route.params.item, 
+          id: this.$route.params.id, 
           status: this.data.status,
-          company: this.data.company
           }
         })
       }
@@ -95,13 +92,17 @@ export default {
     }
   },
   created() {
-    if(this.$route.params.item) {
-      console.log('外面传进来的item',this.$route.params.item)
-      this.data = this.$route.params.item
+    if(this.$route.params.id) {
+      console.log('外面传进来的id',this.$route.params.id)
+      this.id = this.$route.params.id
+      gzhJump(this.id).then(res => {
+        this.data = res
+      })
+      
       this.data.status = this.$route.params.status
     }else {
       console.log(22222222222)
-      gzhJump("D000124879").then(res => {
+      gzhJump(60).then(res => {
         console.log("shuaxin--",res)
         this.data = res
         if(res.shbz == 1) {
@@ -156,5 +157,9 @@ export default {
     width: 90%;
     margin: .1rem 5%;
     padding: 5px;
+  }
+  .readGoods {
+    font-weight: 600;
+    margin-top: .05rem;
   }
 </style>

@@ -37,7 +37,7 @@
 
           <!-- 如果接收数量大于0且小于总数  说明此货物是发了一定数量 还剩一些数量 给input框 -->
           <div class="relative" v-if="item.recv_num - 0 >= 0 && item.recv_num - 0 < item.require_num">
-            <van-field v-model="num[index]" label="此次发送" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入数量" :error="error" />
+            <van-field v-model="num[index]" label="此次发送" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入数量" />
             <span class="span">{{item.spjldw}}</span>
           </div>
           <!-- <div class="relative" v-if="item.recv_num - 0 > 0">
@@ -72,12 +72,13 @@ export default {
       checkNum: [],
       canSubmit: true, //是否能提交
       hasData: false,
-      company: ''
+      company: '',
+      id: 0,
     }
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'Wwc',params: {item: this.$route.params.item,status: this.$route.params.status}})
+      this.$router.push({name: 'Wwc',params: {id: this.$route.params.id,status: this.$route.params.status}})
     },
     save() {
       console.log('保存时的num',this.num)
@@ -116,7 +117,7 @@ export default {
       //为true才让保存 并跳转
       if(this.canSubmit) {
         this.$router.push({name:'WriteOrder',params: {
-          item: this.$route.params.item,
+          id: this.$route.params.id,
           status: this.$route.params.status,
           sp: this.sp,
           num: this.num
@@ -133,7 +134,7 @@ export default {
         console.log('有值填错了')
       }else {
       }
-    }
+    },
   },
   created() {
     //来回传num是为了点击保存之后到提交页面，他还想返回来看一眼goods页面填的值是多少的话，就得这个num来做简单
@@ -144,11 +145,8 @@ export default {
       console.log('不包含num')
     }
     // this.num = this.$route.params.num
-    //路由携带的公司
-    this.company = this.$route.params.company
-
-    this.searchParams.djbh = this.$route.params.djbh
-    goodsDetail(this.searchParams,this.company).then(res => {
+    
+    goodsDetail({"order": this.$route.params.id}).then(res => {
       console.log('res',res)
       this.data = res
       
