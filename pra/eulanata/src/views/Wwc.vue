@@ -17,14 +17,15 @@
         <van-cell title="订单状态" :value="data.status" />
         <van-cell title="交货地址" :value="data.jhdz" />
         <van-cell title="所属公司" value="平湖凯隆新材料科技有限公司" v-if="data.company === 'pubdatanew'" class="_company"/>
-        <van-cell title="所属公司" value="嘉兴凯隆智能科技股份有限公司" v-if="data.company === 'zy_erp'" class="_company"/>
-        <van-cell title="所属公司" value="平湖市兆涌五金塑胶制造有限公司" v-if="data.company === 'wjfc'" class="_company"/>
+        <!-- <van-cell title="所属公司" value="嘉兴凯隆智能科技股份有限公司" v-if="data.company === 'wjfc'" class="_company"/> -->
+        <van-cell title="所属公司" value="平湖市兆涌五金塑胶制造有限公司" v-if="data.company === 'zy_erp'" class="_company"/>
+        <van-cell title="所属公司" value="嘉兴市鸿镕五金塑胶制品股份有限公司" v-if="data.company === 'hong'" class="_company"/>
       </van-cell-group>
       
       <van-cell-group>
         <van-cell title="填写送货单" is-link @click="readGoods" class="readGoods"/>
       </van-cell-group>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注" v-model="submitObj.remark"></textarea>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注(非必填)" v-model="submitObj.remark"></textarea>
       <van-button type="primary" class="submit" @click="submit" :disabled="disabled">提 交</van-button>
     </div>
   </div>
@@ -32,6 +33,7 @@
 
 <script>
 import { submitGoods, gzhJump } from '@/api/all.js'
+import { setStorage, getStorage } from '@/assets/js/utils.js'
 export default {
   name: 'ListDetail',
   data() {
@@ -82,13 +84,35 @@ export default {
 
       console.log('提交前的submitObj',this.submitObj)
 
-      submitGoods(this.submitObj).then(res => {
-        console.log('提交啦',res)
-        if(res.detail == 'success') {
-          this.$toast.success('提交成功！')
-          this.$router.push({name: 'Home'})
-        }
-      })
+      //不为undefined 填写了货物
+      if(this.submitObj.sp != undefined) {
+        submitGoods(this.submitObj).then(res => {
+          console.log('提交啦',res)
+          if(res.detail == 'success') {
+            this.$toast.success({
+              message: '   提交成功   凯隆已收到您的送货单',
+              duration: 5000
+            })
+            //提交成功的单子存其id进sessionStorage, [10,55,32]
+            if(getStorage('submitId')) {
+              let j = JSON.parse(getStorage('submitId'))
+              j.push(this.id)
+              let k = JSON.stringify(j)
+              setStorage('submitId',k)
+            }else {
+              //初次submitId肯定不存在 进来这里
+              let arr = []
+              arr.push(this.id)
+              let arr2 = JSON.stringify(arr)
+              setStorage('submitId',arr2)
+            }
+          }
+          this.$router.push({name: 'Home',params:{id: this.id}})
+        })
+      }else {
+        console.log('sp的值',this.submitObj.sp)
+        this.$toast.fail("请至少填写一样所送货物")
+      }
     }
   },
   created() {
@@ -97,12 +121,13 @@ export default {
       this.id = this.$route.params.id
       gzhJump(this.id).then(res => {
         this.data = res
+        this.data.status = this.$route.params.status
       })
       
-      this.data.status = this.$route.params.status
+      
     }else {
       console.log(22222222222)
-      gzhJump(60).then(res => {
+      gzhJump(630).then(res => {
         console.log("shuaxin--",res)
         this.data = res
         if(res.shbz == 1) {
@@ -161,5 +186,15 @@ export default {
   .readGoods {
     font-weight: 600;
     margin-top: .05rem;
+  }
+  .readGoods:before {
+    position: absolute;
+    left: 8px;
+    color: #ee0a24;
+    font-size: 14px;
+    content: '*';
+  }
+  .section .van-cell__right-icon {
+    color: #323232;
   }
 </style>

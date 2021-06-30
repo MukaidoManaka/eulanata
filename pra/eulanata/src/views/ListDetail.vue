@@ -21,8 +21,9 @@
         <van-cell title="订单状态" :value="data.status" />
         <van-cell title="交货地址" :value="data.jhdz" />
         <van-cell title="所属公司" value="平湖凯隆新材料科技有限公司" v-if="data.company === 'pubdatanew'" class="_company"/>
-        <van-cell title="所属公司" value="嘉兴凯隆智能科技股份有限公司" v-if="data.company === 'zy_erp'" class="_company"/>
-        <van-cell title="所属公司" value="平湖市兆涌五金塑胶制造有限公司" v-if="data.company === 'wjfc'" class="_company"/>
+        <!-- <van-cell title="所属公司" value="嘉兴凯隆智能科技股份有限公司" v-if="data.company === 'wjfc'" class="_company"/> -->
+        <van-cell title="所属公司" value="平湖市兆涌五金塑胶制造有限公司" v-if="data.company === 'zy_erp'" class="_company"/>
+        <van-cell title="所属公司" value="嘉兴市鸿镕五金塑胶制品股份有限公司" v-if="data.company === 'hong'" class="_company"/>
       </van-cell-group>
       
       <van-cell-group>
@@ -67,8 +68,9 @@ export default {
       this.id = this.$route.params.id
       gzhJump(this.id).then(res => {
         this.data = res
+        this.data.status = this.$route.params.status
       })
-      this.data.status = this.$route.params.status
+      
     }else {
       console.log(22222222222)
       
@@ -104,5 +106,8 @@ export default {
   .readGoods {
     margin-top: .05rem;
     font-weight: 600;
+  }
+  .section .van-cell__right-icon {
+    color: #323232;
   }
 </style>

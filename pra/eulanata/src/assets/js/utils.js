@@ -81,22 +81,35 @@ export function getUrlParam(name) {
     if (r != null) return unescape(r[2]); return null;
 }
 
-// 获取 localStorage
+// // 获取 localStorage
+// export function getStorage(key) {
+//     return window.localStorage.getItem(key)
+//   }
+// // 设置 localStorage
+// export function setStorage(key, value) {
+// return window.localStorage.setItem(key, value)
+// }
+// // 删除 localStorage
+// export function removeStorage(key) {
+// return Cookies.remove(key)
+// }
+
+// 获取 sessionStorage
 export function getStorage(key) {
-    return window.localStorage.getItem(key)
+    return window.sessionStorage.getItem(key)
   }
-// 设置 localStorage
+// 设置 sessionStorage
 export function setStorage(key, value) {
-return window.localStorage.setItem(key, value)
+    return window.sessionStorage.setItem(key, value)
 }
-// 删除 localStorage
-export function removeStorage(key) {
-return Cookies.remove(key)
-}
+
 
 //2021-06-27T00:00:00 这种值变成2021-06-27,T切割不稳，万一以后不是T呢
 export function date(date) {
-    return date.slice(0,10)
+    if(date != undefined) {
+        return date.slice(0,10)
+    }
+    // return date.split('T')[0]
 }
 
 //2020年最新的手机号检测
@@ -106,13 +119,17 @@ export function checkMobile(num) {
 }
 
 //把url后面的参数转成obj
+// export function transformObj(url) {
+//     let a = url.split('?')[1]
+//     let b = a.split('&')
+//     let obj = {}
+//     for (let i in b) {
+//         let c = b[i].split('=')
+//         obj[c[0]] = c[1]
+//     }
+//     console.log(obj)
+// }
 export function transformObj(url) {
     let a = url.split('?')[1]
-    let b = a.split('&')
-    let obj = {}
-    for (let i in b) {
-        let c = b[i].split('=')
-        obj[c[0]] = c[1]
-    }
-    console.log(obj)
+    return a.split('=')[1]
 }

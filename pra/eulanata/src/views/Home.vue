@@ -66,7 +66,10 @@
                   <div class="_top">
                     <span v-if="!(item.xshth === '' && item.khhth === '')">客户合同号：{{item.khhth}}</span>
                     <span v-if="item.xshth === '' && item.khhth === ''">单据编号：{{item.djbh}}</span>
-                    <van-tag plain type='primary' :class="'bindClass' + `${active}`">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
+                    <div>
+                      <van-tag plain type='primary' v-if="func(item.id)" style="margin-right:3px">已提交</van-tag>
+                      <van-tag plain type='primary' :class="'bindClass' + `${active}`">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
+                    </div>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '未发货' : '已完成'}}</van-tag> -->
                     <!-- <van-tag plain type="warning">{{item.status}}</van-tag> -->
@@ -109,7 +112,7 @@
 
 <script>
 import Footer from '@/components/Footer'
-import { dateFormat, timestamp } from '@/assets/js/utils'
+import { dateFormat, timestamp, setStorage, getStorage } from '@/assets/js/utils.js'
 import { homeList, goodsDetail, userInfo, getDate } from '@/api/all.js'
 export default {
   name: 'Home',
@@ -176,34 +179,11 @@ export default {
       b:0,
       c:0,
       x_arr: [],  //用来存goingArr，初始就计算好going第一页的percent
+      submitId: 0,
     }
   },
   methods: {
     onLoad() {
-      //判断是在哪一栏执行这个上拉加载动作
-      // if(this.active === 0) {
-      //   //如果这个为true，就说明目前是有搜索条件在的，是onload一个搜索条件下的剩余列表 ，page什么的至少也是第二第三页
-      //   if(this.whetherSearching) {
-      //     this.page += 1
-      //     this.searchParams.page = this.page
-      //     homeList(this.searchParams).then(res => {
-      //       console.log('某某搜索条件下的onload',res)
-      //       if (res.results.length > 0) {
-      //         this.currentArr = [...currentArr,...res.results]
-      //         this.waitArr = this.currentArr
-      //       }
-      //     })
-      //   }else {
-
-      //   }
-
-      // }
-
-
-      //onload时有两种情况的考虑：①此时是否有搜索条件？反正每次请求的东东都在searchParams里存的好好的，有无搜索条件都用searchParams就没错
-      //②此时列表处于哪一栏？每次切换栏目的时候都clear了searchParams，所以也没事
-      //综上，昨天“灵机一动”地去定义whetherSearching这个变量以及还去区分是哪一栏进行的onload动作的我是个🤡了
-      //不对，②还是有必要的，已经onlaod过的数据放waitArr goingArr finishedArr里面，不然三栏互相切换的时候每次都只有新请求10条
 
       if(this.active === 0) {
         if(this.waitPage === null) {
@@ -795,6 +775,16 @@ export default {
     },
     focusEnd() {
       this.$refs.end.blur()
+    },
+    //提交成功的单子存其id进sessionStorage，为true就显示 “已提交”这个tag
+    func(id) {
+      let array = JSON.parse(getStorage('submitId'))
+      for (let o in array) {
+        if(array[o] == id)  {
+          return true
+        }
+      }
+      return false
     }
   },
   created() {
@@ -805,6 +795,8 @@ export default {
       duration: this.loadload
     });
 
+    setStorage('openid','G00012openid')
+    
     //获取厂商信息
     userInfo().then(res => {
       console.log('厂商信息',res)
@@ -897,21 +889,31 @@ export default {
     })
 
   },
-  beforeRouteLeave(to, from, next){
-    console.log('window',window.scrollY)
-    let position = window.scrollY
-    console.log('position的值',position)
-    this.$store.commit('savePosition', position) //离开路由时把位置存起来
-    next()
-  },
+  // beforeRouteLeave(to, from, next){
+  //   console.log('window',window.scrollY)
+  //   let position = window.scrollY
+  //   console.log('position的值',position)
+  //   this.$store.commit('savePosition', position) //离开路由时把位置存起来
+  //   next()
+  // },
   activated() {
     console.log('activeted')
-    let position = this.$store.state.position //返回页面取出来
-    window.scrollTo(0, 800)
+    console.log(this.$route.params.id)
+    this.func(this.$route.params.id)
+    //只有里面提交成功才会传回来id，强制更新tag
+    if(this.$route.params.id) {
+      this.$forceUpdate()
+    }
+    
+    // let position = this.$store.state.position //返回页面取出来
+    // window.scrollTo(0, 800)
     // this.$nextTick(() => {
     //   let position = this.$store.state.position //返回页面取出来
     //   window.scrollTo(0, 300 + position)
     // })
+  },
+  beforeRouteUpdate(to,from,next) {
+    console.log('id',this.$route.params.id)
   },
   mounted() {
   },
@@ -959,7 +961,7 @@ export default {
       height: 0.3rem;
       border-radius: .3rem;
       border: 1px solid #37AE52;
-      font-size: 22px;
+      font-size: 20px;
       display: flex;
       justify-content: center;
       align-items: center;

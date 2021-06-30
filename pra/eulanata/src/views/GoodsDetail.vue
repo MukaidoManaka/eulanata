@@ -24,6 +24,10 @@
           </div>
         </van-cell-group>
       </div>
+      <div class="image" v-if="display">
+        <img :src="img" alt="">
+        <p>没有查到相关货物数据</p>
+      </div>
     </div>
     <div class="footer">
 
@@ -47,6 +51,8 @@ export default {
       },
       company: '',
       id: 0,
+      img: require('@/assets/404_images/404.png'),
+      display: false,
     }
   },
   methods: {
@@ -60,6 +66,11 @@ export default {
     goodsDetail({"order":this.id}).then(res => {
       console.log('res',res)
       this.data = res
+
+      if(res.length == 0) {
+        console.log("空空空空空空")
+        this.display = true
+      }
 
       //不用var会报i not defined,把i当vue data里的变量
       for (var i in this.data) {
@@ -105,5 +116,19 @@ export default {
 .footer {
   width: 100%;
   height: 0.2rem;
+}
+.image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  img {
+    width: 100%;
+  }
+  p {
+    color: #aaa;
+    margin-top: .1rem;
+  }
 }
 </style>

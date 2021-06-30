@@ -1,7 +1,7 @@
 <template>
   <div class="wwcDetail">
     <div class="header">
-       <van-nav-bar title="商品发货填写" left-text="返回" right-text="保存" @click-right="save" left-arrow @click-left="returnPrev"></van-nav-bar>
+       <van-nav-bar title="商品发货填写" left-text="返回" :right-text="rightBtn" @click-right="save" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
     <div class="section">
       <div v-for="(item, index) in data" :key="item.id">
@@ -30,7 +30,7 @@
             <p>已发</p>
             <div class="ku">
               <div>{{item.recv_num}}</div>
-              <div class="shengyu">/(剩余{{(item.require_num - 0) - (item.recv_num - 0)}})</div>
+              <div class="shengyu">/(剩余{{(item.require_num - 0) - (item.recv_num - 0) > 0 ? (item.require_num - 0) - (item.recv_num - 0) : 0}})</div>
             </div>
             <span class="span">{{item.spjldw}}</span>
           </div>
@@ -45,6 +45,10 @@
             <span class="span">{{item.spjldw}}</span>
           </div> -->
         </van-cell-group>
+      </div>
+      <div class="image" v-if="display">
+        <img :src="img" alt="">
+        <p>没有查到相关货物数据</p>
       </div>
     </div>
     <div class="footer">
@@ -74,6 +78,9 @@ export default {
       hasData: false,
       company: '',
       id: 0,
+      rightBtn: '保存',
+      img: require('@/assets/404_images/404.png'),
+      display: false,
     }
   },
   methods: {
@@ -110,13 +117,14 @@ export default {
       //checkNum里面但凡有一个false都不能提交
       if(this.checkNum.includes(false)) {
         this.canSubmit = false
+        this.$toast.fail('保存失败，请检查填写内容')
       }else {
         this.canSubmit = true
       }
 
       //为true才让保存 并跳转
       if(this.canSubmit) {
-        this.$router.push({name:'WriteOrder',params: {
+        this.$router.push({name:'Wwc',params: {
           id: this.$route.params.id,
           status: this.$route.params.status,
           sp: this.sp,
@@ -150,6 +158,11 @@ export default {
       console.log('res',res)
       this.data = res
       
+      if(res === null) {
+        console.log("空空空空空空")
+        this.rightBtn = ''
+        this.display = true
+      }
 
       //不用var会报i not defined,把i当vue data里的变量
       for (var i in this.data) {
@@ -218,5 +231,19 @@ export default {
 .footer {
   width: 100%;
   height: 0.2rem;
+}
+.image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  img {
+    width: 100%;
+  }
+  p {
+    color: #aaa;
+    margin-top: .1rem;
+  }
 }
 </style>

@@ -1,33 +1,34 @@
 import axios from 'axios'
 import store from '@/store'
-import {
-  Toast
-} from 'vant'
+import { getStorage, setStorage } from '@/assets/js/utils.js'
+import { Toast } from 'vant'
 // import {
 //   api
 // } from '@/config'
-// create an axios instance
+
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+axios.defaults.headers['Authorization'] = 'qms'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 const service = axios.create({
-  // baseURL: api.base_api, // url = base url + request url
   baseURL: process.env.VUE_APP_BASE_API_URL,
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 30000 ,// request timeout,
-  headers: {'Openid': 'G00016openid'}
+  // headers: {'Openid': 'G00016openid'}
 })
 
 // request拦截器 request interceptor
 service.interceptors.request.use(
   config => {
-    // 不传递默认开启loading
-    if (!config.hideloading) {
-      // loading
-      // Toast.loading({
-      //   forbidClick: true
-      // })
+    //请求前判断是否有openid，有就给header加上
+    if(getStorage('openid')) {
+      config.headers.Openid = getStorage('openid')
+    }else {
+      Toast.fail({
+        message: '无效的供应商openid',
+        duration: 5000
+      })
     }
-    // config.headers['Authorization'] = 'eyJ3eE1wVXNlciI6eyJibG9vZENhcmQiOm51bGwsImJsb29kU3RhdGlvbklkIjowLCJjaXR5IjoxMjAxMDAsImNvdW50cnkiOm51bGwsImNvdW50eSI6MTIwMTAxLCJjcmVhdGVCeSI6IiIsImNyZWF0ZVRpbWUiOjE1NzU1MzYwNjgwMDAsImRlbEZsYWciOiIwIiwiaGVhZEltZ1VybCI6bnVsbCwiaWQiOjEsImlkQ2FyZCI6IjEzMDgyNDE5OTMwMTIxNDAxOCIsImluQ29tZSI6bnVsbCwiaW50ZWdyYWxzIjpudWxsLCJpbnZpdGVDb2RlIjoiMDAwMDAxIiwibGFzdERhdGUiOm51bGwsIm5hbWUiOiLosKLnmpMiLCJuaWNrbmFtZSI6bnVsbCwib3BlbklkIjoib3o2cWJ2MWU0UTg0WjVjMjRPNHlxd2ZyLVdrbyIsInBob25lIjoiMTg2MDA4NDcxNjQiLCJwaW55aW4iOiJ4IiwicHJpdmlsZWdlIjpudWxsLCJwcm92aW5jZSI6MTIwMDAwLCJyZWFsTmFtZSI6ZmFsc2UsInJlbGF0ZWRQYXJ0eUlkIjowLCJyZW1hcmsiOm51bGwsInNleCI6bnVsbCwic3RhdHVzIjpudWxsLCJ0b2tlbiI6bnVsbCwidG93biI6MTIwMTAxMDAyLCJ1bmlvbklkIjoiL2ltZ1VwbG9hZC9xckNvZGUvMS5qcGciLCJ1cGRhdGVCeSI6IiIsInVwZGF0ZVRpbWUiOjE1ODU1MjkyNjkzMjh9LCJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlvbklkIjoiL2ltZ1VwbG9hZC9xckNvZGUvMS5qcGciLCJvcGVuSWQiOiJvejZxYnYxZTRRODRaNWMyNE80eXF3ZnItV2tvIiwiaWQiOjEsImV4cCI6MTU4NjgyNTI2OSwic3RhdGlvbklkIjowfQ.1zYearYiD1Jzkwhip11ZQ-Ar0ub85PPdr3rh5EH1kqc'
+    
     if (store.getters.token) {
       config.headers['Authorization'] = store.getters.token
     }
