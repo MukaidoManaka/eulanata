@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'WriteOrder',params: {id: this.$route.params.id,status: this.$route.params.status}})
+      this.$router.push({name: 'WriteOrder',query: {id: this.$route.params.id,status: this.$route.params.status}})
     },
     save() {
       console.log('保存时的num',this.num)
@@ -76,6 +76,7 @@ export default {
             obj.spbm = this.data[i].spbm
             obj.spmc = this.data[i].spmc
             obj.num = this.num[i] - 0
+            obj.spjbsx = this.data[i].spjbsx
             this.sp.push(obj)
           }
           this.checkNum[i] = true
@@ -100,7 +101,7 @@ export default {
 
       //为true才让保存 并跳转
       if(this.canSubmit) {
-        this.$router.push({name:'WriteOrder',params: {
+        this.$router.push({name:'WriteOrder',query: {
           id: this.$route.params.id,
           status: this.$route.params.status,
           sp: this.sp,
@@ -141,6 +142,8 @@ export default {
         this.activeNames.push(this.data[i].spmc)
       }
       console.log('折叠面板数组值',this.activeNames)
+    }).catch(err => {
+      console.log('errrrrrrrrrrrrrrrrr',err)
     })
     
     

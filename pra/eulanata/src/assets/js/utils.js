@@ -81,14 +81,14 @@ export function getUrlParam(name) {
     if (r != null) return unescape(r[2]); return null;
 }
 
-// // 获取 localStorage
-// export function getStorage(key) {
-//     return window.localStorage.getItem(key)
-//   }
-// // 设置 localStorage
-// export function setStorage(key, value) {
-// return window.localStorage.setItem(key, value)
-// }
+// 获取 localStorage
+export function getLocal(key) {
+    return window.localStorage.getItem(key)
+}
+// 设置 localStorage
+export function setLocal(key, value) {
+    return window.localStorage.setItem(key, value)
+}
 // // 删除 localStorage
 // export function removeStorage(key) {
 // return Cookies.remove(key)
@@ -119,17 +119,17 @@ export function checkMobile(num) {
 }
 
 //把url后面的参数转成obj
-// export function transformObj(url) {
-//     let a = url.split('?')[1]
-//     let b = a.split('&')
-//     let obj = {}
-//     for (let i in b) {
-//         let c = b[i].split('=')
-//         obj[c[0]] = c[1]
-//     }
-//     console.log(obj)
-// }
 export function transformObj(url) {
     let a = url.split('?')[1]
-    return a.split('=')[1]
+    let b = a.split('&')
+    let obj = {}
+    for (let i in b) {
+        let c = b[i].split('=')
+        obj[c[0]] = c[1]
+    }
+    console.log(obj)
 }
+// export function transformObj(url) {
+//     let a = url.split('?')[1]
+//     return a.split('=')[1]
+// }

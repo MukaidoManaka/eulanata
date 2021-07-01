@@ -8,14 +8,9 @@
         <van-cell title="单据编号" :value="data.djbh" />
         <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
-      <!-- <van-cell-group>
-        <van-cell title="合计不含税金额" :value="data.hjbhsje" />
-        <van-cell title="合计含税金额" :value="data.hjhsje" />
-        <van-cell title="合计商品税额" :value="data.hjspse" />
-      </van-cell-group> -->
       <van-cell-group>
-        <van-cell title="采购合同号" :value="data.khhth" />
-        <van-cell title="销售合同号" :value="data.xshth" />
+        <van-cell title="采购合同号" :value="data.xshth" />
+        <van-cell title="客户合同号" :value="data.khhth" />
       </van-cell-group>
       <van-cell-group>
         <van-cell title="订单状态" :value="data.status" />
@@ -50,6 +45,8 @@ export default {
         sp: [],
         csmc: `${this.$store.state.csmc}`,
         csbm: `${this.$store.state.csbm}`,
+        pk: 0,
+
       },
       disabled: false,
       id: 0,
@@ -79,8 +76,9 @@ export default {
     submit() {
       this.submitObj.djbh = this.data.djbh
       this.submitObj.xshth = this.data.xshth
+      this.submitObj.pk = this.id
 
-      this.submitObj.sp = this.$route.params.sp
+      this.submitObj.sp = this.$route.query.sp
       // for(let i in this.$route.params.sp) {
       //   this.submitObj.sp.push(this.$route.params.sp[i])
       // }
@@ -122,36 +120,38 @@ export default {
     },
     
   },
-  created() {
+  mounted() {
 
     setStorage('openid','G00012openid')
 
-    if(this.$route.params.id) {
-      console.log('外面传进来的id',this.$route.params.id)
-      this.id = this.$route.params.id
+    if(this.$route.query.id) {
+      console.log('外面传进来的id',this.$route.query.id)
+      console.log('外面传进来的route',this.$route)
+      this.id = this.$route.query.id
       gzhJump(this.id).then(res => {
         this.data = res
-        this.data.status = this.$route.params.status
+        this.data.status = this.$route.query.status
       })
       
     }else {
+      console.log('不进else')
       let p = location.href
       console.log(p)
-      // let obj = transformObj(p)
-      // console.log(obj)
-      // gzhJump(141).then(res => {
-      //   console.log("shuaxin--",res)
-      //   this.data = res
-      //   if(res.shbz == 1) {
-      //     this.data.status = '未完成'
-      //     this.$router.push({name:'Wwc',params:{item: res, status: '未完成'}})
-      //   }else if(res.shbz == 0) {
-      //     this.data.status = '未发货'
-      //   }else {
-      //     this.data.status = '已完成'
-      //     this.$router.push({name:'ListDetail',params:{item: res, status: '已完成'}})
-      //   }
-      // })
+      let obj = transformObj(p)
+      console.log(obj)
+      gzhJump(obj.id).then(res => {
+        console.log("shuaxin--",res)
+        this.data = res
+        if(res.shbz == 1) {
+          this.data.status = '未完成'
+          this.$router.push({name:'Wwc',params:{item: res, status: '未完成'}})
+        }else if(res.shbz == 0) {
+          this.data.status = '未发货'
+        }else {
+          this.data.status = '已完成'
+          this.$router.push({name:'ListDetail',params:{item: res, status: '已完成'}})
+        }
+      })
     }
     
   },

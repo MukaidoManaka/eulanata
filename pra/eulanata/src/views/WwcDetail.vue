@@ -99,6 +99,7 @@ export default {
             obj.spbm = this.data[i].spbm
             obj.spmc = this.data[i].spmc
             obj.num = this.num[i] - 0
+            obj.spjbsx = this.data[i].spjbsx
             this.sp.push(obj)
           }
           this.checkNum[i] = true

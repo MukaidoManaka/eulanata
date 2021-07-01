@@ -8,12 +8,12 @@
         </template>
       </van-nav-bar>
       <!-- 搜索按钮的弹出框 -->
-      <van-overlay :show="show" @click="overlay">
+      <van-overlay :show="show" @click="overlay" class="overlay_search">
         <van-cell-group>
           <div class="cross">
             <van-icon name="cross" @click="closeSearch"/>
           </div>
-          <van-field label="合同号" placeholder="输入采购/销售合同号" v-model="searchParams.xshth" clearable></van-field>
+          <van-field label="合同号" placeholder="输入采购/客户合同号" v-model="searchParams.xshth" clearable></van-field>
           <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间" @focus="focusStart" ref="start"></van-field>
           <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间" @focus="focusEnd" ref="end"></van-field>
           <van-radio-group v-model="radio" checked-color="#60C08B">
@@ -64,11 +64,11 @@
                 <!-- 右边订单相关数据 -->
                 <div class="right_item">
                   <div class="_top">
-                    <span v-if="!(item.xshth === '' && item.khhth === '')">客户合同号：{{item.khhth}}</span>
+                    <span v-if="!(item.xshth === '' && item.khhth === '')">采购合同号：{{item.xshth}}</span>
                     <span v-if="item.xshth === '' && item.khhth === ''">单据编号：{{item.djbh}}</span>
                     <div>
                       <van-tag plain type='primary' v-if="func(item.id)" style="margin-right:3px">已提交</van-tag>
-                      <van-tag plain type='primary' :class="'bindClass' + `${active}`">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
+                      <van-tag plain type='primary' :class="'bindClass' + `${active}`" v-if="!item.going">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
                     </div>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '未发货' : '已完成'}}</van-tag> -->
@@ -77,7 +77,7 @@
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
                     <div class="_bottom_left">
-                      <p>销售合同号: {{item.xshth}} </p>
+                      <p>客户合同号: {{item.khhth}} </p>
                       <p>交货日期：{{$date(item.fsrq)}} </p>
                     </div>
                     <!-- <span class="progress" v-show="active === 1"> 已送：约{{item.percent}}% </span> -->
@@ -105,6 +105,33 @@
         @cancel="cancelDate"
       />
     </van-popup>
+
+    <van-overlay :show="help" class="overlay_help"> 
+      <div class="help">
+        <div class="content">
+          <h3>系统说明</h3>
+          <ul>
+            <li class="font18">使用此系统的目的：</li>
+            <li>让我们能提前知道今天你有货要送来，做好准备</li>
+            <li class="font18">流程：</li>
+            <li>点击任意送货单——><span>填写送货单</span>——>填写数量——><span>保存</span>——><span>提交</span></li>
+            <li></li>
+            <li class="font18">订单状态解释：</li>
+            <li>未发货：未发货的订单</li>
+            <li>未完成：订单仅部分发货</li>
+            <li>已完成：订单中的货品全部发货</li>
+            <li>已提交：指您刚刚提交成功的订单</li>
+            <li></li>
+            <li class="red">注：需要等到我司相关负责人员入库验收货物之后，此页面上的订单状态才会改变</li>
+            <li class="red">住：请根据实际情况如实填写</li>
+            <li></li>
+            <li></li>
+          </ul>
+          <van-checkbox v-model="checked" shape="square" style="margin-top:5px">下次不再弹出</van-checkbox>
+        </div>
+        <div class="iknow" @click="closeHelp">我知道了</div>
+      </div>
+    </van-overlay>
     <Footer :currentIndex = '0' />
     <!-- <div class="blankFooter"></div> -->
   </div>
@@ -112,7 +139,7 @@
 
 <script>
 import Footer from '@/components/Footer'
-import { dateFormat, timestamp, setStorage, getStorage } from '@/assets/js/utils.js'
+import { dateFormat, timestamp, setLocal, getStorage, getLocal, setStorage } from '@/assets/js/utils.js'
 import { homeList, goodsDetail, userInfo, getDate } from '@/api/all.js'
 export default {
   name: 'Home',
@@ -130,8 +157,9 @@ export default {
         '100%': '#6149f6',
       },
       
-      show: false,//overlay的显隐
+      show: false,//overlay_search的显隐
       showPop: false,//popup的显隐
+      help: false,  //帮助（使用指南）的显隐
       active: 0,  //tab处于哪一栏
       minDate: new Date(2021, 0, 1),
       maxDate: new Date(2025, 5, 1),
@@ -162,6 +190,7 @@ export default {
       formatDate: '',
       startOrEnd: '', //此时是在选择起始还是截至时间  start/end
       radio: "1", //搜索框中的单选按钮，这东西得是字符串，就能默认选中了
+      checked: false, //复选框 不再弹出
       searchParams: {
         xshth: '',
         startdate: '',
@@ -429,7 +458,7 @@ export default {
       console.log('active',this.active)
       //0表示点击事件时tab处于未发货这一栏，就去填写页
       if (this.active === 0 ) {
-        this.$router.push({name: 'WriteOrder', params: {id, status: '未发货'}})
+        this.$router.push({name: 'WriteOrder', query: {id, status: '未发货'}})
       }else if(this.active === 1) {
         this.$router.push({name:'Wwc',params:{id, status: '未完成'}})
       }else {
@@ -746,8 +775,8 @@ export default {
       }
       
 
-      // 采购合同号，销售合同号，交货日期，合计不含税金额，单据编号
-      // xshth，xshth，fsrq，hjbhsje djbh
+      // 采购合同号，客户合同号，交货日期，合计不含税金额，单据编号
+      // xshth，khhth，fsrq，hjbhsje djbh
 
 
     },
@@ -785,6 +814,17 @@ export default {
         }
       }
       return false
+    },
+    closeHelp() {
+      if(this.checked == true) {
+        setLocal('nolongerShow',true)
+      }else {
+        setLocal('nolongerShow',false)
+      }
+      this.help = false
+    },
+    allTrue() {
+      this.help = true
     }
   },
   created() {
@@ -887,6 +927,15 @@ export default {
         }
       }
     })
+
+    //如果为真 那help这个overlay就别弹出来了
+    if(getLocal('nolongerShow') == true) {
+      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+      this.help = false
+    }else {
+      this.help = true
+      console.log('??')
+    }
 
   },
   // beforeRouteLeave(to, from, next){
@@ -1027,6 +1076,40 @@ export default {
       padding-bottom: 7px;
     }
   }
+  .help .iknow {
+    width: 100%;
+    height: 40px;
+    background-color: #06AE56;
+    color: #fff;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 0 0 14px 14px;
+  }
+  .home .help .font18 {
+    font-size: 16px;
+    margin: 3px 0;
+  }
+  .help h3 {
+    text-align: center;
+  }
+  .help li span {
+    color: #6cf;
+  }
+  .home .help .red {
+    color: #F4606C;
+  }
+  .help .content li {
+    font-size: 14px;
+    color: #666;
+  }
+  .help .content {
+    padding: .2rem .1rem;
+    // height: 250px;
+    overflow: scroll;
+  }
+  .help .van-checkbox {
+    font-size: 12px;
+  }
   // 改(覆盖) 一些UI的默认样式
 
   .header .van-nav-bar {
@@ -1039,11 +1122,17 @@ export default {
   .section .van-divider {
     margin: 0;
   }
-  .home .van-overlay .van-cell-group {
+  .home .van-overlay.overlay_search .van-cell-group {
     width: 80%;
     border-radius: 10px;
     padding: 15px 15px 10px;
   }
+  .home .van-overlay.overlay_help .help {
+    width: 70%;
+    border-radius: 15px;
+    background-color: #fff;
+  }
+  
   .cross {
     display: flex;
     justify-content: flex-end;
@@ -1083,12 +1172,20 @@ export default {
   }
   
   //遮罩层要在Tab的滑动横线之上
-  .home .van-overlay {
+  .home .van-overlay.overlay_search {
     z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+  }
+  .home .van-overlay.overlay_help {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
   }
 
   .van-progress {

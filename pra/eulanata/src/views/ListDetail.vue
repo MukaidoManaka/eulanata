@@ -8,14 +8,9 @@
         <van-cell title="单据编号" :value="data.djbh" />
         <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
-      <!-- <van-cell-group>
-        <van-cell title="合计不含税金额" :value="data.hjbhsje" />
-        <van-cell title="合计含税金额" :value="data.hjhsje" />
-        <van-cell title="合计商品税额" :value="data.hjspse" />
-      </van-cell-group> -->
       <van-cell-group>
-        <van-cell title="采购合同号" :value="data.khhth" />
-        <van-cell title="销售合同号" :value="data.xshth" />
+        <van-cell title="采购合同号" :value="data.xshth" />
+        <van-cell title="客户合同号" :value="data.khhth" />
       </van-cell-group>
       <van-cell-group>
         <van-cell title="订单状态" :value="data.status" />

@@ -69,3 +69,7 @@ textarea {
 .van-cell._company .van-cell__value {
   flex: 5;
 }
+
+.home .help .van-checkbox__icon {
+  font-size: 12px;
+}

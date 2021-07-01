@@ -11,6 +11,8 @@
 
 <script>
 import Footer from '@/components/Footer'
+import { getDate, userInfo } from '@/api/all.js'
+import { setStorage } from '@/assets/js/utils.js'
   export default {
     data() {
       return {
@@ -19,6 +21,16 @@ import Footer from '@/components/Footer'
     },
     components: {
       Footer
+    },
+    created() {
+      setStorage('openid','G00012openid')
+      getDate().then(res => {
+        console.log('这是App.vue里面的请求',res)
+      })
+
+      userInfo().then(res => {
+        console.log('这是App.vue里面的请求',res)
+      })
     }
   }
 </script>

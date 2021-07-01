@@ -23,10 +23,10 @@ service.interceptors.request.use(
     if(getStorage('openid')) {
       config.headers.Openid = getStorage('openid')
     }else {
-      Toast.fail({
-        message: '无效的供应商openid',
-        duration: 5000
-      })
+      // Toast.fail({
+      //   message: '无效的供应商openid',
+      //   duration: 5000
+      // })
     }
     
     if (store.getters.token) {
@@ -49,7 +49,7 @@ service.interceptors.response.use(
     // 登录超时,重新登录
     // console.log('------resresres拦截器',response)
     if (response.code === 401) {
-      
+      console.log(401)
     }
     if(response.status === 200) {
       // console.log(200)
@@ -70,7 +70,29 @@ service.interceptors.response.use(
   },
   error => {
     // Toast.clear()
-    console.log('八嘎！', error) // for debug
+    console.log('八嘎！', error.response) // for debug
+
+    if(error.response.status === 401) {
+      Toast.fail({
+        message:error.response.data.detail,
+        duration: 5000
+      })
+    }
+
+    if(error.response.status === 404) {
+      Toast.fail({
+        message:error.response.data.detail,
+        duration: 5000
+      })
+    }
+
+    if(error.response.status === 500) {
+      Toast.fail({
+        message:'服务器开小差了~ 请刷新/重进或者稍微再试',
+        duration: 5000
+      })
+    }
+
     return Promise.reject(error)
   }
 )

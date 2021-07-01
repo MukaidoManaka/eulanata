@@ -10,8 +10,8 @@
         <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="采购合同号" :value="data.khhth" />
-        <van-cell title="销售合同号" :value="data.xshth" />
+        <van-cell title="采购合同号" :value="data.xshth" />
+        <van-cell title="客户合同号" :value="data.khhth" />
       </van-cell-group>
       <van-cell-group>
         <van-cell title="订单状态" :value="data.status" />
@@ -46,6 +46,7 @@ export default {
         sp: [],
         csmc: `${this.$store.state.csmc}`,
         csbm: `${this.$store.state.csbm}`,
+        pk: 0
       },
       disabled: false,
       id: 0,
@@ -76,6 +77,7 @@ export default {
     submit() {
       this.submitObj.djbh = this.data.djbh
       this.submitObj.xshth = this.data.xshth
+      this.submitObj.pk = this.id
 
       this.submitObj.sp = this.$route.params.sp
       // for(let i in this.$route.params.sp) {
@@ -94,6 +96,7 @@ export default {
               duration: 5000
             })
             //提交成功的单子存其id进sessionStorage, [10,55,32]
+            //submitId : 未完成的单子 送货成功存里面；waitId：未发货的单子
             if(getStorage('submitId')) {
               let j = JSON.parse(getStorage('submitId'))
               j.push(this.id)
