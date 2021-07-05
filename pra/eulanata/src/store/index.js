@@ -20,6 +20,8 @@ export default new Vuex.Store({
 
     date: '', //今天日期
     help: true, //默认显示帮助
+    appid: 'wxf67fa2fc7c8643a4',
+    openid: '',
   },
   mutations: {
     //保存当前页面Y轴的滚动条位置
@@ -56,6 +58,10 @@ export default new Vuex.Store({
     },
     saveHelp(state,val)  {
       state.help = val
+    },
+    //保存openid
+    saveOpenid(state,val) {
+      state.openid = val
     }
   },
   actions: {

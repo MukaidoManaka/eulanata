@@ -19,7 +19,7 @@
             <span class="span">{{item.spjldw}}</span>
           </div>
           <div class="relative">
-            <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(非必填)" />
+            <van-field v-model="num[index]" label="实发" :class="[item.isError ? 'warning':'']" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(不发的货不填)" />
             <span class="span">{{item.spjldw}}</span>
           </div>
         </van-cell-group>
@@ -50,7 +50,6 @@ export default {
         djbh: ''
       },
       sp: [],
-      error: false,
       checkNum: [],
       canSubmit: true, //是否能提交
       company: '',
@@ -79,6 +78,9 @@ export default {
             obj.spmc = this.data[i].spmc
             obj.num = this.num[i] - 0
             obj.spjbsx = this.data[i].spjbsx
+
+            this.data[i].isError = false
+            this.$forceUpdate()
             this.sp.push(obj)
           }
           this.checkNum[i] = true
@@ -87,6 +89,8 @@ export default {
           if(this.num[i] != '') {
             //能进这个if的  就是数字乱填 / 填错
             this.checkNum[i] = false
+            this.data[i].isError = true
+            this.$forceUpdate()
             this.$toast.fail('请检查货物所填数目是否正确')
           }else {
             //checkNum---- (4) [true, false, true, true, __ob__: Observer] 删掉那个false
@@ -120,9 +124,12 @@ export default {
       console.log('item---index',item,index,this.num[index])
       console.log('num',this.num)
       if(this.num[index] - 0 > this.data[index].require_num) {
-        this.error = true
         console.log('有值填错了')
+        this.data[index].isError = true
+        this.$forceUpdate()
       }else {
+        this.data[index].isError = false
+        this.$forceUpdate()
       }
     }
   },
@@ -138,6 +145,9 @@ export default {
     goodsDetail({"order": this.$route.params.id}).then(res => {
       console.log('res',res)
       this.data = res
+      for (let p in this.data) {
+        this.data[p].isError = false
+      }
 
       if(res.length == 0) {
         console.log("空空空空空空")
@@ -209,4 +219,7 @@ export default {
     margin-top: .1rem;
   }
 }
+// .warning input::placeholder {
+//   color: #ee0a24;
+// }
 </style>

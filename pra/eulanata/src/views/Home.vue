@@ -116,22 +116,22 @@
           <h3>使用说明</h3>
           <ul>
             <li class="font18">主要功能：</li>
-            <li class="pl5"> 1.实时查看订单的收货状态与详细信息</li>
-            <li class="pl5"> 2.提前预约送货</li>
-            <li class="pl5"> 3.新订单到达提醒</li>
-            <li class="font18">流程：</li>
-            <li class="pl5"> 点击任意订单—><span>填写送货单</span>—>填写数量—><span>保存</span>—><span>提交</span></li>
+            <li class="pl5"> 1.查看订单详情及发货记录</li>
+            <li class="pl5"> 2.接收新订单提醒</li>
+            <li class="pl5"> 3.填写发货单</li>
+            <li class="font18">操作步骤：</li>
+            <li class="pl5"> 点击任意订单--><span>填写发货单</span>-->发货数量--><span>保存</span>--><span>提交</span></li>
             <li></li>
             <li class="font18">订单状态：</li>
             <li class="pl5"> 未发货：未发货的订单</li>
-            <li class="pl5"> 未完成：订单仅部分发货</li>
-            <li class="pl5"> 已完成：订单中的货品已全部发货</li>
-            <li class="pl5"> 已提交：指您刚刚提交送货的订单</li>
+            <li class="pl5"> 未完成：部分发货的订单</li>
+            <li class="pl5"> 已完成：全部发货的订单</li>
+            <li class="pl5"> 已提交：已填写发货单的订单</li>
             <li></li>
-            <li class="red"> 注：</li>
-            <li class="red"> 1.需要等到我司相关负责人员入库验收货物之后，此页面上的订单状态才会改变</li>
-            <li class="red"> 2.送货数量请依据实际情况如实填写</li>
-            <li class="red"> 3.如果订单中的某一货物这次不送，那么就不填，不要填0</li>
+            <li class="red"> 备注：</li>
+            <li class="red"> 1.发货数量请如实填写</li>
+            <li class="red"> 2.货物入库手续完成后，订单状态才会改变</li>
+            <!-- <li class="red"> 3.如订单中某货物本次不送，可不填，请不要填写0</li> -->
             <li></li>
             <li></li>
           </ul>
@@ -147,22 +147,22 @@
           <h3>使用说明</h3>
           <ul>
             <li class="font18">主要功能：</li>
-            <li class="pl5"> 1.实时查看订单的收货状态与详细信息</li>
-            <li class="pl5"> 2.提前预约送货</li>
-            <li class="pl5">3.新订单到达提醒</li>
-            <li class="font18">流程：</li>
-            <li class="pl5"> 点击任意订单—><span>填写送货单</span>—>填写数量—><span>保存</span>—><span>提交</span></li>
+            <li class="pl5"> 1.查看订单详情及发货记录</li>
+            <li class="pl5"> 2.接收新订单提醒</li>
+            <li class="pl5"> 3.填写发货单</li>
+            <li class="font18">操作步骤：</li>
+            <li class="pl5"> 点击任意订单--><span>填写发货单</span>-->发货数量--><span>保存</span>--><span>提交</span></li>
             <li></li>
             <li class="font18">订单状态：</li>
             <li class="pl5"> 未发货：未发货的订单</li>
-            <li class="pl5"> 未完成：订单仅部分发货</li>
-            <li class="pl5"> 已完成：订单中的货品已全部发货</li>
-            <li class="pl5"> 已提交：指您刚刚提交送货的订单</li>
+            <li class="pl5"> 未完成：部分发货的订单</li>
+            <li class="pl5"> 已完成：全部发货的订单</li>
+            <li class="pl5"> 已提交：已填写发货单的订单</li>
             <li></li>
-            <li class="red"> 注：</li>
-            <li class="red"> 1.需要等到我司相关负责人员入库验收货物之后，此页面上的订单状态才会改变</li>
-            <li class="red"> 2.送货数量请依据实际情况如实填写</li>
-            <li class="red"> 3.如果订单中的某一货物这次不送，那么就不填，不要填0</li>
+            <li class="red"> 备注：</li>
+            <li class="red"> 1.发货数量请如实填写</li>
+            <li class="red"> 2.货物入库手续完成后，订单状态才会改变</li>
+            <!-- <li class="red"> 3.如订单中某货物本次不送，可不填，请不要填写0</li> -->
             <li></li>
             <li></li>
           </ul>
@@ -177,8 +177,8 @@
 
 <script>
 import Footer from '@/components/Footer'
-import { dateFormat, timestamp, setLocal, getStorage, getLocal, setStorage } from '@/assets/js/utils.js'
-import { homeList, goodsDetail, userInfo, getDate, showHelp } from '@/api/all.js'
+import { dateFormat, timestamp, setLocal, getStorage, getLocal, setStorage,transformObj, decodeurl } from '@/assets/js/utils.js'
+import { homeList, goodsDetail, userInfo, getDate, showHelp, getOpenid } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -247,7 +247,7 @@ export default {
       c:0,
       x_arr: [],  //用来存goingArr，初始就计算好going第一页的percent
       submitId: 0,
-      
+      code: '', //微信的code
     }
   },
   methods: {
@@ -870,9 +870,35 @@ export default {
     },
     readHelp() {
       this.help = true
-    }
+    },
+    getCode () { // 非静默授权，第一次有弹框
+        const local = window.location.href
+        const o = decodeurl(local)
+        const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
+        if (code == null || code === '') {
+            window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
+        } else {
+            this.getOpenId(code)
+        }
+    },
+    getOpenId (code) {
+      getOpenid({code:code}).then(res => {
+        console.log('openid的res',res)
+        this.$store.commit('saveOpenid',res.open_id)
+        setStorage('openid',res.open_id)
+        setLocal('openid',res.open_id)
+      })
+      
+    },
   },
+
+  
   created() {
+    if (getLocal('openid')){
+      
+    }else {
+      this.getCode()
+    }
     //一进来先让他无限加载，请求拿到res之后就给他clear掉
     this.$toast.loading({
       message: this.testMSG,
@@ -880,7 +906,9 @@ export default {
       duration: this.loadload
     });
 
-    setStorage('openid','G00012openid')
+    // setStorage('openid','G00012openid')
+
+
     
     // //获取厂商信息
     // userInfo().then(res => {
@@ -1177,7 +1205,7 @@ export default {
     padding: 15px 15px 10px;
   }
   .home .van-overlay.overlay_help .help {
-    width: 70%;
+    width: 80%;
     border-radius: 15px;
     background-color: #fff;
   }

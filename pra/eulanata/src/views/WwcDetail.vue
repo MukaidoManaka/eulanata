@@ -37,7 +37,7 @@
 
           <!-- 如果接收数量大于0且小于总数  说明此货物是发了一定数量 还剩一些数量 给input框 -->
           <div class="relative" v-if="item.recv_num - 0 >= 0 && item.recv_num - 0 < item.require_num">
-            <van-field v-model="num[index]" label="此次发送" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(非必填)" />
+            <van-field v-model="num[index]" label="此次发送" :class="[item.isError ? 'warning':'']" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(不发的货不填)" />
             <span class="span">{{item.spjldw}}</span>
           </div>
           <!-- <div class="relative" v-if="item.recv_num - 0 > 0">
@@ -102,6 +102,9 @@ export default {
             obj.spmc = this.data[i].spmc
             obj.num = this.num[i] - 0
             obj.spjbsx = this.data[i].spjbsx
+
+            this.data[i].isError = false
+            this.$forceUpdate()
             this.sp.push(obj)
           }
           this.checkNum[i] = true
@@ -109,6 +112,8 @@ export default {
           if(this.num[i] != '') {
             //能进这个if的  就是数字乱填 / 填错
             this.checkNum[i] = false
+            this.data[i].isError = true
+            this.$forceUpdate()
             this.$toast.fail('请检查货物所填数目是否正确')
           }else {
             //checkNum---- (4) [true, false, true, true, __ob__: Observer] 删掉那个false
@@ -145,8 +150,12 @@ export default {
       console.log('num',this.num)
       if(this.num[index] - 0 > (this.data[index].require_num-0) - (this.data[index].recv_num-0)) {
         // this.error = true
+        this.data[index].isError = true
+        this.$forceUpdate()
         console.log('有值填错了')
       }else {
+        this.data[index].isError = false
+        this.$forceUpdate()
       }
     },
   },

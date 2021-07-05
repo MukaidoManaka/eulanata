@@ -2,6 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 import { getStorage, setStorage } from '@/assets/js/utils.js'
 import { Toast } from 'vant'
+import { getLocal } from '../assets/js/utils'
 // import {
 //   api
 // } from '@/config'
@@ -27,6 +28,10 @@ service.interceptors.request.use(
       //   message: '无效的供应商openid',
       //   duration: 5000
       // })
+    }
+
+    if(getLocal('openid')) {
+      config.headers.Openid = getLocal('openid')
     }
     
     if (store.getters.token) {

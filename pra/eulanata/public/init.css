@@ -73,3 +73,10 @@ textarea {
 .home .help .van-checkbox__icon {
   font-size: 12px;
 }
+
+.warning input::placeholder {
+  color: #ee0a24;
+}
+.warning input {
+  color: #ee0a24;
+}

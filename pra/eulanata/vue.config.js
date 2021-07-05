@@ -24,7 +24,10 @@ module.exports = {
                 // }
             }
         }
-    }
+    },
+    publicPath: './',
+    outputDir: 'dist',
+    // assetsDir:'static'
 };
 
 //配置全局less文件

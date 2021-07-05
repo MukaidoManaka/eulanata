@@ -22,7 +22,7 @@
       </van-cell-group>
       
       <van-cell-group>
-        <van-cell title="填写送货单" is-link @click="readGoods" class="readGoods"/>
+        <van-cell title="填写发货单" is-link @click="readGoods" class="readGoods"/>
       </van-cell-group>
       <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注(非必填)" v-model="submitObj.remark"></textarea>
       <van-button type="primary" class="submit" @click="submit" :disabled="disabled">提 交</van-button>
@@ -122,7 +122,7 @@ export default {
   },
   mounted() {
 
-    setStorage('openid','G00012openid')
+    // setStorage('openid','G00012openid')
 
     if(this.$route.query.id) {
       console.log('外面传进来的id',this.$route.query.id)
