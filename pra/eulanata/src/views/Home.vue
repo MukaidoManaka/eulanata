@@ -6,41 +6,10 @@
           <van-icon name="search" size="18" @click="search" v-show="!whetherSearching"/>
           <van-icon name="search" size="24" @click="search" v-show="whetherSearching" dot class="searchIcon"/>
         </template>
+        <template #left>
+          <van-icon name="question-o" size="18" @click="readHelp"/>
+        </template>
       </van-nav-bar>
-      <!-- 搜索按钮的弹出框 -->
-      <van-overlay :show="show" @click="overlay" class="overlay_search">
-        <van-cell-group>
-          <div class="cross">
-            <van-icon name="cross" @click="closeSearch"/>
-          </div>
-          <van-field label="合同号" placeholder="输入采购/客户合同号" v-model="searchParams.xshth" clearable></van-field>
-          <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间" @focus="focusStart" ref="start"></van-field>
-          <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间" @focus="focusEnd" ref="end"></van-field>
-          <van-radio-group v-model="radio" checked-color="#60C08B">
-            <!-- <van-row type="flex" justify="space-around" class="van_row">
-              <van-col span="1"></van-col>
-              <van-col span="11"><van-radio name="1">全部</van-radio></van-col>
-              <van-col span="11"><van-radio name="2">未发货</van-radio></van-col>
-              <van-col span="1"></van-col>
-            </van-row>
-            <van-row>
-              <van-col span="1"></van-col>
-              <van-col span="11"><van-radio name="3">未完成</van-radio></van-col>
-              <van-col span="11"><van-radio name="4">已完成</van-radio></van-col>
-              <van-col span="1"></van-col>
-            </van-row> -->
-            <van-row type="flex" justify="space-around" class="van_row">
-              <van-col span="8"><van-radio name="1">未发货</van-radio></van-col>
-              <van-col span="8"><van-radio name="2">未完成</van-radio></van-col>
-              <van-col span="8"><van-radio name="3">已完成</van-radio></van-col>
-            </van-row>
-          </van-radio-group>
-          <div class="btn">
-            <van-button plain color="#333" class="reset" @click="reset">重 置</van-button>
-            <van-button type="primary" class="search" @click="submit">搜 索</van-button>
-          </div>
-        </van-cell-group>
-      </van-overlay>
     </div>
     <div class="section">
       <van-tabs v-model="active" @click="tabChange" color="#06AE56">
@@ -67,8 +36,9 @@
                     <span v-if="!(item.xshth === '' && item.khhth === '')">采购合同号：{{item.xshth}}</span>
                     <span v-if="item.xshth === '' && item.khhth === ''">单据编号：{{item.djbh}}</span>
                     <div>
-                      <van-tag plain type='primary' v-if="func(item.id)" style="margin-right:3px">已提交</van-tag>
-                      <van-tag plain type='primary' :class="'bindClass' + `${active}`" v-if="!item.going">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
+                      <!-- <van-tag plain type='primary' v-if="func(item.id)" style="margin-right:3px">已提交</van-tag> -->
+                      <van-tag plain type='primary' v-if="item.going || func(item.id)" style="margin-right:3px">已提交</van-tag>
+                      <van-tag plain type='primary' :class="'bindClass' + `${active}`" class="tag3" v-if="active === 1 || !item.going">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
                     </div>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '未发货' : '已完成'}}</van-tag> -->
@@ -105,31 +75,99 @@
         @cancel="cancelDate"
       />
     </van-popup>
-
-    <van-overlay :show="help" class="overlay_help"> 
+    <!-- 搜索按钮的弹出框 -->
+    <van-overlay :show="show" @click="overlay" class="overlay_search">
+      <van-cell-group>
+        <div class="cross">
+          <van-icon name="cross" @click="closeSearch"/>
+        </div>
+        <van-field label="合同号" placeholder="输入采购/客户合同号" v-model="searchParams.xshth" clearable></van-field>
+        <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间" @focus="focusStart" ref="start"></van-field>
+        <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间" @focus="focusEnd" ref="end"></van-field>
+        <van-radio-group v-model="radio" checked-color="#60C08B">
+          <!-- <van-row type="flex" justify="space-around" class="van_row">
+            <van-col span="1"></van-col>
+            <van-col span="11"><van-radio name="1">全部</van-radio></van-col>
+            <van-col span="11"><van-radio name="2">未发货</van-radio></van-col>
+            <van-col span="1"></van-col>
+          </van-row>
+          <van-row>
+            <van-col span="1"></van-col>
+            <van-col span="11"><van-radio name="3">未完成</van-radio></van-col>
+            <van-col span="11"><van-radio name="4">已完成</van-radio></van-col>
+            <van-col span="1"></van-col>
+          </van-row> -->
+          <van-row type="flex" justify="space-around" class="van_row">
+            <van-col span="8"><van-radio name="1">未发货</van-radio></van-col>
+            <van-col span="8"><van-radio name="2">未完成</van-radio></van-col>
+            <van-col span="8"><van-radio name="3">已完成</van-radio></van-col>
+          </van-row>
+        </van-radio-group>
+        <div class="btn">
+          <van-button plain color="#333" class="reset" @click="reset">重 置</van-button>
+          <van-button type="primary" class="search" @click="submit">搜 索</van-button>
+        </div>
+      </van-cell-group>
+    </van-overlay>
+    <!-- 自动弹出的帮助 v-if保证help为false的时候直接不渲染 就不会半秒的出现遮罩层再消失 ，show保证为明明help为true，但是居然不显示遮罩层 -->
+    <van-overlay class="overlay_help" v-if="$store.state.help" :show="$store.state.help"> 
       <div class="help">
         <div class="content">
-          <h3>系统说明</h3>
+          <h3>使用说明</h3>
           <ul>
-            <li class="font18">使用此系统的目的：</li>
-            <li>让我们能提前知道今天你有货要送来，做好准备</li>
+            <li class="font18">主要功能：</li>
+            <li class="pl5"> 1.实时查看订单的收货状态与详细信息</li>
+            <li class="pl5"> 2.提前预约送货</li>
+            <li class="pl5"> 3.新订单到达提醒</li>
             <li class="font18">流程：</li>
-            <li>点击任意送货单——><span>填写送货单</span>——>填写数量——><span>保存</span>——><span>提交</span></li>
+            <li class="pl5"> 点击任意订单—><span>填写送货单</span>—>填写数量—><span>保存</span>—><span>提交</span></li>
             <li></li>
-            <li class="font18">订单状态解释：</li>
-            <li>未发货：未发货的订单</li>
-            <li>未完成：订单仅部分发货</li>
-            <li>已完成：订单中的货品全部发货</li>
-            <li>已提交：指您刚刚提交成功的订单</li>
+            <li class="font18">订单状态：</li>
+            <li class="pl5"> 未发货：未发货的订单</li>
+            <li class="pl5"> 未完成：订单仅部分发货</li>
+            <li class="pl5"> 已完成：订单中的货品已全部发货</li>
+            <li class="pl5"> 已提交：指您刚刚提交送货的订单</li>
             <li></li>
-            <li class="red">注：需要等到我司相关负责人员入库验收货物之后，此页面上的订单状态才会改变</li>
-            <li class="red">住：请根据实际情况如实填写</li>
+            <li class="red"> 注：</li>
+            <li class="red"> 1.需要等到我司相关负责人员入库验收货物之后，此页面上的订单状态才会改变</li>
+            <li class="red"> 2.送货数量请依据实际情况如实填写</li>
+            <li class="red"> 3.如果订单中的某一货物这次不送，那么就不填，不要填0</li>
             <li></li>
             <li></li>
           </ul>
           <van-checkbox v-model="checked" shape="square" style="margin-top:5px">下次不再弹出</van-checkbox>
         </div>
         <div class="iknow" @click="closeHelp">我知道了</div>
+      </div>
+    </van-overlay>
+    <!-- 点击帮助按钮弹出 -->
+    <van-overlay class="overlay_help" :show="help"> 
+      <div class="help">
+        <div class="content">
+          <h3>使用说明</h3>
+          <ul>
+            <li class="font18">主要功能：</li>
+            <li class="pl5"> 1.实时查看订单的收货状态与详细信息</li>
+            <li class="pl5"> 2.提前预约送货</li>
+            <li class="pl5">3.新订单到达提醒</li>
+            <li class="font18">流程：</li>
+            <li class="pl5"> 点击任意订单—><span>填写送货单</span>—>填写数量—><span>保存</span>—><span>提交</span></li>
+            <li></li>
+            <li class="font18">订单状态：</li>
+            <li class="pl5"> 未发货：未发货的订单</li>
+            <li class="pl5"> 未完成：订单仅部分发货</li>
+            <li class="pl5"> 已完成：订单中的货品已全部发货</li>
+            <li class="pl5"> 已提交：指您刚刚提交送货的订单</li>
+            <li></li>
+            <li class="red"> 注：</li>
+            <li class="red"> 1.需要等到我司相关负责人员入库验收货物之后，此页面上的订单状态才会改变</li>
+            <li class="red"> 2.送货数量请依据实际情况如实填写</li>
+            <li class="red"> 3.如果订单中的某一货物这次不送，那么就不填，不要填0</li>
+            <li></li>
+            <li></li>
+          </ul>
+        </div>
+        <div class="iknow" @click="closeHelp2">我知道了</div>
       </div>
     </van-overlay>
     <Footer :currentIndex = '0' />
@@ -140,7 +178,7 @@
 <script>
 import Footer from '@/components/Footer'
 import { dateFormat, timestamp, setLocal, getStorage, getLocal, setStorage } from '@/assets/js/utils.js'
-import { homeList, goodsDetail, userInfo, getDate } from '@/api/all.js'
+import { homeList, goodsDetail, userInfo, getDate, showHelp } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -209,6 +247,7 @@ export default {
       c:0,
       x_arr: [],  //用来存goingArr，初始就计算好going第一页的percent
       submitId: 0,
+      
     }
   },
   methods: {
@@ -817,13 +856,19 @@ export default {
     },
     closeHelp() {
       if(this.checked == true) {
-        setLocal('nolongerShow',true)
+        showHelp({'show_help':!this.checked}).then(res => {
+          console.log('show help',res)
+          this.$store.commit('saveHelp',false)
+        })
       }else {
-        setLocal('nolongerShow',false)
+        this.$store.commit('saveHelp',false)
+        this.help = false
       }
+    },
+    closeHelp2() {
       this.help = false
     },
-    allTrue() {
+    readHelp() {
       this.help = true
     }
   },
@@ -837,14 +882,15 @@ export default {
 
     setStorage('openid','G00012openid')
     
-    //获取厂商信息
-    userInfo().then(res => {
-      console.log('厂商信息',res)
-      this.$store.commit('saveCSBM',res.csbm)
-      this.$store.commit('saveCSMC',res.csmc)
-      this.$store.commit('changeName',res.name)
-      this.$store.commit('changePhone',res.phone)
-    })
+    // //获取厂商信息
+    // userInfo().then(res => {
+    //   console.log('厂商信息',res)
+    //   this.$store.commit('saveCSBM',res.csbm)
+    //   this.$store.commit('saveCSMC',res.csmc)
+    //   this.$store.commit('changeName',res.name)
+    //   this.$store.commit('changePhone',res.phone)
+    //   this.help = res.show_help
+    // })
 
     //拿未完成的总count
     let _ing = JSON.parse(JSON.stringify(this.searchParams))
@@ -927,16 +973,6 @@ export default {
         }
       }
     })
-
-    //如果为真 那help这个overlay就别弹出来了
-    if(getLocal('nolongerShow') == true) {
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-      this.help = false
-    }else {
-      this.help = true
-      console.log('??')
-    }
-
   },
   // beforeRouteLeave(to, from, next){
   //   console.log('window',window.scrollY)
@@ -949,9 +985,18 @@ export default {
     console.log('activeted')
     console.log(this.$route.params.id)
     this.func(this.$route.params.id)
+    // if(document.querySelector('.tag3')) {
+    //   document.querySelector('.tag3').style.display = 'none'
+    // }
+    if(this.active === 0) {
+      //van-tag的item.going没变，这样强制更新
+      this.onRefresh()
+    }
     //只有里面提交成功才会传回来id，强制更新tag
     if(this.$route.params.id) {
+      console.log('进没进force啊')
       this.$forceUpdate()
+      
     }
     
     // let position = this.$store.state.position //返回页面取出来
@@ -1097,18 +1142,22 @@ export default {
   }
   .home .help .red {
     color: #F4606C;
+    line-height: 14px;
   }
   .help .content li {
     font-size: 14px;
     color: #666;
   }
   .help .content {
-    padding: .2rem .1rem;
+    padding: .2rem .1rem .1rem;
     // height: 250px;
     overflow: scroll;
   }
   .help .van-checkbox {
     font-size: 12px;
+  }
+  .pl5 {
+    padding-left: 8px;
   }
   // 改(覆盖) 一些UI的默认样式
 

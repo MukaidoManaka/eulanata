@@ -19,7 +19,7 @@
             <span class="span">{{item.spjldw}}</span>
           </div>
           <div class="relative">
-            <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入" />
+            <van-field v-model="num[index]" label="实发" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(非必填)" />
             <span class="span">{{item.spjldw}}</span>
           </div>
         </van-cell-group>
@@ -66,6 +66,8 @@ export default {
     },
     save() {
       console.log('保存时的num',this.num)
+      //置空，不然出错的时候不能提交,会一直往sp里面push(obj)
+      this.sp = []
       
       for(let i in this.num) {
         const obj = {}
@@ -81,10 +83,14 @@ export default {
           }
           this.checkNum[i] = true
         }else {
+          console.log('此时num【i】的值',this.num[i])
           if(this.num[i] != '') {
             //能进这个if的  就是数字乱填 / 填错
             this.checkNum[i] = false
             this.$toast.fail('请检查货物所填数目是否正确')
+          }else {
+            //checkNum---- (4) [true, false, true, true, __ob__: Observer] 删掉那个false
+            this.checkNum.splice(i,1)
           }
           
         }
@@ -100,7 +106,7 @@ export default {
       }
 
       //为true才让保存 并跳转
-      if(this.canSubmit) {
+      if(this.canSubmit == true) {
         this.$router.push({name:'WriteOrder',query: {
           id: this.$route.params.id,
           status: this.$route.params.status,
@@ -115,12 +121,13 @@ export default {
       console.log('num',this.num)
       if(this.num[index] - 0 > this.data[index].require_num) {
         this.error = true
+        console.log('有值填错了')
       }else {
       }
     }
   },
   created() {
-    //来回传num是为了点击保存之后到提交页面，他还想返回来看一眼goods页面填的值是多少的话，就得这个num来做简单
+    //来回传num是为了点击保存之后到提交页面，他还想返回来看一眼goods页面填的值是多少的话，就得这个num来做
     if(Object.keys(this.$route.params).includes('num')) {
       console.log('包含num',this.$route.params.num)
       this.num = this.$route.params.num

@@ -23,13 +23,14 @@ import { setStorage } from '@/assets/js/utils.js'
       Footer
     },
     created() {
-      setStorage('openid','G00012openid')
-      getDate().then(res => {
-        console.log('这是App.vue里面的请求',res)
-      })
-
+      //获取厂商信息
       userInfo().then(res => {
-        console.log('这是App.vue里面的请求',res)
+        console.log('App里面的请求--厂商信息',res)
+        this.$store.commit('saveCSBM',res.csbm)
+        this.$store.commit('saveCSMC',res.csmc)
+        this.$store.commit('changeName',res.name)
+        this.$store.commit('changePhone',res.phone)
+        this.$store.commit('saveHelp',res.show_help)
       })
     }
   }

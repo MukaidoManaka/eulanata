@@ -75,11 +75,11 @@ export function decodeurl(url){
 //       return null
 //   }
 
-export function getUrlParam(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null) return unescape(r[2]); return null;
-}
+// export function getUrlParam(name) {
+//     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+//     var r = window.location.search.substr(1).match(reg);
+//     if (r != null) return unescape(r[2]); return null;
+// }
 
 // 获取 localStorage
 export function getLocal(key) {
@@ -132,4 +132,11 @@ export function transformObj(url) {
 // export function transformObj(url) {
 //     let a = url.split('?')[1]
 //     return a.split('=')[1]
+// }
+
+// export function getUrlParam(val) {
+//     var reg = new RegExp('(^|&)' + val + '=([^&]*)(&|$)')
+//     var r = window.location.search.substr(1).match(reg)
+//     if(r != null) return unescape(r[2])
+//     return null
 // }

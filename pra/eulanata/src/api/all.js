@@ -75,6 +75,17 @@ export function getDate() {
   })
 }
 
+//提示框的显隐 true/false 的修改
+export function showHelp(params) {
+  return request({
+    url: '/supplier/wechat-userinfo',
+    method: 'patch',
+    data: qs.parse(params)
+  })
+}
+
+
+
 export function homeListDetail(params) {
   return request({
     url: '/orderforms/' + params,

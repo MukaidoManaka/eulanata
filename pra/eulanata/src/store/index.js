@@ -19,6 +19,7 @@ export default new Vuex.Store({
     phone: '',
 
     date: '', //今天日期
+    help: true, //默认显示帮助
   },
   mutations: {
     //保存当前页面Y轴的滚动条位置
@@ -52,6 +53,9 @@ export default new Vuex.Store({
     },
     saveDate(state, val) {
       state.date = val
+    },
+    saveHelp(state,val)  {
+      state.help = val
     }
   },
   actions: {

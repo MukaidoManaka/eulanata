@@ -37,7 +37,7 @@
 
           <!-- 如果接收数量大于0且小于总数  说明此货物是发了一定数量 还剩一些数量 给input框 -->
           <div class="relative" v-if="item.recv_num - 0 >= 0 && item.recv_num - 0 < item.require_num">
-            <van-field v-model="num[index]" label="此次发送" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入数量" />
+            <van-field v-model="num[index]" label="此次发送" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(非必填)" />
             <span class="span">{{item.spjldw}}</span>
           </div>
           <!-- <div class="relative" v-if="item.recv_num - 0 > 0">
@@ -89,6 +89,8 @@ export default {
     },
     save() {
       console.log('保存时的num',this.num)
+      //置空，不然出错的时候不能提交,会一直往sp里面push(obj)
+      this.sp = []
       
       for(let i in this.num) {
         const obj = {}
@@ -108,6 +110,9 @@ export default {
             //能进这个if的  就是数字乱填 / 填错
             this.checkNum[i] = false
             this.$toast.fail('请检查货物所填数目是否正确')
+          }else {
+            //checkNum---- (4) [true, false, true, true, __ob__: Observer] 删掉那个false
+            this.checkNum.splice(i,1)
           }
           
         }

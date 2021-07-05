@@ -12,8 +12,9 @@ module.exports = {
         },
         proxy: {
             [process.env.VUE_APP_BASE_API_URL]: {
-                target: 'http://47.98.220.100', 
-                // target: 'http://www.jinchengdong.top', //擦,这里不写http://会出错
+                // target: 'http://47.98.220.100', 
+                target: 'http://www.keeplong.vip', 
+                // target: 'http://www.jinchengdong.top', 
                 // target: 'http://127.0.0.1:8000', //擦,这里不写http://会出错
                 // 允许跨域
                 changeOrigin: true,

@@ -57,11 +57,11 @@ export default {
       this.$router.push('/home')
     },
     readGoods() {
-      if(Object.keys(this.$route.params).includes('num')) {
+      if(Object.keys(this.$route.query).includes('num')) {
         this.$router.push({name: 'WriteGoods',params: {
           id: this.id, 
           status: this.data.status,
-          num: this.$route.params.num,
+          num: this.$route.query.num,
           }
         })
       }else {
