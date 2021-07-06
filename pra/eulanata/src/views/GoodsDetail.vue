@@ -9,7 +9,7 @@
         <van-cell-group>
           <van-cell title="单据编号" :value="item.djbh" />
           <van-cell title="商品编码" :value="item.spbm" />
-          <van-cell title="交货日期" :value="item.jhrq" />
+          <van-cell title="交货日期" :value="$date(item.jhrq)" />
           <van-cell title="商品名称" :value="item.spmc" />
           <van-collapse v-model="activeNames">
             <van-collapse-item title="扩展属性" :name="item.spmc">{{item.spjbsx}}</van-collapse-item>

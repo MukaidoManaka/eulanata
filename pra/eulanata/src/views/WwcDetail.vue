@@ -37,7 +37,7 @@
 
           <!-- 如果接收数量大于0且小于总数  说明此货物是发了一定数量 还剩一些数量 给input框 -->
           <div class="relative" v-if="item.recv_num - 0 >= 0 && item.recv_num - 0 < item.require_num">
-            <van-field v-model="num[index]" label="此次发送" :class="[item.isError ? 'warning':'']" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(不发的货不填)" />
+            <van-field v-model="num[index]" label="此次发送" :class="[item.isError ? 'warning':'']" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(不发此货就不填)" />
             <span class="span">{{item.spjldw}}</span>
           </div>
           <!-- <div class="relative" v-if="item.recv_num - 0 > 0">
@@ -135,6 +135,7 @@ export default {
 
       //为true才让保存 并跳转
       if(this.canSubmit) {
+        this.$toast.success('保存成功！')
         this.$router.push({name:'Wwc',params: {
           id: this.$route.params.id,
           status: this.$route.params.status,

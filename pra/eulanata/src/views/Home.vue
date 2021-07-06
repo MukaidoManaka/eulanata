@@ -76,7 +76,7 @@
       />
     </van-popup>
     <!-- 搜索按钮的弹出框 -->
-    <van-overlay :show="show" @click="overlay" class="overlay_search">
+    <van-overlay :show="show" class="overlay_search">
       <van-cell-group>
         <div class="cross">
           <van-icon name="cross" @click="closeSearch"/>
@@ -178,7 +178,7 @@
 <script>
 import Footer from '@/components/Footer'
 import { dateFormat, timestamp, setLocal, getStorage, getLocal, setStorage,transformObj, decodeurl } from '@/assets/js/utils.js'
-import { homeList, goodsDetail, userInfo, getDate, showHelp, getOpenid } from '@/api/all.js'
+import { homeList, goodsDetail, userInfo, getDate, showHelp, getOpenid, getToken } from '@/api/all.js'
 export default {
   name: 'Home',
   components: {
@@ -189,11 +189,6 @@ export default {
       loading: false, //是否处于加载状态，加载过程中不触发load事件
       finished: false,  //是否已加载完成，加载完成后不再触发load事件
       refreshing: false,
-      currentRate: 55,
-      gradientColor: {
-        '0%': '#3fecff',
-        '100%': '#6149f6',
-      },
       
       show: false,//overlay_search的显隐
       showPop: false,//popup的显隐
@@ -202,10 +197,7 @@ export default {
       minDate: new Date(2021, 0, 1),
       maxDate: new Date(2025, 5, 1),
       currentDate: new Date(),
-      //不管先选起止还是截至，x_date来标记时间
-      x_date: '',
-      pink: 'pink',
-      //区分审核或者通过火已完成3中状态
+      
       // dict:['全部','未发货','未完成','已完成'],
       // dict:[`未发货(${this.$store.state.count_no})`,`未完成(${this.$store.state.count_ing})`,`已完成(${this.$store.state.count_finished})`],
       dict:[`未发货(${this.a})`,`未完成(${this.b})`,`已完成(${this.c})`],
@@ -237,7 +229,7 @@ export default {
       },
       page: 1,  //分页の第一页
       whetherSearching: false, //搜索条件是否正在生效,
-      testMSG: '加载加载',
+      testMSG: '加载中~',
       loadload: 20000,  //20秒
 
       percentArr: [], //装百分比的数组
@@ -287,7 +279,7 @@ export default {
               this.finished = true
             }
           }).catch(err => {
-            console.log("error------------",err.code)
+            console.log("error------------",err.response)
           })
         }
       }else if (this.active === 1) {
@@ -351,9 +343,6 @@ export default {
                 })
 
               }
-
-              
-              
 
               // this.currentArr = [...this.currentArr,...res.results]
               console.log('----------------------------percent',this.percentArr)
@@ -447,33 +436,9 @@ export default {
             this.waitPage = ''
           }
         }else if(this.active === 1) {
-          //找active为1时的各种情况 给currentArr绑定percent属性
-          // for (var j in this.currentArr) {
-          //   this.currentArr[j].percent = this.percentArr[j]
-          // }
-          
           this.currentArr = this.x_arr 
           this.goingArr = this.x_arr 
           // this.goingArr = res.results
-
-          // for (let i in res.results) {
-          //   var obj2 = {djbh:''}
-          //   obj2.djbh = res.results[i].djbh
-          //   goodsDetail(obj2,res.results[i].company).then(res => {
-          //     var require = 0
-          //     var receive = 0
-          //     for(var k in res) {
-          //       require = require + Number(res[k].require_num)
-          //       receive = receive + Number(res[k].recv_num)
-          //     }
-          //     var percent = (receive/require).toFixed(2) * 100
-          //     console.log('百分比------',percent)
-          //     this.currentArr[i].percent = Math.trunc(percent)
-          //     this.goingArr[i].percent = Math.trunc(percent)
-          //   })
-          // }
-          
-
           
           if(res.next === null) {
             this.goingPage = null
@@ -526,8 +491,6 @@ export default {
       this.searchParams.page = this.page
 
       this.finished = false
-
-     
       
       if(name == 0) { //用name还是active好像没区别吧
         //如果waitArr里面没值，就去请求
@@ -660,13 +623,6 @@ export default {
     },
     search() {
       this.show = !this.show
-    },
-    overlay1() {
-      // console.log('overlay1')
-    },
-    overlay() {
-      // console.log('overlay')
-      // this.show = !this.show
     },
     formatter(type, val) {
       if (type === 'year') {
@@ -871,34 +827,42 @@ export default {
     readHelp() {
       this.help = true
     },
-    getCode () { // 非静默授权，第一次有弹框
-        const local = window.location.href
-        const o = decodeurl(local)
-        const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
-        if (code == null || code === '') {
-            window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
-        } else {
-            this.getOpenId(code)
-        }
-    },
-    getOpenId (code) {
-      getOpenid({code:code}).then(res => {
-        console.log('openid的res',res)
-        this.$store.commit('saveOpenid',res.open_id)
-        setStorage('openid',res.open_id)
-        setLocal('openid',res.open_id)
-      })
+    // getCode () { // 非静默授权，第一次有弹框
+    //     const local = window.location.href
+    //     const hash = window.location.hash 
+    //     const o = decodeurl(local)
+    //     const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
+    //     console.log(code)
+    //     const baseurl = 'http://www.keeplong.vip/dist/'
+    //     const url = baseurl + hash
+    //     console.log(url)
+    //     if (code == null || code === '') {
+    //         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
+    //     } else {
+    //       console.log('else')
+    //       this.getOpenId(code)
+    //     }
+    // },
+    // getOpenId (code) {
+    //   console.log(code)
+    //   getOpenid({'code':code}).then(res => {
+    //     console.log('openid的res',res)
+    //     this.$store.commit('saveOpenid',res.open_id)
+    //     setStorage('openid',res.open_id)
+    //     setLocal('openid',res.open_id)
+    //   })
       
-    },
+    // },
   },
 
   
   created() {
-    if (getLocal('openid')){
+    // if (getLocal('openid')){
       
-    }else {
-      this.getCode()
-    }
+    // }else {
+    //   this.getCode()
+    // }
+    // this.getCode()
     //一进来先让他无限加载，请求拿到res之后就给他clear掉
     this.$toast.loading({
       message: this.testMSG,
@@ -906,26 +870,25 @@ export default {
       duration: this.loadload
     });
 
+    
+
     // setStorage('openid','G00012openid')
 
-
-    
-    // //获取厂商信息
-    // userInfo().then(res => {
-    //   console.log('厂商信息',res)
-    //   this.$store.commit('saveCSBM',res.csbm)
-    //   this.$store.commit('saveCSMC',res.csmc)
-    //   this.$store.commit('changeName',res.name)
-    //   this.$store.commit('changePhone',res.phone)
-    //   this.help = res.show_help
-    // })
+    //获取厂商信息
+    userInfo().then(res => {
+      console.log('App里面的请求--厂商信息',res)
+      this.$store.commit('saveCSBM',res.csbm)
+      this.$store.commit('saveCSMC',res.csmc)
+      this.$store.commit('changeName',res.name)
+      this.$store.commit('changePhone',res.phone)
+      this.$store.commit('saveHelp',res.show_help)
+    })
 
     //拿未完成的总count
     let _ing = JSON.parse(JSON.stringify(this.searchParams))
     _ing.status = 'going'
     homeList(_ing).then(res => {
       this.b = res.count
-      console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbb',this.b)
       this.$store.commit('changeIng',res.count)
       this.$set(this.dict,1,`未完成(${this.b})`)
       
@@ -1012,6 +975,7 @@ export default {
   activated() {
     console.log('activeted')
     console.log(this.$route.params.id)
+    // this.getCode()
     this.func(this.$route.params.id)
     // if(document.querySelector('.tag3')) {
     //   document.querySelector('.tag3').style.display = 'none'

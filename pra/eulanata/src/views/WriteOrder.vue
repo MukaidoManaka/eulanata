@@ -32,7 +32,7 @@
 
 <script>
 import { submitGoods, gzhJump } from '@/api/all.js'
-import { setStorage, getStorage, transformObj } from '@/assets/js/utils.js'
+import { setStorage, getStorage, transformObj, decodeurl } from '@/assets/js/utils.js'
 export default {
   name: 'WriteOrder',
   data() {
@@ -137,19 +137,19 @@ export default {
       console.log('不进else')
       let p = location.href
       console.log(p)
-      let obj = transformObj(p)
+      let obj = decodeurl(p)
       console.log(obj)
       gzhJump(obj.id).then(res => {
         console.log("shuaxin--",res)
         this.data = res
         if(res.shbz == 1) {
           this.data.status = '未完成'
-          this.$router.push({name:'Wwc',params:{item: res, status: '未完成'}})
+          this.$router.push({name:'Wwc',params:{id:obj.id}})
         }else if(res.shbz == 0) {
           this.data.status = '未发货'
         }else {
           this.data.status = '已完成'
-          this.$router.push({name:'ListDetail',params:{item: res, status: '已完成'}})
+          this.$router.push({name:'ListDetail',params:{id:obj.id}})
         }
       })
     }

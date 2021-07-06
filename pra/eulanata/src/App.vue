@@ -11,8 +11,8 @@
 
 <script>
 import Footer from '@/components/Footer'
-import { getDate, userInfo } from '@/api/all.js'
-import { setStorage } from '@/assets/js/utils.js'
+import { getDate, userInfo, getToken, getOpenid } from '@/api/all.js'
+import { setStorage, getLocal, setLocal, decodeurl } from '@/assets/js/utils.js'
   export default {
     data() {
       return {
@@ -23,15 +23,52 @@ import { setStorage } from '@/assets/js/utils.js'
       Footer
     },
     created() {
-      //获取厂商信息
-      userInfo().then(res => {
-        console.log('App里面的请求--厂商信息',res)
-        this.$store.commit('saveCSBM',res.csbm)
-        this.$store.commit('saveCSMC',res.csmc)
-        this.$store.commit('changeName',res.name)
-        this.$store.commit('changePhone',res.phone)
-        this.$store.commit('saveHelp',res.show_help)
+      getToken().then(res => {
+        this.$store.commit('saveToken',res.token)
+        setStorage("token",res.token)
+        console.log('token--',res.token)
       })
+
+      // getOpenid({'code':'031ZxhHa1rs7lB0uH2Ia1GdqAe2ZxhHO'}).then(res => {
+      //     console.log('openid的res',res)
+      //     this.$store.commit('saveOpenid',res.open_id)
+      //     setStorage('openid',res.open_id)
+      //     setLocal('openid',res.open_id)
+      //   })
+
+      if (getLocal('openid')){
+      
+      }else {
+        this.getCode()
+      }
+    },
+    methods: {
+      getCode () { // 非静默授权，第一次有弹框
+        const local = window.location.href
+        const hash = window.location.hash 
+        const o = decodeurl(local)
+        const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
+        console.log('code',code)
+        const baseurl = 'http://www.keeplong.vip/dist/'
+        const url = baseurl + hash
+        console.log(url)
+        if (code == null || code === '') {
+            window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
+        } else {
+          console.log('else')
+          this.getOpenId(code)
+        }
+      },
+      getOpenId (code) {
+        console.log(code)
+        getOpenid({'code':code}).then(res => {
+          console.log('openid的res',res)
+          this.$store.commit('saveOpenid',res.open_id)
+          setStorage('openid',res.open_id)
+          setLocal('openid',res.open_id)
+        })
+        
+      },
     }
   }
 </script>

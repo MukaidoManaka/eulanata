@@ -1,5 +1,4 @@
 import axios from 'axios'
-import store from '@/store'
 import { getStorage, setStorage } from '@/assets/js/utils.js'
 import { Toast } from 'vant'
 import { getLocal } from '../assets/js/utils'
@@ -21,22 +20,16 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     //请求前判断是否有openid，有就给header加上
-    if(getStorage('openid')) {
-      config.headers.Openid = getStorage('openid')
-    }else {
-      // Toast.fail({
-      //   message: '无效的供应商openid',
-      //   duration: 5000
-      // })
-    }
-
     if(getLocal('openid')) {
       config.headers.Openid = getLocal('openid')
     }
-    
-    if (store.getters.token) {
-      config.headers['Authorization'] = store.getters.token
-    }
+
+    // config.headers['X-CSRFToken'] = getStorage('token')
+    config.headers.post['X-CSRFToken'] = getStorage('token')
+
+    // if (store.getters.token) {
+    //   config.headers['Authorization'] = store.getters.token
+    // }
     return config
   },
   error => {

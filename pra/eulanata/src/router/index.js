@@ -18,16 +18,14 @@ const OrderDetail = resolve => require(['@/views/OrderDetail'], resolve);
 const BindUser = resolve => require(['@/views/BindUser'], resolve);
 const Wwc = resolve => require(['@/views/Wwc'], resolve);
 const WwcDetail = resolve => require(['@/views/WwcDetail'], resolve);
-const aaa = resolve => require(['@/views/aaa'], resolve);
 
 const routes = [
   {
     path: '/',
-    // name: 'Login',
-    component: Login,
+    component: Home,
     meta: {
-      title: '登录',
-      keepAlive: false
+      title: '主页',
+      keepAlive: true
     }
   },
   {
@@ -152,15 +150,6 @@ const routes = [
     path: '/wwcDetail',
     name: 'WwcDetail',
     component: WwcDetail,
-    meta: {
-      title: '未完成详情',
-      keepAlive: false
-    }
-  },
-  {
-    path: '/aaa',
-    name: 'aaa',
-    component: aaa,
     meta: {
       title: '未完成详情',
       keepAlive: false

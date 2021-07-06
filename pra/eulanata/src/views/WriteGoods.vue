@@ -19,7 +19,7 @@
             <span class="span">{{item.spjldw}}</span>
           </div>
           <div class="relative">
-            <van-field v-model="num[index]" label="实发" :class="[item.isError ? 'warning':'']" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(不发的货不填)" />
+            <van-field v-model="num[index]" label="实发" :class="[item.isError ? 'warning':'']" required input-align="right" type="number" @blur="checkValue(item,index)" placeholder="请输入(不发此货就不填)" />
             <span class="span">{{item.spjldw}}</span>
           </div>
         </van-cell-group>
@@ -111,6 +111,7 @@ export default {
 
       //为true才让保存 并跳转
       if(this.canSubmit == true) {
+        this.$toast.success('保存成功！')
         this.$router.push({name:'WriteOrder',query: {
           id: this.$route.params.id,
           status: this.$route.params.status,

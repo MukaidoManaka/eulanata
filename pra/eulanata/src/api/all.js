@@ -93,7 +93,13 @@ export function getOpenid(params) {
   })
 }
 
-
+//获取token
+export function getToken() {
+  return request({
+    url:'/api/csrf-token',
+    method: 'get'
+  })
+}
 
 export function homeListDetail(params) {
   return request({
