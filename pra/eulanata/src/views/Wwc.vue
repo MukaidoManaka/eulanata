@@ -5,13 +5,18 @@
        <van-nav-bar title="送货单详情" left-text="返回" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
     <div class="section">
-      <van-cell-group>
+      <!-- <van-cell-group>
         <van-cell title="单据编号" :value="data.djbh" />
         <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
       <van-cell-group>
         <van-cell title="采购合同号" :value="data.xshth" />
         <van-cell title="客户合同号" :value="data.khhth" />
+      </van-cell-group> -->
+      <van-cell-group>
+        <van-cell title="采购合同号" :value="data.djbh" />
+        <van-cell title="客户合同号" :value="data.xshth" />
+        <van-cell title="交货日期" :value="$date(data.fsrq)" />
       </van-cell-group>
       <van-cell-group>
         <van-cell title="订单状态" :value="data.status" />

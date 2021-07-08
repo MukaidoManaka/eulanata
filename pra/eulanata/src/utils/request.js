@@ -79,7 +79,8 @@ service.interceptors.response.use(
 
     if(error.response.status === 404) {
       Toast.fail({
-        message:error.response.data.detail,
+        // message:error.response.data.detail,
+        message:'未找到相关用户数据',
         duration: 5000
       })
     }

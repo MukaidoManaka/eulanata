@@ -33,11 +33,12 @@
                 <!-- 右边订单相关数据 -->
                 <div class="right_item">
                   <div class="_top">
-                    <span v-if="!(item.xshth === '' && item.khhth === '')">采购合同号：{{item.xshth}}</span>
-                    <span v-if="item.xshth === '' && item.khhth === ''">单据编号：{{item.djbh}}</span>
+                    <!-- <span v-if="!(item.xshth === '' && item.khhth === '')">采购合同号：{{item.xshth}}</span>
+                    <span v-if="item.xshth === '' && item.khhth === ''">单据编号：{{item.djbh}}</span> -->
+                    <span>采购合同号：{{item.djbh}}</span>
                     <div>
                       <!-- <van-tag plain type='primary' v-if="func(item.id)" style="margin-right:3px">已提交</van-tag> -->
-                      <van-tag plain type='primary' v-if="item.going || func(item.id)" style="margin-right:3px">已提交</van-tag>
+                      <van-tag plain type='primary' v-if="item.going && active === 0 || func(item.id)" style="margin-right:3px">已提交</van-tag>
                       <van-tag plain type='primary' :class="'bindClass' + `${active}`" class="tag3" v-if="active === 1 || !item.going">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
                     </div>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
@@ -47,7 +48,7 @@
                   <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '2px' }"/>
                   <div class="_bottom">
                     <div class="_bottom_left">
-                      <p>客户合同号: {{item.khhth}} </p>
+                      <p>客户合同号: {{item.xshth}} </p>
                       <p>交货日期：{{$date(item.fsrq)}} </p>
                     </div>
                     <!-- <span class="progress" v-show="active === 1"> 已送：约{{item.percent}}% </span> -->
@@ -85,18 +86,6 @@
         <van-field is-link @click="showPopup('start')" v-model="startDate" label="选择起始时间" @focus="focusStart" ref="start"></van-field>
         <van-field is-link @click="showPopup('end')" v-model="endDate" label="选择截至时间" @focus="focusEnd" ref="end"></van-field>
         <van-radio-group v-model="radio" checked-color="#60C08B">
-          <!-- <van-row type="flex" justify="space-around" class="van_row">
-            <van-col span="1"></van-col>
-            <van-col span="11"><van-radio name="1">全部</van-radio></van-col>
-            <van-col span="11"><van-radio name="2">未发货</van-radio></van-col>
-            <van-col span="1"></van-col>
-          </van-row>
-          <van-row>
-            <van-col span="1"></van-col>
-            <van-col span="11"><van-radio name="3">未完成</van-radio></van-col>
-            <van-col span="11"><van-radio name="4">已完成</van-radio></van-col>
-            <van-col span="1"></van-col>
-          </van-row> -->
           <van-row type="flex" justify="space-around" class="van_row">
             <van-col span="8"><van-radio name="1">未发货</van-radio></van-col>
             <van-col span="8"><van-radio name="2">未完成</van-radio></van-col>
@@ -462,7 +451,7 @@ export default {
       console.log('active',this.active)
       //0表示点击事件时tab处于未发货这一栏，就去填写页
       if (this.active === 0 ) {
-        this.$router.push({name: 'WriteOrder', query: {id, status: '未发货'}})
+        this.$router.push({name: 'WriteOrder', query: {id}})
       }else if(this.active === 1) {
         this.$router.push({name:'Wwc',params:{id, status: '未完成'}})
       }else {
@@ -827,42 +816,109 @@ export default {
     readHelp() {
       this.help = true
     },
-    // getCode () { // 非静默授权，第一次有弹框
-    //     const local = window.location.href
-    //     const hash = window.location.hash 
-    //     const o = decodeurl(local)
-    //     const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
-    //     console.log(code)
-    //     const baseurl = 'http://www.keeplong.vip/dist/'
-    //     const url = baseurl + hash
-    //     console.log(url)
-    //     if (code == null || code === '') {
-    //         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
-    //     } else {
-    //       console.log('else')
-    //       this.getOpenId(code)
-    //     }
-    // },
-    // getOpenId (code) {
-    //   console.log(code)
-    //   getOpenid({'code':code}).then(res => {
-    //     console.log('openid的res',res)
-    //     this.$store.commit('saveOpenid',res.open_id)
-    //     setStorage('openid',res.open_id)
-    //     setLocal('openid',res.open_id)
-    //   })
+    //不管有没有openid都要执行的请求，当没openid时得在openid异步结束之后再请求
+    init() {
+      //post请求需要的token
+      getToken().then(res => {
+        this.$store.commit('saveToken',res.token)
+        setStorage("token",res.token)
+        console.log('token--',res.token)
+      })
+      //获取厂商信息
+      userInfo().then(res => {
+        console.log('App里面的请求--厂商信息',res)
+        this.$store.commit('saveCSBM',res.csbm)
+        this.$store.commit('saveCSMC',res.csmc)
+        this.$store.commit('changeName',res.name)
+        this.$store.commit('changePhone',res.phone)
+        this.$store.commit('saveHelp',res.show_help)
+      })
+
+      //拿未完成的总count
+      let _ing = JSON.parse(JSON.stringify(this.searchParams))
+      _ing.status = 'going'
+      homeList(_ing).then(res => {
+        this.b = res.count
+        this.$store.commit('changeIng',res.count)
+        this.$set(this.dict,1,`未完成(${this.b})`)
+        
+      })
+
+      //拿已完成的总count
+      let _finished = JSON.parse(JSON.stringify(this.searchParams))
+      _finished.status = 'finished'
+      homeList(_finished).then(res => {
+        this.c = res.count
+        this.$store.commit('changeFinished',res.count)
+        this.$set(this.dict,2,`已完成(${this.c})`)
+      })
+
+      //获取当天时间
+      getDate().then(res => {
+        console.log("今天时间---",res.time)
+        this.$store.commit('saveDate',res.time)
+      })
+
+      homeList(this.searchParams).then(res => {
+        console.log('初始化wait',res)
+        
+        this.currentArr = res.results
+        this.waitArr = res.results
+        this.nextPage = res.next
+
+        if(res.next === null) {
+          this.waitPage = null
+        }
+        this.a = res.count
+        //待发货的总count
+        this.$store.commit('changeNo',res.count)
+
+        this.$set(this.dict,0,`未发货(${this.a})`)
+        
+        this.$toast.clear()
+      })
+
+      const obj = {
+        'xshth': '',
+        'startdate': '',
+        'enddate': '',
+        'status': 'going',
+        'page': 1
+      }
       
-    // },
+      homeList(obj).then(res => {
+        console.log('mounted的res',res)
+        this.x_arr = res.results
+        if(res.results.length > 0) {
+          for (let i in res.results) {
+            var obj2 = {order:0}
+            obj2.order = res.results[i].id
+            goodsDetail(obj2).then(res => {
+              console.log('详细信息---',res)
+              
+              var require = 0
+              var receive = 0
+              for(var k in res) {
+                
+                require = require + Number(res[k].require_num)
+                receive = receive + Number(res[k].recv_num)
+              }
+              var percent = (receive/require).toFixed(2) * 100
+              console.log('百分比------',percent)
+              // this.percentArr.push(Math.trunc(percent))
+              // res.results[i].percent = Math.trunc(percent)
+              this.currentArr[i].percent = Math.trunc(percent)
+              this.x_arr[i].percent = Math.trunc(percent)
+            })
+
+          }
+        }
+      })
+    }
   },
 
   
   created() {
-    // if (getLocal('openid')){
-      
-    // }else {
-    //   this.getCode()
-    // }
-    // this.getCode()
     //一进来先让他无限加载，请求拿到res之后就给他clear掉
     this.$toast.loading({
       message: this.testMSG,
@@ -870,119 +926,45 @@ export default {
       duration: this.loadload
     });
 
-    
-
-    // setStorage('openid','G00012openid')
-
-    //获取厂商信息
-    userInfo().then(res => {
-      console.log('App里面的请求--厂商信息',res)
-      this.$store.commit('saveCSBM',res.csbm)
-      this.$store.commit('saveCSMC',res.csmc)
-      this.$store.commit('changeName',res.name)
-      this.$store.commit('changePhone',res.phone)
-      this.$store.commit('saveHelp',res.show_help)
-    })
-
-    //拿未完成的总count
-    let _ing = JSON.parse(JSON.stringify(this.searchParams))
-    _ing.status = 'going'
-    homeList(_ing).then(res => {
-      this.b = res.count
-      this.$store.commit('changeIng',res.count)
-      this.$set(this.dict,1,`未完成(${this.b})`)
-      
-    })
-
-    //拿已完成的总count
-    let _finished = JSON.parse(JSON.stringify(this.searchParams))
-    _finished.status = 'finished'
-    homeList(_finished).then(res => {
-      this.c = res.count
-      this.$store.commit('changeFinished',res.count)
-      this.$set(this.dict,2,`已完成(${this.c})`)
-    })
-
-    //获取当天时间
-    getDate().then(res => {
-      console.log("今天时间---",res.time)
-      this.$store.commit('saveDate',res.time)
-    })
-
-    homeList(this.searchParams).then(res => {
-      console.log('初始化wait',res)
-      
-      this.currentArr = res.results
-      this.waitArr = res.results
-      this.nextPage = res.next
-
-      if(res.next === null) {
-        this.waitPage = null
+    //没有openid就去else请求
+    if (getLocal('openid')){
+      console.log('if true的openid',getLocal('openid'))
+      this.init()
+    }else {
+      const local = window.location.href
+      const hash = window.location.hash 
+      const o = decodeurl(local)
+      const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
+      console.log(code)
+      const baseurl = 'http://www.keeplong.vip/dist/'
+      const url = baseurl + hash
+      console.log(url)
+      if (code == null || code === '') {
+          window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
+      } else {
+        console.log('else')
+        getOpenid({'code':code}).then(res => {
+          console.log('openid的res',res)
+          this.$store.commit('saveOpenid',res.open_id)
+          setStorage('openid',res.open_id)
+          setLocal('openid',res.open_id)
+          this.init()
+        })
       }
-      this.a = res.count
-      //待发货的总count
-      this.$store.commit('changeNo',res.count)
-
-      this.$set(this.dict,0,`未发货(${this.a})`)
-      
-      this.$toast.clear()
-    })
-
-    const obj = {
-      'xshth': '',
-      'startdate': '',
-      'enddate': '',
-      'status': 'going',
-      'page': 1
     }
     
-    homeList(obj).then(res => {
-      console.log('mounted的res',res)
-      this.x_arr = res.results
-      if(res.results.length > 0) {
-        for (let i in res.results) {
-          var obj2 = {order:0}
-          obj2.order = res.results[i].id
-          goodsDetail(obj2).then(res => {
-            console.log('详细信息---',res)
-            
-            var require = 0
-            var receive = 0
-            for(var k in res) {
-              
-              require = require + Number(res[k].require_num)
-              receive = receive + Number(res[k].recv_num)
-            }
-            var percent = (receive/require).toFixed(2) * 100
-            console.log('百分比------',percent)
-            // this.percentArr.push(Math.trunc(percent))
-            // res.results[i].percent = Math.trunc(percent)
-            this.currentArr[i].percent = Math.trunc(percent)
-            this.x_arr[i].percent = Math.trunc(percent)
-          })
 
-        }
-      }
-    })
   },
-  // beforeRouteLeave(to, from, next){
-  //   console.log('window',window.scrollY)
-  //   let position = window.scrollY
-  //   console.log('position的值',position)
-  //   this.$store.commit('savePosition', position) //离开路由时把位置存起来
-  //   next()
-  // },
   activated() {
     console.log('activeted')
     console.log(this.$route.params.id)
-    // this.getCode()
     this.func(this.$route.params.id)
-    // if(document.querySelector('.tag3')) {
-    //   document.querySelector('.tag3').style.display = 'none'
-    // }
     if(this.active === 0) {
       //van-tag的item.going没变，这样强制更新
-      this.onRefresh()
+      //设个延迟，不然新用户进来时会在getopenid之前执行报401（虽然这个401没任何影响
+      setTimeout(() =>{
+        this.onRefresh()
+      },300)
     }
     //只有里面提交成功才会传回来id，强制更新tag
     if(this.$route.params.id) {
@@ -990,13 +972,6 @@ export default {
       this.$forceUpdate()
       
     }
-    
-    // let position = this.$store.state.position //返回页面取出来
-    // window.scrollTo(0, 800)
-    // this.$nextTick(() => {
-    //   let position = this.$store.state.position //返回页面取出来
-    //   window.scrollTo(0, 300 + position)
-    // })
   },
   beforeRouteUpdate(to,from,next) {
     console.log('id',this.$route.params.id)
@@ -1157,9 +1132,7 @@ export default {
     // background-color: #6cf;
     background-color: #06AE56;
   }
-  .section .list_item:first-child {
-    // border-top: 1px solid gray;
-  }
+ 
   .section .van-divider {
     margin: 0;
   }
