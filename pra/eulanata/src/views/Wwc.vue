@@ -38,7 +38,7 @@
 
 <script>
 import { submitGoods, gzhJump } from '@/api/all.js'
-import { setStorage, getStorage } from '@/assets/js/utils.js'
+import { setStorage, getStorage, decodeurl } from '@/assets/js/utils.js'
 export default {
   name: 'ListDetail',
   data() {
@@ -64,16 +64,16 @@ export default {
     readGoods() {
       //场景： 在detail页面填过一次数据回到Wwc页面，还想再进去WwcDetail页面看看/改改，detail页面里面填过的输入框应该显示刚刚填的值
       //如果包含num属性 那就说明在那边填过
-      if(Object.keys(this.$route.params).includes('num')) {
+      if(Object.keys(this.$route.query).includes('num')) {
         this.$router.push({name: 'WwcDetail',params: {
-          id: this.$route.params.id,
+          id: this.$route.query.id,
           status: this.data.status,
-          num: this.$route.params.num,
+          num: this.$route.query.num,
           }
         })
       }else {
         this.$router.push({name: 'WwcDetail',params: {
-          id: this.$route.params.id, 
+          id: this.$route.query.id, 
           status: this.data.status,
           }
         })
@@ -84,7 +84,7 @@ export default {
       this.submitObj.xshth = this.data.xshth
       this.submitObj.pk = this.id
 
-      this.submitObj.sp = this.$route.params.sp
+      this.submitObj.sp = this.$route.query.sp
       // for(let i in this.$route.params.sp) {
       //   this.submitObj.sp.push(this.$route.params.sp[i])
       // }
@@ -92,7 +92,7 @@ export default {
       console.log('提交前的submitObj',this.submitObj)
 
       //不为undefined 填写了货物
-      if(this.submitObj.sp != undefined) {
+      if(this.submitObj.sp != undefined && this.submitObj.sp.length > 0) {
         submitGoods(this.submitObj).then(res => {
           console.log('提交啦',res)
           if(res.detail == 'success') {
@@ -124,36 +124,66 @@ export default {
     }
   },
   created() {
-    if(this.$route.params.id) {
-      console.log('外面传进来的id',this.$route.params.id)
-      this.id = this.$route.params.id
+    if(this.$route.query.id) {
+      console.log('外面传进来的id',this.$route.query.id)
+      console.log('外面传进来的route',this.$route)
+      this.id = this.$route.query.id
       gzhJump(this.id).then(res => {
         this.data = res
-        this.data.status = this.$route.params.status
+        if(res.shbz == 0) {
+          this.data.status = '未发货'
+        }else if (res.shbz == 1) {
+          this.data.status = '未完成'
+        }else if (res.shbz == 2) {
+          this.data.status = '已完成'
+        }
       })
       
-      
     }else {
-      console.log(22222222222)
-      gzhJump(630).then(res => {
+      console.log('不进else')
+      let p = location.href
+      console.log(p)
+      let obj = decodeurl(p)
+      console.log(obj)
+      gzhJump(obj.id).then(res => {
         console.log("shuaxin--",res)
         this.data = res
         if(res.shbz == 1) {
           this.data.status = '未完成'
+          this.$router.push({name:'Wwc',query:{id:obj.id}})
         }else if(res.shbz == 0) {
           this.data.status = '未发货'
         }else {
           this.data.status = '已完成'
+          this.$router.push({name:'ListDetail',query:{id:obj.id}})
         }
       })
     }
+    // if(this.$route.params.id) {
+    //   console.log('外面传进来的id',this.$route.params.id)
+    //   this.id = this.$route.params.id
+    //   gzhJump(this.id).then(res => {
+    //     this.data = res
+    //     this.data.status = this.$route.params.status
+    //   })
+      
+      
+    // }else {
+    //   console.log(22222222222)
 
+    //   gzhJump(630).then(res => {
+    //     console.log("shuaxin--",res)
+    //     this.data = res
+    //     if(res.shbz == 1) {
+    //       this.data.status = '未完成'
+    //     }else if(res.shbz == 0) {
+    //       this.data.status = '未发货'
+    //     }else {
+    //       this.data.status = '已完成'
+    //     }
+    //   })
+    // }
 
-    // //根据以上item拿到详情
-    // homeListDetail(this.item).then(res => {
-    //   console.log('created时的res',res)
-    //   this.data = res
-    // })
 
   }
 }

@@ -18,6 +18,7 @@ const OrderDetail = resolve => require(['@/views/OrderDetail'], resolve);
 const BindUser = resolve => require(['@/views/BindUser'], resolve);
 const Wwc = resolve => require(['@/views/Wwc'], resolve);
 const WwcDetail = resolve => require(['@/views/WwcDetail'], resolve);
+const space = resolve => require(['@/views/space'], resolve);
 
 const routes = [
   {
@@ -155,6 +156,15 @@ const routes = [
       keepAlive: false
     }
   },
+  {
+    path: '/space',
+    name: 'space',
+    component: space,
+    meta: {
+      title: '404',
+      keepAlive: false
+    }
+  },
 ]
 
 //不写这个的话，如果一直点同一个路由 console会报错
@@ -166,7 +176,10 @@ VueRouter.prototype.push = function push(location) {
 }
 
 const router = new VueRouter({
-  routes
+  routes,
+  scrollBehavior: () => {
+    history.pushState(null, null, document.URL)
+  }
 })
 
 export default router

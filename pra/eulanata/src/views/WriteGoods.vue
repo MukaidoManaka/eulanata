@@ -4,13 +4,14 @@
        <van-nav-bar title="商品发货填写" left-text="返回" :right-text="rightBtn" @click-right="save" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
     <div class="section">
+      <van-cell class="djbh" title="单据编号" :value="data[0].djbh" />
       <div v-for="(item, index) in data" :key="item.id">
         <div class="title"> 商品{{index + 1}} </div>
         <van-cell-group>
-          <van-cell title="单据编号" :value="item.djbh" />
-          <van-cell title="商品编码" :value="item.spbm" />
-          <van-cell title="交货日期" :value="$date(item.jhrq)" />
+          <!-- <van-cell title="单据编号" :value="item.djbh" /> -->
+          <!-- <van-cell title="商品编码" :value="item.spbm" /> -->
           <van-cell title="商品名称" :value="item.spmc" />
+          <van-cell title="交货日期" :value="$date(item.jhrq)" />
           <van-collapse v-model="activeNames">
             <van-collapse-item title="扩展属性" :name="item.spmc">{{item.spjbsx}}</van-collapse-item>
           </van-collapse>
@@ -61,7 +62,7 @@ export default {
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'WriteOrder',query: {id: this.$route.params.id,status: this.$route.params.status}})
+      this.$router.push({name: 'WriteOrder',query: {id: this.$route.params.id}})
     },
     save() {
       console.log('保存时的num',this.num)
@@ -173,12 +174,12 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .writeGoods {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-  }
+.writeGoods {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
 .writeGoods .section {
   flex: 1;
   overflow-y: scroll;
@@ -218,6 +219,13 @@ export default {
   p {
     color: #aaa;
     margin-top: .1rem;
+  }
+}
+.djbh {
+  color: #000;
+  font-weight: 600;
+  .van-cell__value {
+    color: #000;
   }
 }
 // .warning input::placeholder {

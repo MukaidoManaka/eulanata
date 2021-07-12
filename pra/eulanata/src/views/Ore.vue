@@ -2,24 +2,24 @@
   <div class="ore">
     <div class="header">
       <div class="touxiang">
-        <img :src="touxiang" alt="" />
-        <p>讴歌_</p>
+        <img :src="$store.state.avatar" alt="" />
+        <p>{{$store.state.nickname}}</p>
       </div>
       <div class="order">
-        <div class="order_item">
+        <div class="order_item one">
           <p> {{$store.state.count_no}} </p>
           <p>未发货</p>
         </div>
-        <div class="order_item">
+        <div class="order_item two">
           <p> {{$store.state.count_ing}} </p>
           <p>未完成</p>
         </div>
-        <div class="order_item">
+        <div class="order_item three">
           <p> {{$store.state.count_finished}} </p>
           <p>已完成</p>
         </div>
       </div>
-      <div class="share">
+      <!-- <div class="share">
         <van-icon name="share-o" class="share_icon" @click="share" />
         <van-share-sheet
           v-model="showShare"
@@ -27,17 +27,12 @@
           :options="options"
           @select="shareOne"
         />
-      </div>
+      </div> -->
     </div>
     <div class="section">
       <van-cell-group>
         <van-field label="送货人" placeholder="请输入姓名" @blur="changeName" v-model="name" input-align="right" clearable :error="nameError" />
         <van-field label="手机号" placeholder="请输入手机号" @blur="changePhone" v-model="phone" input-align="right" clearable :error="phoneError" />
-        <!-- <van-cell title="我的姓名" value="张三" />
-        <van-cell title="我的电话" value="18408246666" /> -->
-        <!-- <van-cell title="生成订单时间" value="2021-09-09" /> -->
-        
-        <!-- <van-cell title="我的消息" value="查看" /> -->
         <van-cell title="我的公司" :value="$store.state.csmc" />
         <!-- <van-field clickable label="公司" :value="value" placeholder="选择公司" :is-link="true" input-align="right" @click="changeCompany" class="company"/> -->
       </van-cell-group>
@@ -72,23 +67,21 @@
     },
     data() {
         return {
-            // active: null,
-            touxiang: require('@/assets/image/touxiang.jpeg'),
             showShare: false,
-            options: [
-              [
-                { name: '微信', icon: 'wechat' },
-                { name: '朋友圈', icon: 'wechat-moments' },
-                { name: '微博', icon: 'weibo' },
-                { name: 'QQ', icon: 'qq' },
-              ],
-              [
-                { name: '复制链接', icon: 'link' },
-                { name: '分享海报', icon: 'poster' },
-                { name: '二维码', icon: 'qrcode' },
-                { name: '小程序码', icon: 'weapp-qrcode' },
-              ],
-            ],
+            // options: [
+            //   [
+            //     { name: '微信', icon: 'wechat' },
+            //     { name: '朋友圈', icon: 'wechat-moments' },
+            //     { name: '微博', icon: 'weibo' },
+            //     { name: 'QQ', icon: 'qq' },
+            //   ],
+            //   [
+            //     { name: '复制链接', icon: 'link' },
+            //     { name: '分享海报', icon: 'poster' },
+            //     { name: '二维码', icon: 'qrcode' },
+            //     { name: '小程序码', icon: 'weapp-qrcode' },
+            //   ],
+            // ],
             company: [],
             value: '选择公司查看送货单',
             showPicker: false,
@@ -132,22 +125,47 @@
       closeSearch() {
 
       },
-      changeName(e) {
+      changeName() {
         if(this.name === '') {
           this.$toast.fail('送货人姓名不能为空！')
           this.nameError = true
         }else {
-          if(this.name === this.$store.state.name) {
-            //无操作
+          if(this.name.length >= 2 && this.name.length <= 6) {
+            if(this.name === this.$store.state.name) {
+              //没修改，无操作
+            }else {
+              this.nameError = false
+              editName({name: this.name}).then(res => {
+                this.$toast.success('送货人姓名修改成功')
+                console.log('修改名字',res)
+                this.$store.commit("changeName",this.name)
+              })
+            }
           }else {
-            this.nameError = false
-            editName({name: this.name}).then(res => {
-              this.$toast.success('送货人姓名修改成功')
-              console.log('修改名字',res)
-              this.$store.commit("changeName",this.name)
-            })
+            this.$toast.fail('送货人姓名长度为2至6！')
+            this.nameError = true
           }
         }
+        // if(this.name === '') {
+        //   this.$toast.fail('送货人姓名不能为空！')
+        //   this.nameError = true
+        // }else {
+        //   if(this.name.length >= 2 && this.name.length <= 6) {
+            
+        //   }else {
+        //     this.$toast.fail('送货人姓名长度为2至6！')
+        //   }
+        //   if(this.name === this.$store.state.name) {
+        //     //无操作
+        //   }else {
+        //     this.nameError = false
+        //     editName({name: this.name}).then(res => {
+        //       this.$toast.success('送货人姓名修改成功')
+        //       console.log('修改名字',res)
+        //       this.$store.commit("changeName",this.name)
+        //     })
+        //   }
+        // }
       },
       changePhone() {
         if(checkMobile(this.phone)) {
@@ -170,6 +188,23 @@
     },
     created() {
       this.company = this.$store.state.company
+
+      //获取厂商信息
+      userInfo().then(res => {
+        console.log('App里面的请求--厂商信息',res)
+        this.$store.commit('saveCSBM',res.csbm)
+        this.$store.commit('saveCSMC',res.csmc)
+        this.$store.commit('changeName',res.name)
+        this.$store.commit('changePhone',res.phone)
+        this.$store.commit('saveHelp',res.show_help)
+        this.$store.commit('saveAvatar',res.headimgurl)
+        this.$store.commit('saveNickname',res.nickname)
+        // this.$store.commit('saveUserinfo',res.headimgurl,res.nickname)
+      })
+
+      if(this.$store.state.count_finished === 0 || this.$store.state.count_no === 0) {
+        
+      }
     }
   }
 </script>
@@ -184,7 +219,7 @@
 .header {
   width: 100%;
   height: 2.5rem;
-  background-color: lightblue;
+  background-color: rgba(155, 238, 140,.7);
   display: flex;
   flex-direction: column;
   color: #fff;
@@ -241,5 +276,13 @@
 .footer {
   height: .5rem;
 }
-
+.order_item.one {
+  color: goldenrod;
+}
+.order_item.two {
+  color: #f30;
+}
+.order_item.three {
+  color: #07C160;
+}
 </style>

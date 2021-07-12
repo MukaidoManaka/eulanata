@@ -2,6 +2,7 @@ import axios from 'axios'
 import { getStorage, setStorage } from '@/assets/js/utils.js'
 import { Toast } from 'vant'
 import { getLocal } from '../assets/js/utils'
+import router from '../router'
 // import {
 //   api
 // } from '@/config'
@@ -9,11 +10,10 @@ import { getLocal } from '../assets/js/utils'
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 axios.defaults.headers['Authorization'] = 'qms'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API_URL,
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 30000 ,// request timeout,
-  // headers: {'Openid': 'G00016openid'}
+  timeout: 30000 ,
 })
 
 // request拦截器 request interceptor
@@ -23,13 +23,10 @@ service.interceptors.request.use(
     if(getLocal('openid')) {
       config.headers.Openid = getLocal('openid')
     }
-
+    
     // config.headers['X-CSRFToken'] = getStorage('token')
     config.headers.post['X-CSRFToken'] = getStorage('token')
 
-    // if (store.getters.token) {
-    //   config.headers['Authorization'] = store.getters.token
-    // }
     return config
   },
   error => {
@@ -55,8 +52,7 @@ service.interceptors.response.use(
 
     if(response.status === 404) {
       console.log(404)
-      this.loading = false
-      this.finished = true
+      
     }
 
     if (response.code && response.code == 500) {
@@ -70,11 +66,19 @@ service.interceptors.response.use(
     // Toast.clear()
     console.log('八嘎！', error.response) // for debug
 
+    if(error.response.status === 400) {
+      Toast.fail({
+        message:'至少需要填写一项货物',
+        duration: 5000
+      })
+    }
+
     if(error.response.status === 401) {
       Toast.fail({
         message:error.response.data.detail,
         duration: 5000
       })
+      router.push({name:'space'})
     }
 
     if(error.response.status === 404) {
@@ -83,6 +87,7 @@ service.interceptors.response.use(
         message:'未找到相关用户数据',
         duration: 5000
       })
+      router.push({name:'space'})
     }
 
     if(error.response.status === 500) {
@@ -90,6 +95,7 @@ service.interceptors.response.use(
         message:'服务器开小差了~ 请刷新/重进或者稍微再试',
         duration: 5000
       })
+      router.push({name:'space'})
     }
 
     return Promise.reject(error)

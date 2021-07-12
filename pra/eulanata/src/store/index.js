@@ -7,8 +7,7 @@ export default new Vuex.Store({
   state: {
     position: 0,
     keepalive:['Home','WriteOrder'],  //缓存的页面
-    // company: ['平湖凯隆新材料科技有限公司','平湖市兆涌五金塑胶制造有限公司','嘉兴凯隆智能科技股份有限公司'],
-    // curCompany: '',
+    
     count_no: 0,  //no：不 
     count_ing: 0,
     count_finished: 0,
@@ -23,6 +22,12 @@ export default new Vuex.Store({
     appid: 'wxf67fa2fc7c8643a4',
     openid: '',
     token: '',
+    // userinfo: {
+    //   avatar:'',
+    //   nickname: ''
+    // },
+    avatar:'',
+    nickname: ''
   },
   mutations: {
     //保存当前页面Y轴的滚动条位置
@@ -66,6 +71,17 @@ export default new Vuex.Store({
     },
     saveToken(state, val) {
       state.token = val
+    },
+    // saveUserinfo(state,[head,name]) {
+    //   console.log(head,name)
+    //   state.userinfo.avatar = head
+    //   state.userinfo.nickname = name
+    // }
+    saveAvatar(state, val) {
+      state.avatar = val
+    },
+    saveNickname(state, val) {
+      state.nickname = val
     }
   },
   actions: {

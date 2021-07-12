@@ -4,13 +4,14 @@
        <van-nav-bar title="商品发货填写" left-text="返回" :right-text="rightBtn" @click-right="save" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
     <div class="section">
+      <van-cell class="djbh" title="单据编号" :value="item.djbh" />
       <div v-for="(item, index) in data" :key="item.id">
         <div class="title"> 商品{{index + 1}} </div>
         <van-cell-group>
-          <van-cell title="单据编号" :value="item.djbh" />
-          <van-cell title="商品编码" :value="item.spbm" />
-          <van-cell title="交货日期" :value="$date(item.jhrq)" />
+          <!-- <van-cell title="单据编号" :value="item.djbh" />
+          <van-cell title="商品编码" :value="item.spbm" /> -->
           <van-cell title="商品名称" :value="item.spmc" />
+          <van-cell title="交货日期" :value="$date(item.jhrq)" />
           <van-collapse v-model="activeNames">
             <van-collapse-item title="扩展属性" :name="item.spmc">{{item.spjbsx}}</van-collapse-item>
           </van-collapse>
@@ -85,7 +86,7 @@ export default {
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'Wwc',params: {id: this.$route.params.id,status: this.$route.params.status}})
+      this.$router.push({name: 'Wwc',query: {id: this.$route.params.id}})
     },
     save() {
       console.log('保存时的num',this.num)
@@ -130,13 +131,14 @@ export default {
         this.canSubmit = false
         this.$toast.fail('保存失败，请检查填写内容')
       }else {
+
         this.canSubmit = true
       }
 
       //为true才让保存 并跳转
       if(this.canSubmit) {
         this.$toast.success('保存成功！')
-        this.$router.push({name:'Wwc',params: {
+        this.$router.push({name:'Wwc',query: {
           id: this.$route.params.id,
           status: this.$route.params.status,
           sp: this.sp,
@@ -161,6 +163,8 @@ export default {
     },
   },
   created() {
+    this.id = this.$route.params.id
+    console.log('id',this.id)
     //来回传num是为了点击保存之后到提交页面，他还想返回来看一眼goods页面填的值是多少的话，就得这个num来做简单
     if(Object.keys(this.$route.params).includes('num')) {
       console.log('包含num',this.$route.params.num)
@@ -170,7 +174,7 @@ export default {
     }
     // this.num = this.$route.params.num
     
-    goodsDetail({"order": this.$route.params.id}).then(res => {
+    goodsDetail({"order": this.id}).then(res => {
       console.log('res',res)
       this.data = res
       
@@ -260,6 +264,13 @@ export default {
   p {
     color: #aaa;
     margin-top: .1rem;
+  }
+}
+.djbh {
+  color: #000;
+  font-weight: 600;
+  .van-cell__value {
+    color: #000;
   }
 }
 </style>

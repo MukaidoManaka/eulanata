@@ -4,13 +4,14 @@
        <van-nav-bar title="商品发货详情" left-text="返回" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
     <div class="section">
+      <van-cell class="djbh" title="单据编号" :value="item.djbh" />
       <div v-for="(item, index) in data" :key="item.id">
         <div class="title"> 商品{{index + 1}} </div>
         <van-cell-group>
-          <van-cell title="单据编号" :value="item.djbh" />
-          <van-cell title="商品编码" :value="item.spbm" />
-          <van-cell title="交货日期" :value="$date(item.jhrq)" />
+          <!-- <van-cell title="单据编号" :value="item.djbh" />
+          <van-cell title="商品编码" :value="item.spbm" /> -->
           <van-cell title="商品名称" :value="item.spmc" />
+          <van-cell title="交货日期" :value="$date(item.jhrq)" />
           <van-collapse v-model="activeNames">
             <van-collapse-item title="扩展属性" :name="item.spmc">{{item.spjbsx}}</van-collapse-item>
           </van-collapse>
@@ -57,11 +58,12 @@ export default {
   },
   methods: {
     returnPrev() {
-      this.$router.push({name: 'ListDetail',params: {id: this.$route.params.id,status: this.$route.params.status}})
+      this.$router.push({name: 'ListDetail',query: {id: this.$route.params.id}})
     },
   },
   created() {
     this.id = this.$route.params.id
+    console.log('id',this.id)
 
     goodsDetail({"order":this.id}).then(res => {
       console.log('res',res)
@@ -129,6 +131,13 @@ export default {
   p {
     color: #aaa;
     margin-top: .1rem;
+  }
+}
+.djbh {
+  color: #000;
+  font-weight: 600;
+  .van-cell__value {
+    color: #000;
   }
 }
 </style>

@@ -2,7 +2,8 @@ const path = require('path');
 module.exports = {
     chainWebpack: config => {
         const types = ['vue-modules', 'vue', 'normal-modules', 'normal'];
-        types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
+        types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)));
+        // config.rule('js').include.add(/node_modules\/(dom7|swiper)\/.*/)
     },
     lintOnSave: false,
     devServer: {

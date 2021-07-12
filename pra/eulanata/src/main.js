@@ -26,6 +26,10 @@ Vue.prototype.$date = date
 require('es6-promise').polyfill();
 require('es6-promise/auto');
 
+window.addEventListener('popstate', function() {
+  history.pushState(null, null, document.URL)
+})
+
 new Vue({
   router,
   store,

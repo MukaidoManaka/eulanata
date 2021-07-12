@@ -9,12 +9,11 @@
     </div>
     <div class="section">
       <div class="swipeWraper">
-        <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+        <!-- <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
           <van-swipe-item><img :src="swipeImg1" alt=""></van-swipe-item>
           <van-swipe-item><img :src="swipeImg2" alt=""></van-swipe-item>
           <van-swipe-item><img :src="banner2" alt=""></van-swipe-item>
-          <!-- <van-swipe-item><img :src="swipeImg1" alt=""></van-swipe-item> -->
-        </van-swipe>
+        </van-swipe> -->
       </div>
       <div class="msg">
         <van-notice-bar scrollable text="技术是开发它的人的共同灵魂。" />
@@ -38,9 +37,9 @@ export default {
   },
   data() {
     return {
-      swipeImg1: require("@/assets/image/solution02.png"),
-      swipeImg2: require("@/assets/image/solution04.png"),
-      banner2: require("@/assets/image/banner2.jpg"),
+      // swipeImg1: require("@/assets/image/solution02.png"),
+      // swipeImg2: require("@/assets/image/solution04.png"),
+      // banner2: require("@/assets/image/banner2.jpg"),
       false: true
     }
   }

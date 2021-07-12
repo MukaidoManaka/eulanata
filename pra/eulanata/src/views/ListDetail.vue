@@ -39,6 +39,7 @@
 
 <script>
 import { gzhJump } from '@/api/all.js'
+import { decodeurl } from '@/assets/js/utils.js'
 export default {
   name: 'ListDetail',
   data() {
@@ -56,25 +57,61 @@ export default {
     },
     readGoods() {
       this.$router.push({name: 'GoodsDetail',params: {
-        id: this.$route.params.id, 
+        id: this.$route.query.id, 
         status: this.data.status,
         }
       })
     }
   },
   created() {
-    if(this.$route.params.id) {
-      console.log('外面传进来的id',this.$route.params.id)
-      this.id = this.$route.params.id
+    if(this.$route.query.id) {
+      console.log('外面传进来的id',this.$route.query.id)
+      console.log('外面传进来的route',this.$route)
+      this.id = this.$route.query.id
       gzhJump(this.id).then(res => {
         this.data = res
-        this.data.status = this.$route.params.status
+        if(res.shbz == 0) {
+          this.data.status = '未发货'
+        }else if (res.shbz == 1) {
+          this.data.status = '未完成'
+        }else if (res.shbz == 2) {
+          this.data.status = '已完成'
+        }
       })
       
     }else {
-      console.log(22222222222)
-      
+      console.log('不进else')
+      let p = location.href
+      console.log(p)
+      let obj = decodeurl(p)
+      console.log(obj)
+      gzhJump(obj.id).then(res => {
+        console.log("shuaxin--",res)
+        this.data = res
+        if(res.shbz == 1) {
+          this.data.status = '未完成'
+          this.$router.push({name:'Wwc',query:{id:obj.id}})
+        }else if(res.shbz == 0) {
+          this.data.status = '未发货'
+        }else {
+          this.data.status = '已完成'
+          this.$router.push({name:'ListDetail',query:{id:obj.id}})
+        }
+      })
     }
+
+    // if(this.$route.params.id) {
+    //   console.log('外面传进来的id',this.$route.params.id)
+    //   this.id = this.$route.params.id
+    //   gzhJump(this.id).then(res => {
+    //     this.data = res
+    //     this.data.status = this.$route.params.status
+    //   })
+      
+    // }else {
+    //   console.log(22222222222)
+      
+    // }
     
 
   }

@@ -136,7 +136,7 @@ export default {
       //   })
       // }
 
-      if(this.submitObj.sp != undefined) {
+      if(this.submitObj.sp != undefined && this.submitObj.sp.length > 0) {
         submitGoods(this.submitObj).then(res => {
           console.log('提交啦',res)
           if(res.detail == 'success') {
@@ -172,47 +172,47 @@ export default {
     //
     init() {
       if(this.$route.query.id) {
-      console.log('外面传进来的id',this.$route.query.id)
-      console.log('外面传进来的route',this.$route)
-      this.id = this.$route.query.id
-      gzhJump(this.id).then(res => {
-        this.data = res
-        if(res.shbz == 0) {
-          this.data.status = '未发货'
-        }else if (res.shbz == 1) {
-          this.data.status = '未完成'
-        }else if (res.shbz == 2) {
-          this.data.status = '已完成'
-        }
-      })
-      
-    }else {
-      console.log('不进else')
-      let p = location.href
-      console.log(p)
-      let obj = decodeurl(p)
-      console.log(obj)
-      gzhJump(obj.id).then(res => {
-        console.log("shuaxin--",res)
-        this.data = res
-        if(res.shbz == 1) {
-          this.data.status = '未完成'
-          this.$router.push({name:'Wwc',params:{id:obj.id}})
-        }else if(res.shbz == 0) {
-          this.data.status = '未发货'
-        }else {
-          this.data.status = '已完成'
-          this.$router.push({name:'ListDetail',params:{id:obj.id}})
-        }
-      })
-    }
+        console.log('外面传进来的id',this.$route.query.id)
+        console.log('外面传进来的route',this.$route)
+        this.id = this.$route.query.id
+        gzhJump(this.id).then(res => {
+          this.data = res
+          if(res.shbz == 0) {
+            this.data.status = '未发货'
+          }else if (res.shbz == 1) {
+            this.data.status = '未完成'
+          }else if (res.shbz == 2) {
+            this.data.status = '已完成'
+          }
+        })
+        
+      }else {
+        console.log('不进else')
+        let p = location.href
+        console.log(p)
+        let obj = decodeurl(p)
+        console.log(obj)
+        gzhJump(obj.id).then(res => {
+          console.log("shuaxin--",res)
+          this.data = res
+          if(res.shbz == 1) {
+            this.data.status = '未完成'
+            this.$router.push({name:'Wwc',query:{id:obj.id}})
+          }else if(res.shbz == 0) {
+            this.data.status = '未发货'
+          }else {
+            this.data.status = '已完成'
+            this.$router.push({name:'ListDetail',query:{id:obj.id}})
+          }
+        })
+      }
     }
     
   },
   mounted() {
 
     //没有openid就去else请求
-    if (getLocal('openid')){
+    if (getLocal('openid') && getLocal('openid') !== 'undefined'){
       console.log('if true的openid',getLocal('openid'))
       this.init()
     }else {

@@ -20,8 +20,6 @@
             </div>
             <div>
                 <van-button color="{'rgb(29, 98, 240)', 'rgb(25, 213, 253)'}" type="info" class="loginBtn" block round @click="login">登 录</van-button>
-                <!-- <button class="button">wawa</button> -->
-                <!-- <img :src="button" alt="" class="buttonImg"> -->
             </div>
         </van-form>
         <div class="wechat">
@@ -36,20 +34,9 @@
         name: 'Login',
         data() {
             return {
-                bg1:require('@/assets/image/login_bg1.jpg'),
-                bg2:require('@/assets/image/login_bg2.jpg'),
-                bg3:require('@/assets/image/login_bg3.jpg'),
-                bg4:require('@/assets/image/login_bg4.jpg'),
                 bg5:require('@/assets/image/login_bg5.jpg'),
-                bg6:require('@/assets/image/login_bg6.jpg'),
-                bg7:require('@/assets/image/login_bg7.jpg'),
-                // bg8:require('@/assets/image/login_bg8.jpg'),
-                button:require('@/assets/image/phone-btn.png'),
                 logo:require('@/assets/image/logo.png'),
                 wechat:require('@/assets/image/f_we_chat.png'),
-                // gradient:['to right','rgb(29, 98, 240)', 'rgb(25, 213, 253)'],
-                // gradient:{'to right','rgb(29, 98, 240)', 'rgb(25, 213, 253)'},
-                // gradient:`{linear-gradient('rgb(29, 98, 240), rgb(25, 213, 253))}`,
                 username: '',
                 password: '',
                 url: '',
