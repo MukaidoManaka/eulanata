@@ -4,7 +4,7 @@
        <van-nav-bar title="商品发货填写" left-text="返回" :right-text="rightBtn" @click-right="save" left-arrow @click-left="returnPrev"></van-nav-bar>
     </div>
     <div class="section">
-      <van-cell class="djbh" title="单据编号" :value="item.djbh" />
+      <van-cell class="djbh" title="单据编号" :value="djbh" />
       <div v-for="(item, index) in data" :key="item.id">
         <div class="title"> 商品{{index + 1}} </div>
         <van-cell-group>
@@ -177,6 +177,7 @@ export default {
     goodsDetail({"order": this.id}).then(res => {
       console.log('res',res)
       this.data = res
+      this.djbh = res[0].djbh
       
       if(res === null) {
         console.log("空空空空空空")

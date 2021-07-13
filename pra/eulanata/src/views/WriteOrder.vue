@@ -25,7 +25,7 @@
       <van-cell-group>
         <van-cell title="填写发货单" is-link @click="readGoods" class="readGoods"/>
       </van-cell-group>
-      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注(非必填)" v-model="submitObj.remark"></textarea>
+      <textarea name="remark" id="remark" cols="30" rows="5" placeholder="备注(非必填,最多100字)" maxlength="100" v-model="submitObj.remark"></textarea>
       <van-button type="primary" class="submit" @click="submit" :disabled="disabled">提 交</van-button>
     </div> 
   </div>
@@ -84,7 +84,7 @@ export default {
       //   this.submitObj.sp.push(this.$route.params.sp[i])
       // }
 
-      console.log('提交前的submitObj',this.submitObj)
+      // console.log('提交前的submitObj',this.submitObj)
 
       //判断提交时间  是否为交货日期的7tian之内 暂时不用这个功能，直接就能提交 不做限制
       // const date = new Date(this.$store.state.date)
@@ -138,8 +138,9 @@ export default {
 
       if(this.submitObj.sp != undefined && this.submitObj.sp.length > 0) {
         submitGoods(this.submitObj).then(res => {
-          console.log('提交啦',res)
+          // console.log('提交啦',res)
           if(res.detail == 'success') {
+
             this.$toast.success({
               message: '   提交成功   凯隆已收到您的送货单',
               duration: 5000
@@ -147,14 +148,14 @@ export default {
             
             //提交成功的单子存其id进sessionStorage, [10,55,32]
             if(getStorage('submitId')) {
-              console.log('这')
+              // console.log('这')
               let j = JSON.parse(getStorage('submitId'))
               j.push(this.id)
               let k = JSON.stringify(j)
               setStorage('submitId',k)
             }else {
               //初次submitId肯定不存在 进来这里
-              console.log('那')
+              // console.log('那')
               let arr = []
               arr.push(this.id)
               let arr2 = JSON.stringify(arr)
@@ -164,7 +165,7 @@ export default {
           this.$router.push({name: 'Home',params: {id: this.id}})
         })
       }else {
-        console.log('sp的值',this.submitObj.sp)
+        // console.log('sp的值',this.submitObj.sp)
         this.$toast.fail("请至少填写一样所送货物")
       }
   
@@ -172,8 +173,8 @@ export default {
     //
     init() {
       if(this.$route.query.id) {
-        console.log('外面传进来的id',this.$route.query.id)
-        console.log('外面传进来的route',this.$route)
+        // console.log('外面传进来的id',this.$route.query.id)
+        // console.log('外面传进来的route',this.$route)
         this.id = this.$route.query.id
         gzhJump(this.id).then(res => {
           this.data = res
@@ -187,13 +188,13 @@ export default {
         })
         
       }else {
-        console.log('不进else')
+        // console.log('不进else')
         let p = location.href
-        console.log(p)
+        // console.log(p)
         let obj = decodeurl(p)
-        console.log(obj)
+        // console.log(obj)
         gzhJump(obj.id).then(res => {
-          console.log("shuaxin--",res)
+          // console.log("shuaxin--",res)
           this.data = res
           if(res.shbz == 1) {
             this.data.status = '未完成'
@@ -213,23 +214,23 @@ export default {
 
     //没有openid就去else请求
     if (getLocal('openid') && getLocal('openid') !== 'undefined'){
-      console.log('if true的openid',getLocal('openid'))
+      // console.log('if true的openid',getLocal('openid'))
       this.init()
     }else {
       const local = window.location.href
       const hash = window.location.hash 
       const o = decodeurl(local)
       const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
-      console.log(code)
+      // console.log(code)
       const baseurl = 'http://www.keeplong.vip/dist/'
       const url = baseurl + hash
-      console.log(url)
+      // console.log(url)
       if (code == null || code === '') {
           window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
       } else {
-        console.log('else')
+        // console.log('else')
         getOpenid({'code':code}).then(res => {
-          console.log('openid的res',res)
+          // console.log('openid的res',res)
           this.$store.commit('saveOpenid',res.open_id)
           setStorage('openid',res.open_id)
           setLocal('openid',res.open_id)

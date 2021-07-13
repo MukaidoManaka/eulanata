@@ -35,8 +35,8 @@
                     <span>采购合同号：{{item.djbh}}</span>
                     <div>
                       <!-- <van-tag plain type='primary' v-if="func(item.id)" style="margin-right:3px">已提交</van-tag> -->
-                      <van-tag plain type='primary' v-if="item.going && active === 0 || func(item.id)" style="margin-right:3px">已提交</van-tag>
-                      <van-tag plain type='primary' :class="'bindClass' + `${active}`" class="tag3" v-if="active === 1 || !item.going">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
+                      <van-tag plain type='primary' v-if="(item.going && item.shbz == 0) || func(item.id)" style="margin-right:3px">已提交</van-tag>
+                      <van-tag plain type='primary' :class="'bindClass' + `${active}`" class="tag3" v-if="active === 1 || active === 2 || !item.going">{{active === 0 ? '未发货' : (active === 1 ? '未完成' : '已完成')}}</van-tag>
                     </div>
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${searchParams.status}`">{{searchParams.status === 'wait' ? '未发货' : (searchParams.status === 'going' ? '未完成' : '已完成')}}</van-tag> -->
                     <!-- <van-tag plain type='primary' :class="'bindClass' + `${item.status}`">{{item.status == 0 ? '未发货' : '已完成'}}</van-tag> -->
@@ -242,10 +242,10 @@ export default {
           const p = Math.ceil(this.waitArr.length/10)
           this.page = 1 + p
           this.searchParams.page = this.page
-          console.log("onload之前的page是多少",this.page,'------p是多少',p)
+          // console.log("onload之前的page是多少",this.page,'------p是多少',p)
 
           homeList(this.searchParams).then(res => {
-            console.log('onload时的res',res)
+            // console.log('onload时的res',res)
             if (res.results.length > 0) {
 
               this.currentArr = [...this.currentArr,...res.results]
@@ -256,7 +256,7 @@ export default {
 
               if(res.next === null) {
                 this.waitPage = null
-                console.log("wait已加载完")
+                // console.log("wait已加载完")
               }
               
             }else { // length = 0
@@ -265,7 +265,7 @@ export default {
               this.finished = true
             }
           }).catch(err => {
-            console.log("error------------",err.response)
+            // console.log("error------------",err.response)
           })
         }
       }else if (this.active === 1) {
@@ -280,10 +280,10 @@ export default {
           const p = Math.ceil(this.goingArr.length/10)
           this.page = 1 + p
           this.searchParams.page = this.page
-          console.log("onload之前的page是多少",this.page,'------p是多少',p)
+          // console.log("onload之前的page是多少",this.page,'------p是多少',p)
 
           homeList(this.searchParams).then(res => {
-            console.log('onload时的res',res)
+            // console.log('onload时的res',res)
             // this.emptyArr = res.results
             
             if (res.results.length > 0) {
@@ -295,7 +295,7 @@ export default {
 
               if(res.next === null) {
                 this.goingPage = null
-                console.log("going已加载完")
+                // console.log("going已加载完")
               }
               
             }else { // length = 0
@@ -316,10 +316,10 @@ export default {
           const p = Math.ceil(this.finishedArr.length/10)
           this.page = 1 + p
           this.searchParams.page = this.page
-          console.log("onload之前的page是多少",this.page,'------p是多少',p)
+          // console.log("onload之前的page是多少",this.page,'------p是多少',p)
 
           homeList(this.searchParams).then(res => {
-            console.log('onload时的res',res)
+            // console.log('onload时的res',res)
             if (res.results.length > 0) {
 
               this.currentArr = [...this.currentArr,...res.results]
@@ -330,7 +330,7 @@ export default {
 
               if(res.next === null) {
                 this.finishedPage = null
-                console.log("已完成已加载完")
+                // console.log("已完成已加载完")
               }
               
             }else { // length = 0
@@ -339,7 +339,7 @@ export default {
               this.finished = true
             }
           }).catch(err => {
-            console.log("error------------",err.code)
+            // console.log("error------------",err.code)
           })
         }
       }
@@ -360,7 +360,7 @@ export default {
       }
 
       homeList(this.searchParams).then(res => {
-        console.log('下拉刷新时的res',res)
+        // console.log('下拉刷新时的res',res)
         this.currentArr = res.results
         this.nextPage = res.next
         this.refreshing = false
@@ -396,9 +396,9 @@ export default {
       })
     },
     enterDetail(id) {
-      console.log('看看id',id)
-      console.log('active',this.active)
-      console.log('进入详情的scrollTop',document.querySelector('.van-tabs__content').scrollTop)
+      // console.log('看看id',id)
+      // console.log('active',this.active)
+      // console.log('进入详情的scrollTop',document.querySelector('.van-tabs__content').scrollTop)
       this.$store.commit('savePosition',document.querySelector('.van-tabs__content').scrollTop)
 
       //0表示点击事件时tab处于未发货这一栏，就去填写页
@@ -412,20 +412,14 @@ export default {
       
     },
     tabChange(name,title) {
-      console.log('title',title)
-      console.log('name',name)
+      // console.log('title',title)
+      // console.log('name',name)
 
       //神之一true，被遗忘的loading这么强大，切换tab的时候置个true 再也不用怕瞎逼自动onload数据导致的各种报错了
       this.loading = true
 
       //栏目切换了 clear一下
       this.reset()
-      this.$nextTick(() => {
-        document.querySelector('.van-pull-refresh').scrollTop = 21
-        document.querySelector('.van-pull-refresh').scrollTo(0,33)
-        console.log("scrollTop--------",document.querySelector('.van-pull-refresh'))
-        console.log("scrollTop--------",document.querySelector('.van-pull-refresh').scrollTop)
-      })
       this.currentArr = []
 
       this.page = 1
@@ -447,7 +441,7 @@ export default {
           this.searchParams.status = 'wait'
 
           homeList(this.searchParams).then(res => {
-            console.log('未发货',res)
+            // console.log('未发货',res)
             this.currentArr = res.results
             this.waitArr = res.results
             this.nextPage = res.next
@@ -481,7 +475,7 @@ export default {
 
           homeList(this.searchParams).then(res => {
 
-            console.log('切换到未完成',res)
+            // console.log('切换到未完成',res)
             this.currentArr = res.results
             this.goingArr = res.results
             
@@ -499,7 +493,7 @@ export default {
           })
         }else {
           this.searchParams.status = 'going'
-          console.log("已经有goingArr的情况进else时",this.goingArr)
+          // console.log("已经有goingArr的情况进else时",this.goingArr)
           this.currentArr = this.goingArr
           this.loading =false
           //显示百分比
@@ -510,7 +504,7 @@ export default {
         }
 
         
-        console.log('active 1时的currentArr',this.currentArr)
+        // console.log('active 1时的currentArr',this.currentArr)
       }else if (name == 2) {
         this.radio = '3'
         //如果finishedArr里面没值，就去请求
@@ -524,7 +518,7 @@ export default {
           this.searchParams.status = 'finished'
 
           homeList(this.searchParams).then(res => {
-            console.log('已完成',res)
+            // console.log('已完成',res)
             this.currentArr = res.results
             this.finishedArr = res.results
             this.nextPage = res.next
@@ -564,11 +558,11 @@ export default {
       if (this.startOrEnd === 'start') {
         this.startDate = dateFormat('YYYY-mm-dd',val)
         this.currentDate = val
-        console.log('start',this.startDate)
+        // console.log('start',this.startDate)
       }else if (this.startOrEnd === 'end') {
         this.endDate = dateFormat('YYYY-mm-dd',val)
         this.currentDate = val
-        console.log('end',this.endDate)
+        // console.log('end',this.endDate)
       }
 
       this.showPop = !this.showPop
@@ -587,7 +581,7 @@ export default {
     submit() {
       //如果搜索框的 起始时间 > 截至时间 ，不通过(化成时间戳来比较) 4320000000=3600*24*50*1000
       //搜索所得到的数据就只保存在currentArr中，要是左右切换了，再切回来想看之前那个搜索条件下的数据，需要再搜索一次
-    
+      // this.currentArr = []
       this.page = 1
       this.searchParams.page = this.page
       //如果之前划到底了 finished就为true，搜索时置false
@@ -601,7 +595,7 @@ export default {
           this.$toast.fail('查询关键字长度不能大于20！')
         }else {
           if(time2 - time1 > 4320000000) {
-            console.log('time',time2 - time1)
+            // console.log('time',time2 - time1)
             this.$toast.fail('查询时间跨度不能大于50天!')
           }else {
 
@@ -630,14 +624,14 @@ export default {
               this.finishedArr = []
             }
             
-            console.log('searchParams',this.searchParams)
+            // console.log('searchParams',this.searchParams)
             //searchParams组装好了 发请求
             homeList(this.searchParams).then(res => {
-              console.log('搜索时的res',res)
+              // console.log('搜索时的res',res)
               if (res.results.length > 0) {
                 this.currentArr = []
                 this.currentArr = res.results
-                console.log("这个currentArr是没变么",this.currentArr)
+                // console.log("这个currentArr是没变么",this.currentArr)
                 this.nextPage = res.next
 
                 if(this.radio == '1') {
@@ -674,7 +668,7 @@ export default {
                 this.$toast.clear()
               }else {
                 this.$toast.fail('未搜索到相应数据!')
-                console.log('搜索到的数据为0条')
+                // console.log('搜索到的数据为0条')
                 this.finished = true
               }
             })
@@ -704,7 +698,7 @@ export default {
     },
     reset() {
       this.clearSearch()
-      this.radio = '1'
+      // this.radio = '1'
       this.whetherSearching = false
     },
     //监听focus事件， 当field一focus就让他blur，手机端就不会弹出输入法了
@@ -727,7 +721,7 @@ export default {
     closeHelp() {
       if(this.checked == true) {
         showHelp({'show_help':!this.checked}).then(res => {
-          console.log('show help',res)
+          // console.log('show help',res)
           this.$store.commit('saveHelp',false)
           this.help2 = false
         })
@@ -749,11 +743,11 @@ export default {
       getToken().then(res => {
         this.$store.commit('saveToken',res.token)
         setStorage("token",res.token)
-        console.log('token--',res.token)
+        // console.log('token--',res.token)
       })
       //获取厂商信息
       userInfo().then(res => {
-        console.log('App里面的请求--厂商信息',res)
+        // console.log('App里面的请求--厂商信息',res)
         this.$store.commit('saveCSBM',res.csbm)
         this.$store.commit('saveCSMC',res.csmc)
         this.$store.commit('changeName',res.name)
@@ -786,12 +780,12 @@ export default {
 
       //获取当天时间
       getDate().then(res => {
-        console.log("今天时间---",res.time)
+        // console.log("今天时间---",res.time)
         this.$store.commit('saveDate',res.time)
       })
 
       homeList(this.searchParams).then(res => {
-        console.log('初始化wait',res)
+        // console.log('初始化wait',res)
         
         this.currentArr = res.results
         this.waitArr = res.results
@@ -823,24 +817,24 @@ export default {
     //没有openid就去else请求 
     
     if (getLocal('openid') && getLocal('openid') !== 'undefined'){
-      console.log('进if了')
-      console.log('if true的openid',getLocal('openid'))
+      // console.log('进if了')
+      // console.log('if true的openid',getLocal('openid'))
       this.init()
     }else {
       const local = window.location.href
       const hash = window.location.hash 
       const o = decodeurl(local)
       const code = o.code // 截取路径中的code，如果没有就去微信授权，如果已经获取到了就直接传code给后台获取openId
-      console.log(code)
+      // console.log(code)
       const baseurl = 'http://www.keeplong.vip/dist/'
       const url = baseurl + hash
-      console.log(url)
+      // console.log(url)
       if (code == null || code === '') {
           window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + this.$store.state.appid + '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect'
       } else {
-        console.log('else')
+        // console.log('else')
         getOpenid({'code':code}).then(res => {
-          console.log('openid的res',res)
+          // console.log('openid的res',res)
           this.$store.commit('saveOpenid',res.open_id)
           setStorage('openid',res.open_id)
           setLocal('openid',res.open_id)
@@ -852,9 +846,9 @@ export default {
 
   },
   activated() {
-    console.log('activeted')
+    // console.log('activeted')
     // document.querySelector('.van-tabs__content').scrollTop = this.$store.state.position
-    console.log(this.$route.params.id)
+    // console.log(this.$route.params.id)
     this.func(this.$route.params.id)
     if(this.active === 0) {
       //van-tag的item.going没变，这样强制更新
@@ -868,18 +862,10 @@ export default {
 
     //只有里面提交成功才会传回来id，强制更新tag
     if(this.$route.params.id) {
-      console.log('进没进force啊')
+      // console.log('进没进force啊')
       this.$forceUpdate()
     }
   },
-  beforeRouteUpdate(to,from,next) {
-    console.log('id',this.$route.params.id)
-  },
-  mounted() {
-  },
-  updated() {
-    
-  }
 }
 </script>
 
