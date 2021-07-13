@@ -89,12 +89,12 @@ export default {
       //   this.submitObj.sp.push(this.$route.params.sp[i])
       // }
 
-      console.log('提交前的submitObj',this.submitObj)
+      // console.log('提交前的submitObj',this.submitObj)
 
       //不为undefined 填写了货物
       if(this.submitObj.sp != undefined && this.submitObj.sp.length > 0) {
         submitGoods(this.submitObj).then(res => {
-          console.log('提交啦',res)
+          // console.log('提交啦',res)
           if(res.detail == 'success') {
             this.$toast.success({
               message: '   提交成功   凯隆已收到您的送货单',
@@ -118,15 +118,15 @@ export default {
           this.$router.push({name: 'Home',params:{id: this.id}})
         })
       }else {
-        console.log('sp的值',this.submitObj.sp)
-        this.$toast.fail("请至少填写一样所送货物")
+        // console.log('sp的值',this.submitObj.sp)
+        this.$toast.fail("请至少填写一种所送货物")
       }
     }
   },
   created() {
     if(this.$route.query.id) {
-      console.log('外面传进来的id',this.$route.query.id)
-      console.log('外面传进来的route',this.$route)
+      // console.log('外面传进来的id',this.$route.query.id)
+      // console.log('外面传进来的route',this.$route)
       this.id = this.$route.query.id
       gzhJump(this.id).then(res => {
         this.data = res
@@ -140,13 +140,13 @@ export default {
       })
       
     }else {
-      console.log('不进else')
+      // console.log('不进else')
       let p = location.href
-      console.log(p)
+      // console.log(p)
       let obj = decodeurl(p)
-      console.log(obj)
+      // console.log(obj)
       gzhJump(obj.id).then(res => {
-        console.log("shuaxin--",res)
+        // console.log("shuaxin--",res)
         this.data = res
         if(res.shbz == 1) {
           this.data.status = '未完成'

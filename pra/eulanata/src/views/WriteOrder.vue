@@ -166,7 +166,7 @@ export default {
         })
       }else {
         // console.log('sp的值',this.submitObj.sp)
-        this.$toast.fail("请至少填写一样所送货物")
+        this.$toast.fail("请至少填写一种所送货物")
       }
   
     },

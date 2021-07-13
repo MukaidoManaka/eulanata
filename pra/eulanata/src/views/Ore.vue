@@ -58,7 +58,7 @@
 
 <script>
   import Footer from '@/components/Footer'
-  import { editName, editPhone, userInfo } from '@/api/all.js'
+  import { editName, editPhone, userInfo, homeList } from '@/api/all.js'
   import { checkMobile } from '@/assets/js/utils.js'
   export default {
     name: 'Ore',
@@ -92,6 +92,12 @@
             nameErrorMsg: '',
             phoneError: false,
             phoneErrorMsg: '',
+            searchParams: {
+              xshth: '',
+              startdate: '',
+              enddate: '',
+              status: 'wait', //默认显示wait未发货
+            },
         }
     },
     methods: {
@@ -107,15 +113,15 @@
       },
       shareOne(option,index) {
         this.$toast('分享成功！')
-        console.log("分享的option",option)
-        console.log("分享的index",index)
+        // console.log("分享的option",option)
+        // console.log("分享的index",index)
         this.showShare = !this.showShare
       },
       changeCompany() {
         this.showPicker = true
       },
       confirmCompany(val,index) {
-        console.log('val--index',val,index)
+        // console.log('val--index',val,index)
         this.value = val
         this.showPicker =false
       },
@@ -137,7 +143,7 @@
               this.nameError = false
               editName({name: this.name}).then(res => {
                 this.$toast.success('送货人姓名修改成功')
-                console.log('修改名字',res)
+                // console.log('修改名字',res)
                 this.$store.commit("changeName",this.name)
               })
             }
@@ -146,26 +152,6 @@
             this.nameError = true
           }
         }
-        // if(this.name === '') {
-        //   this.$toast.fail('送货人姓名不能为空！')
-        //   this.nameError = true
-        // }else {
-        //   if(this.name.length >= 2 && this.name.length <= 6) {
-            
-        //   }else {
-        //     this.$toast.fail('送货人姓名长度为2至6！')
-        //   }
-        //   if(this.name === this.$store.state.name) {
-        //     //无操作
-        //   }else {
-        //     this.nameError = false
-        //     editName({name: this.name}).then(res => {
-        //       this.$toast.success('送货人姓名修改成功')
-        //       console.log('修改名字',res)
-        //       this.$store.commit("changeName",this.name)
-        //     })
-        //   }
-        // }
       },
       changePhone() {
         if(checkMobile(this.phone)) {
@@ -175,7 +161,7 @@
             this.phoneError = false
             editPhone({phone: this.phone}).then(res => {
               this.$toast.success('手机号修改成功！')
-              console.log('修改手机号',res)
+              // console.log('修改手机号',res)
               this.$store.commit('changePhone',this.phone)
             })
           }
@@ -191,7 +177,7 @@
 
       //获取厂商信息
       userInfo().then(res => {
-        console.log('App里面的请求--厂商信息',res)
+        // console.log('App里面的请求--厂商信息',res)
         this.$store.commit('saveCSBM',res.csbm)
         this.$store.commit('saveCSMC',res.csmc)
         this.$store.commit('changeName',res.name)
@@ -200,10 +186,30 @@
         this.$store.commit('saveAvatar',res.headimgurl)
         this.$store.commit('saveNickname',res.nickname)
         // this.$store.commit('saveUserinfo',res.headimgurl,res.nickname)
+      }).then(() => {
+        this.phone = this.$store.state.phone
+        this.name = this.$store.state.name
       })
 
       if(this.$store.state.count_finished === 0 || this.$store.state.count_no === 0) {
-        
+        //拿未完成的总count
+        let _ing = JSON.parse(JSON.stringify(this.searchParams))
+        _ing.status = 'going'
+        homeList(_ing).then(res => {
+          this.$store.commit('changeIng',res.count)
+        })
+
+        //拿已完成的总count
+        let _finished = JSON.parse(JSON.stringify(this.searchParams))
+        _finished.status = 'finished'
+        homeList(_finished).then(res => {
+          this.$store.commit('changeFinished',res.count)
+        })
+
+        //拿待发货的总count
+        homeList(this.searchParams).then(res => {
+          this.$store.commit('changeNo',res.count)
+        })
       }
     }
   }

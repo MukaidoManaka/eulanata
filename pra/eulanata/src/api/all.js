@@ -4,7 +4,7 @@ import request from '@/utils/request.js'
 
 //列表页
 export function homeList(params) {
-  console.log("请求的search",qs.stringify(params))
+  // console.log("请求的search",qs.stringify(params))
   return request({
     url: '/api/dbcache/order-forms',
     method: 'get',

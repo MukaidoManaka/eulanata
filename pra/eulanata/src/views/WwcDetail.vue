@@ -89,7 +89,7 @@ export default {
       this.$router.push({name: 'Wwc',query: {id: this.$route.params.id}})
     },
     save() {
-      console.log('保存时的num',this.num)
+      // console.log('保存时的num',this.num)
       //置空，不然出错的时候不能提交,会一直往sp里面push(obj)
       this.sp = []
       
@@ -124,8 +124,8 @@ export default {
         }
       }
 
-      console.log('sppppppp-------',this.sp)
-      console.log('checkNum----',this.checkNum)
+      // console.log('sppppppp-------',this.sp)
+      // console.log('checkNum----',this.checkNum)
       //checkNum里面但凡有一个false都不能提交
       if(this.checkNum.includes(false)) {
         this.canSubmit = false
@@ -149,13 +149,13 @@ export default {
     },
     //输入框失焦的时候就判断一下值
     checkValue(item,index) {
-      console.log('item---index',item,index,this.num[index])
-      console.log('num',this.num)
+      // console.log('item---index',item,index,this.num[index])
+      // console.log('num',this.num)
       if(this.num[index] - 0 > (this.data[index].require_num-0) - (this.data[index].recv_num-0)) {
         // this.error = true
         this.data[index].isError = true
         this.$forceUpdate()
-        console.log('有值填错了')
+        // console.log('有值填错了')
       }else {
         this.data[index].isError = false
         this.$forceUpdate()
@@ -164,23 +164,23 @@ export default {
   },
   created() {
     this.id = this.$route.params.id
-    console.log('id',this.id)
+    // console.log('id',this.id)
     //来回传num是为了点击保存之后到提交页面，他还想返回来看一眼goods页面填的值是多少的话，就得这个num来做简单
     if(Object.keys(this.$route.params).includes('num')) {
-      console.log('包含num',this.$route.params.num)
+      // console.log('包含num',this.$route.params.num)
       this.num = this.$route.params.num
     }else {
-      console.log('不包含num')
+      // console.log('不包含num')
     }
     // this.num = this.$route.params.num
     
     goodsDetail({"order": this.id}).then(res => {
-      console.log('res',res)
+      // console.log('res',res)
       this.data = res
       this.djbh = res[0].djbh
       
       if(res === null) {
-        console.log("空空空空空空")
+        // console.log("空空空空空空")
         this.rightBtn = ''
         this.display = true
       }
@@ -189,7 +189,7 @@ export default {
       for (var i in this.data) {
         this.activeNames.push(this.data[i].spmc)
       }
-      console.log('折叠面板数组值',this.activeNames)
+      // console.log('折叠面板数组值',this.activeNames)
     })
     
     

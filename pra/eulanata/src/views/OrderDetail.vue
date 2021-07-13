@@ -21,7 +21,7 @@
         <van-cell title="订单状态" :value="data.status" />
       </van-cell-group>
       <van-cell-group>
-        <van-cell title="货物详情" is-link @click="readGoods" />
+        <van-cell title="货物详情" is-link />
       </van-cell-group>
       <div class="remark">
         <span>备注:</span>
@@ -47,22 +47,9 @@ export default {
     returnPrev() {
       this.$router.push('/message')
     },
-    readGoods() {
-      this.$router.push({name: 'GoodsDetail',params: {routerData:this.data.goods,id: this.id}})
-    }
   },
   created() {
-    console.log('外面传进来的id',this.$route.params.id)
-    this.id = this.$route.params.id
-    //根据以上id拿到详情
-    this.json = require('../../mock.json')
-    console.log('先看看json',this.json)
-    this.data1 = this.json.filter((item) => {
-      console.log(1)
-      return item.id == this.id
-    })
-    this.data = this.data1[0]
-    console.log('现在的data',this.data)
+    
 
   }
 }

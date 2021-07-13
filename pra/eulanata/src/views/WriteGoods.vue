@@ -65,7 +65,7 @@ export default {
       this.$router.push({name: 'WriteOrder',query: {id: this.$route.params.id}})
     },
     save() {
-      console.log('保存时的num',this.num)
+      // console.log('保存时的num',this.num)
       //置空，不然出错的时候不能提交,会一直往sp里面push(obj)
       this.sp = []
       
@@ -86,7 +86,7 @@ export default {
           }
           this.checkNum[i] = true
         }else {
-          console.log('此时num【i】的值',this.num[i])
+          // console.log('此时num【i】的值',this.num[i])
           if(this.num[i] != '') {
             //能进这个if的  就是数字乱填 / 填错
             this.checkNum[i] = false
@@ -101,8 +101,8 @@ export default {
         }
       }
 
-      console.log('sppppppp-------',this.sp)
-      console.log('checkNum----',this.checkNum)
+      // console.log('sppppppp-------',this.sp)
+      // console.log('checkNum----',this.checkNum)
       if(this.checkNum.includes(false)) {
         this.canSubmit = false
         this.$toast.fail('保存失败，请检查填写内容')
@@ -123,10 +123,10 @@ export default {
       }
     },
     checkValue(item,index) {
-      console.log('item---index',item,index,this.num[index])
-      console.log('num',this.num)
+      // console.log('item---index',item,index,this.num[index])
+      // console.log('num',this.num)
       if(this.num[index] - 0 > this.data[index].require_num) {
-        console.log('有值填错了')
+        // console.log('有值填错了')
         this.data[index].isError = true
         this.$forceUpdate()
       }else {
@@ -138,14 +138,14 @@ export default {
   created() {
     //来回传num是为了点击保存之后到提交页面，他还想返回来看一眼goods页面填的值是多少的话，就得这个num来做
     if(Object.keys(this.$route.params).includes('num')) {
-      console.log('包含num',this.$route.params.num)
+      // console.log('包含num',this.$route.params.num)
       this.num = this.$route.params.num
     }else {
-      console.log('不包含num')
+      // console.log('不包含num')
     }
     
     goodsDetail({"order": this.$route.params.id}).then(res => {
-      console.log('res',res)
+      // console.log('res',res)
       this.data = res
       this.djbh = res[0].djbh
       for (let p in this.data) {
@@ -153,7 +153,7 @@ export default {
       }
 
       if(res.length == 0) {
-        console.log("空空空空空空")
+        // console.log("空空空空空空")
         this.rightBtn = ''
         this.display = true
       }
@@ -161,9 +161,9 @@ export default {
       for (var i in this.data) {
         this.activeNames.push(this.data[i].spmc)
       }
-      console.log('折叠面板数组值',this.activeNames)
+      // console.log('折叠面板数组值',this.activeNames)
     }).catch(err => {
-      console.log('errrrrrrrrrrrrrrrrr',err)
+      // console.log('errrrrrrrrrrrrrrrrr',err)
     })
     
     

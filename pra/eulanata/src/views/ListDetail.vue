@@ -65,8 +65,8 @@ export default {
   },
   created() {
     if(this.$route.query.id) {
-      console.log('外面传进来的id',this.$route.query.id)
-      console.log('外面传进来的route',this.$route)
+      // console.log('外面传进来的id',this.$route.query.id)
+      // console.log('外面传进来的route',this.$route)
       this.id = this.$route.query.id
       gzhJump(this.id).then(res => {
         this.data = res
@@ -80,13 +80,13 @@ export default {
       })
       
     }else {
-      console.log('不进else')
+      // console.log('不进else')
       let p = location.href
-      console.log(p)
+      // console.log(p)
       let obj = decodeurl(p)
-      console.log(obj)
+      // console.log(obj)
       gzhJump(obj.id).then(res => {
-        console.log("shuaxin--",res)
+        // console.log("shuaxin--",res)
         this.data = res
         if(res.shbz == 1) {
           this.data.status = '未完成'

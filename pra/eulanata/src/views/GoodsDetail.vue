@@ -63,15 +63,15 @@ export default {
   },
   created() {
     this.id = this.$route.params.id
-    console.log('id',this.id)
+    // console.log('id',this.id)
 
     goodsDetail({"order":this.id}).then(res => {
-      console.log('res',res)
+      // console.log('res',res)
       this.data = res
       this.djbh = res[0].djbh
 
       if(res.length == 0) {
-        console.log("空空空空空空")
+        // console.log("空空空空空空")
         this.display = true
       }
 
@@ -79,7 +79,7 @@ export default {
       for (var i in this.data) {
         this.activeNames.push(this.data[i].spmc)
       }
-      console.log('折叠面板数组值',this.activeNames)
+      // console.log('折叠面板数组值',this.activeNames)
     })
     
   }
